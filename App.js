@@ -31,6 +31,7 @@ import ReSell from './src/component/screens/ReSell.js';
 import PaymentDetails from './src/component/screens/PaymentDetails.js';
 import BookHistory from './src/component/screens/BookHistory.js';
 import BookDetail from './src/component/screens/BookDetail.js';
+import Profile from './src/component/screens/Profile.js';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -48,7 +49,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Home'
+        initialRouteName='Profile'
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
@@ -68,6 +69,8 @@ const App = () => {
         <Stack.Screen name="PaymentDetails" component={PaymentDetails} />
         <Stack.Screen name="BookHistory" component={BookHistory} />
         <Stack.Screen name="BookDetails" component={BookDetail} />
+        <Stack.Screen name="Profile" component={Profile} />
+
 
 
 
