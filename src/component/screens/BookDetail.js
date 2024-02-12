@@ -18,6 +18,7 @@ import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import LinearGradient from 'react-native-linear-gradient';
 import * as images from '../config/constants';
+import { Tooltip } from "react-native-paper";
 
 
 
@@ -123,7 +124,10 @@ export default function BookDetail(props) {
                                 placeholderTextColor={'#7F8192'}
                             />
                             <TouchableOpacity>
+                            <Tooltip title="1300">
                                 <AntDesign name="questioncircleo" size={20} style={{ marginLeft: 10 }} color={color.black} />
+
+                            </Tooltip>
 
                             </TouchableOpacity>
 
@@ -151,7 +155,7 @@ export default function BookDetail(props) {
                         />
 
                     </View>
-                    <Text style={[styles.title, { marginTop: 15 ,marginBottom:10}]}>Add your book images</Text>
+                    <Text style={[styles.title, { marginTop: 15, marginBottom: 10 }]}>Add your book images</Text>
 
                     <FlatList
                         data={books}
@@ -185,16 +189,16 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         color: '#7F8192',
-        marginTop: 12, 
+        marginTop: 12,
         backgroundColor: '#F5F6FA'
     },
     container: { padding: 15 },
     header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
     title: { fontFamily: Font.acari, fontWeight: '800', color: color.black, fontSize: 16 },
-    name:{ color: '#151940', fontWeight: '600', fontSize: 14, lineHeight: 15,marginTop:15},
-    printedView:{ height: 57, backgroundColor: '#F5F6FA', borderRadius: 10, marginTop: 12, flexDirection: 'row', alignItems: 'center' }
-   
+    name: { color: '#151940', fontWeight: '600', fontSize: 14, lineHeight: 15, marginTop: 15 },
+    printedView: { height: 57, backgroundColor: '#F5F6FA', borderRadius: 10, marginTop: 12, flexDirection: 'row', alignItems: 'center' }
+
 
 
 

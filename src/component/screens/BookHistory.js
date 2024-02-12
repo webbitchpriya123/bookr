@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
+import Header from '../header/header';
 
 
 
@@ -72,17 +73,7 @@ const BookHistory = (props) => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
-            <LinearGradient colors={['#241D60', '#4F45A1']} start={{ x: 0.1, y: 0.4 }}
-                end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
-                <View style={styles.header}>
-                    <TouchableOpacity>
-                        <Image source={images.homeBook} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('Notification')}>
-                        <Ionicons name='notifications-outline' color={color.white} size={25} />
-                    </TouchableOpacity>
-                </View>
-            </LinearGradient>
+            <Header />
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.conatiner}>
                     <Text style={styles.title}>My Book History</Text>
@@ -92,7 +83,7 @@ const BookHistory = (props) => {
                             showsVerticalScrollIndicator={false}
                             renderItem={({ item, index }) =>
 
-                                <TouchableOpacity style={styles.bookContainer} onPress={()=>props.navigation.navigate('BookDetails')}>
+                                <TouchableOpacity style={styles.bookContainer} onPress={() => props.navigation.navigate('BookDetails')}>
                                     <View style={styles.imageContainer}>
                                         <Image source={item.image} />
                                     </View>
@@ -106,7 +97,7 @@ const BookHistory = (props) => {
                                             </TouchableOpacity>
                                             {item.status === 'Approved' ?
                                                 <TouchableOpacity style={{ padding: 10, backgroundColor: item.payment === 'paid' ? '#20B52633' : item.payment === 'Payment Pending' ? '#FFD12F33' : '#FF2F2F33', marginLeft: 15, borderRadius: 5 }}>
-                                                    <Text style={{ color:item.payment === 'paid' ? '#056839' : item.payment === 'Payment Pending' ? '#AB8912' : '#FF0000' }}>{item.payment}</Text>
+                                                    <Text style={{ color: item.payment === 'paid' ? '#056839' : item.payment === 'Payment Pending' ? '#AB8912' : '#FF0000' }}>{item.payment}</Text>
                                                 </TouchableOpacity> : null}
                                         </View>
                                     </View>
@@ -139,11 +130,11 @@ const styles = StyleSheet.create({
     conatiner: { padding: 15 },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 52 },
     title: { fontFamily: font.acari, fontWeight: '800', color: color.black, fontSize: 16, marginBottom: 10, marginTop: 3 },
-    bookContainer:{ backgroundColor: '#F9F9F9', height: 180, elevation: 5, borderRadius: 10, flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
-    detailView:{ flex: 0.68, padding: 10, justifyContent: 'center' },
-    name:{ color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '600' },
-    isbn:{ color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '400' },
-    totalBook:{ color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '400' },
-    payView:{ flexDirection: 'row', marginTop: 10 },
-    imageContainer:{ flex: 0.3, padding: 10 }
+    bookContainer: { backgroundColor: '#F9F9F9', height: 180, elevation: 5, borderRadius: 10, flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+    detailView: { flex: 0.68, padding: 10, justifyContent: 'center' },
+    name: { color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '600' },
+    isbn: { color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '400' },
+    totalBook: { color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '400' },
+    payView: { flexDirection: 'row', marginTop: 10 },
+    imageContainer: { flex: 0.3, padding: 10 }
 })

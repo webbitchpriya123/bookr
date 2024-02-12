@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
+import Header from '../header/header';
 
 
 
@@ -31,17 +32,7 @@ const Home = (props) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <LinearGradient colors={['#241D60', '#4F45A1']} start={{ x: 0.1, y: 0.4 }}
-                end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
-                <View style={styles.header}>
-                    <TouchableOpacity>
-                        <Image source={images.homeBook} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('Notification')}>
-                        <Ionicons name='notifications-outline' color={color.white} size={25} />
-                    </TouchableOpacity>
-                </View>
-            </LinearGradient>
+            <Header/>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.conatiner}>
                     <Text style={styles.title}>Dashboard</Text>
@@ -49,10 +40,10 @@ const Home = (props) => {
                     <FlatList
                         data={books}
                         horizontal
-                        renderItem={({ item, index }) => <View style={{ height: windowWidth / 3.7, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth / 3.7, borderRadius: 10, marginLeft: 8 ,marginRight:8}}>
+                        renderItem={({ item, index }) => <TouchableOpacity style={{ height: windowWidth / 3.7, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth / 3.7, borderRadius: 10, marginLeft: 8 ,marginRight:8}}>
                             <Text style={styles.number}>{item.number}</Text>
                             <Text style={styles.status}>{item.status}</Text>
-                        </View>}
+                        </TouchableOpacity>}
                         keyExtractor={item => item.id}
                     />
 
@@ -61,7 +52,9 @@ const Home = (props) => {
                             <View style={{ alignSelf: 'flex-end', width: windowWidth / 2.3, margin: 10 }}>
                                 <Text style={styles.perchant}>30% EXTRA</Text>
                                 <Text style={styles.education}>FOR ALL EDUCATION BOOKS</Text>
+                                <TouchableOpacity>
                                 <Text style={styles.sell}>Sell Now</Text>
+                                </TouchableOpacity>
                             </View>
 
                         </ImageBackground>
