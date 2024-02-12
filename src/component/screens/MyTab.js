@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -15,11 +15,8 @@ import * as color from '../../colors/colors';
 
 const Tab = createBottomTabNavigator();
 
-
-
 export default function MyTab() {
     // console.log("global",this.props.route.params.bottom)
-
     return (
         <>
             <Tab.Navigator
@@ -39,7 +36,6 @@ export default function MyTab() {
                                         <AntDesign name="home" size={25} color={color.darkBlue} />
                                         <Text style={styles.label}>Home</Text>
                                     </View> : <View><AntDesign name="home" size={25} color={color.darkBlue} /></View>}</View>
-
                         ),
 
                     }} />
@@ -97,8 +93,6 @@ export default function MyTab() {
 
                         ),
                     }} />
-
-
 
             </Tab.Navigator>
 
