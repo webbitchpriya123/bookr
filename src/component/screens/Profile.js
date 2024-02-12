@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
     StyleSheet,
     Text,
@@ -12,10 +12,9 @@ import {
 import Header from "../header/header";
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-export default function Profile() {
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-   
+export default function Profile(props) {
     return (
         <SafeAreaView style={styles.containerView}>
             <Header />
@@ -109,7 +108,7 @@ export default function Profile() {
                             placeholderTextColor={'#7F8192'}
                         />
                     </View>
-                    <TouchableOpacity style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('Login')} style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
                         <MaterialCommunityIcons name="logout" size={25} color={color.red} />
                         <Text style={styles.logout} >Logout</Text>
 
