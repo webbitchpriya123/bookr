@@ -133,7 +133,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Name</Text>
                         <TextInput
                             value={state.Name}
-                            style={[styles.input, { borderWidth: state.Name ? 1 : 0, borderColor: state.Name ? 'gray' : '' }]}
+                            style={[styles.input, { borderWidth: state.Name || error.nameError ? 1 : 0, borderColor: state.Name || error.nameError ? 'gray' : '',backgroundColor:state.Name || error.nameError ? color.white :'#F5F6FA' }]}
                             placeholder="Andrew Ainsely"
                             placeholderTextColor={'#7F8192'}
                             onChangeText={onTextChange("Name")}
@@ -144,7 +144,7 @@ export default function EditProfile(props) {
 
                         <TextInput
                             value={state.Email}
-                            style={[styles.input, { borderWidth: state.Email ? 1 : 0, borderColor: state.Email ? 'gray' : '' }]}
+                            style={[styles.input, { borderWidth: state.Email || error.emailError  ? 1 : 0, borderColor: state.Email || error.emailError ? 'gray' : '' ,backgroundColor:state.Email || error.emailError ? color.white :'#F5F6FA' }]}
                             placeholder="andrew@gmail.com"
                             placeholderTextColor={'#7F8192'}
                             onChangeText={onTextChange("Email")}
@@ -153,7 +153,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Phone Number</Text>
 
                         <TextInput
-                            style={[styles.input, { borderWidth: state.Phone ? 1 : 0, borderColor: state.Phone ? 'gray' : '' }]}
+                            style={[styles.input, { borderWidth: state.Phone || error.phoneError ? 1 : 0, borderColor: state.Phone || error.phoneError ? 'gray' : '',backgroundColor:state.Phone || error.phoneError ? color.white :'#F5F6FA' }]}
                             value={state.Phone}
                             placeholder="+91 9878748978"
                             placeholderTextColor={'#7F8192'}
@@ -166,7 +166,7 @@ export default function EditProfile(props) {
 
                         <Text style={styles.name}>State</Text>
                         <Dropdown
-                            style={[styles.dropdown, { borderWidth: state.state ? 1 : 0, borderColor: state.state ? 'gray' : '' }]}
+                            style={[styles.dropdown, { borderWidth: state.state || state.stateError ? 1 : 0, borderColor: state.state || state.stateError ? 'gray' : '' ,backgroundColor:state.state || error.stateError ? color.white :'#F5F6FA' }]}
                             placeholderStyle={styles.placeholderStyle}
                             selectedTextStyle={styles.selectedTextStyle}
                             inputSearchStyle={styles.inputSearchStyle}
@@ -197,7 +197,7 @@ export default function EditProfile(props) {
                             <View style={styles.flex4}>
                                 <Text style={styles.name}>District</Text>
                                 <Dropdown
-                                    style={[styles.dropdown, { borderWidth: state.district ? 1 : 0, borderColor: state.district ? 'gray' : '' }]}
+                                    style={[styles.dropdown, { borderWidth: state.district || error.districtError ? 1 : 0, borderColor: state.district || error.districtError ? 'gray' : '',backgroundColor:state.district || error.districtError ? color.white :'#F5F6FA' }]}
                                     placeholderStyle={styles.placeholderStyle}
                                     selectedTextStyle={styles.selectedTextStyle}
                                     inputSearchStyle={styles.inputSearchStyle}
@@ -229,7 +229,7 @@ export default function EditProfile(props) {
                                 <Text style={styles.name}>City</Text>
 
                                 <Dropdown
-                                    style={[styles.dropdown, { borderWidth: state.city ? 1 : 0, borderColor: state.city ? 'gray' : '' }]}
+                                    style={[styles.dropdown, { borderWidth: state.city || error.cityError ? 1 : 0, borderColor: state.city || error.cityError ? 'gray' : '',backgroundColor:state.city || error.cityError ? color.white :'#F5F6FA' }]}
                                     placeholderStyle={styles.placeholderStyle}
                                     selectedTextStyle={styles.selectedTextStyle}
                                     inputSearchStyle={styles.inputSearchStyle}
@@ -260,7 +260,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Address</Text>
 
                         <TextInput
-                            style={[styles.input, { borderWidth: state.Address ? 1 : 0, borderColor: state.Address ? 'gray' : '' }]}
+                            style={[styles.input, { borderWidth: state.Address || error.AddressError ? 1 : 0, borderColor: state.Address || error.AddressError ? 'gray' : '',backgroundColor:state.Address || error.AddressError ? color.white :'#F5F6FA' }]}
                             value={state.Address}
                             placeholder="11/24 - AI warsan"
                             placeholderTextColor={'#7F8192'}
@@ -272,7 +272,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Pin code</Text>
                         <TextInput
                             value={state.pinCode}
-                            style={[styles.input, { borderWidth: state.pinCode ? 1 : 0, borderColor: state.pinCode ? 'gray' : '' }]}
+                            style={[styles.input, { borderWidth: state.pinCode || error.pinError ? 1 : 0, borderColor: state.pinCode || error.pinError ? 'gray' : '' ,backgroundColor:state.pinCode || error.pinError ? color.white :'#F5F6FA'}]}
                             placeholder="623442"
                             placeholderTextColor={'#7F8192'}
                             onChangeText={onTextChange("pinCode")}
@@ -311,7 +311,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         color: '#7F8192',
         marginTop: 12,
-        backgroundColor: '#F5F6FA'
+        // backgroundColor: '#F5F6FA'
+        // backgroundColor:color.white
     },
     flex7: { flex: 0.67 },
     flex3: { flex: 0.33 },

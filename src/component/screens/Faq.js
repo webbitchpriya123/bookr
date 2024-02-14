@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 52 },
     title: { fontWeight: '700', fontSize: 16, fontFamily: font.acari, color: color.black, paddingBottom: 10 },
     accordian: { backgroundColor: 'white', elevation: 5, marginTop: 15 ,borderRadius:10},
-    accordianList: { color: '#A1A1AA', lineHeight: 23, fontSize: 14, fontWeight: '500', backgroundColor: color.white, paddingLeft: 15, paddingRight: 15, paddingBottom: 15 },
+    accordianList: { color: '#A1A1AA', lineHeight: 23, fontSize: 14, fontWeight: '500', backgroundColor: color.white, paddingLeft: 15, paddingRight: 15, paddingBottom: 15,borderBottomLeftRadius:10,borderBottomRightRadius:10 },
     container: { padding: 15 },
     listSection: { backgroundColor: 'white', elevation: 5, borderRadius: 10 },
     safeArea: { flex: 1, backgroundColor: color.white }
