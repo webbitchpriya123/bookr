@@ -9,7 +9,7 @@ import * as color from '../../colors/colors';
 
 const Header = (props) => {
     return (
-        <LinearGradient colors={['#241D60', '#4F45A1']} start={{ x: 0.1, y: 0.4 }}
+        <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
             end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => props.navigation.navigate('Profile')}>

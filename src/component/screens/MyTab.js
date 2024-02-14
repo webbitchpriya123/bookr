@@ -7,6 +7,7 @@ import Home from './Home';
 import Profile from './Profile';
 import ReSell from './ReSell';
 import * as color from '../../colors/colors';
+import FAQ from './Faq';
 
 
 
@@ -58,7 +59,7 @@ export default function MyTab() {
                         ),
                     }} />
 
-                <Tab.Screen name="Faq" component={ReSell}
+                <Tab.Screen name="FAQ" component={FAQ}
                     options={{
                         headerTitleAlign: 'center',
                         tabBarIcon: ({ focused }) => (

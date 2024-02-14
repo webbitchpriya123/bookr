@@ -74,7 +74,7 @@ export default function ReSell(props) {
     console.log("setstate", images)
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
-            <LinearGradient colors={['#241D60', '#4F45A1']} start={{ x: 0.1, y: 0.4 }}
+            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.header}>
                     <TouchableOpacity style={{ flex: 0.15 }} onPress={() => props.navigation.goBack()}>
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         color: '#7F8192'
     },
-    submitText: { color: color.darkBlue, fontSize: 14, fontFamily: Font.acari, fontWeight: '600', textAlign: 'center' },
+    submitText: { color: color.darkBlack, fontSize: 14, fontFamily: Font.acari, fontWeight: '600', textAlign: 'center' },
     container: { padding: 15 },
     imageContainer: { height: 130, backgroundColor: '#ECEAFF', width: 100, justifyContent: 'center' },
     header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },

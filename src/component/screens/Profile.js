@@ -29,7 +29,7 @@ export default function Profile(props) {
                                 <Text style={styles.number}>+91 8745946943</Text>
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.flex3}>
+                        <TouchableOpacity style={styles.flex3} onPress={()=>props.navigation.navigate('EditProfile')}>
                             <Text style={styles.editProfile}>Edit Profile</Text>
                         </TouchableOpacity>
                     </View>

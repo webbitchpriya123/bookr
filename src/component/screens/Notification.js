@@ -24,7 +24,7 @@ import LinearGradient from 'react-native-linear-gradient';
 export default function Notification(props) {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-            <LinearGradient colors={['#241D60', '#4F45A1']} start={{ x: 0.1, y: 0.4 }}
+            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.header}>
                     <TouchableOpacity style={{ flex: 0.15 }}>

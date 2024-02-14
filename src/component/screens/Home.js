@@ -6,7 +6,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
-import Header from '../header/header';
 
 
 
@@ -32,7 +31,7 @@ const Home = (props) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <LinearGradient colors={['#241D60', '#4F45A1']} start={{ x: 0.1, y: 0.4 }}
+            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => props.navigation.navigate('Profile')}>
@@ -50,7 +49,8 @@ const Home = (props) => {
                     <FlatList
                         data={books}
                         horizontal
-                        renderItem={({ item, index }) => <TouchableOpacity style={{ height: windowWidth / 3.7, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth / 3.7, borderRadius: 10, marginLeft: 8, marginRight: 8 }}>
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item, index }) => <TouchableOpacity style={{ height: windowWidth / 3.7, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth / 3.7, borderRadius: 10, marginLeft: 8, marginRight: 8, justifyContent: 'center' }}>
                             <Text style={styles.number}>{item.number}</Text>
                             <Text style={styles.status}>{item.status}</Text>
                         </TouchableOpacity>}
@@ -59,7 +59,7 @@ const Home = (props) => {
 
                     <View style={{ marginTop: 20 }}>
                         <ImageBackground imageStyle={{ borderRadius: 10 }} source={images.banner} style={{ width: windowWidth - 40, height: 150, alignSelf: 'center' }} >
-                            <View style={{ alignSelf: 'flex-end', width: windowWidth / 2.3, margin: 10 }}>
+                            <View style={{ alignSelf: 'flex-end', width: windowWidth / 2.3, margin: 10, paddingTop: 8 }}>
                                 <Text style={styles.perchant}>30% EXTRA</Text>
                                 <Text style={styles.education}>FOR ALL EDUCATION BOOKS</Text>
                                 <TouchableOpacity>
@@ -69,19 +69,19 @@ const Home = (props) => {
 
                         </ImageBackground>
                     </View>
-
-                    <TouchableOpacity style={{ marginTop: 20 }} onPress={() => props.navigation.navigate('BookHistory')}>
+                    <View style={{ marginTop: 20 }} >
                         <Text style={styles.title}>Sell your Books</Text>
 
-                        <View style={styles.sellContainer}>
-                            <Text style={styles.sellBooks}>Sell your book</Text>
-                            <View style={styles.arrowBox}>
-                                <AntDesign name="arrowright" color={color.darkBlue} size={25} style={{ alignSelf: 'center' }} />
-                            </View>
+                    </View>
 
+                    <TouchableOpacity onPress={() => props.navigation.navigate('BookHistory')} style={styles.sellContainer}>
+                        <Text style={styles.sellBooks}>Sell your book</Text>
+                        <View style={styles.arrowBox}>
+                            <AntDesign name="arrowright" color={color.darkBlue} size={25} style={{ alignSelf: 'center' }} />
                         </View>
+
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ marginTop: 10 }}>
+                    {/* <TouchableOpacity style={{ marginTop: 10 }}>
                         <View style={styles.accountContainer}>
                             <Text style={[styles.sellBooks, { color: '#CDCDCDE5' }]}>Account Details</Text>
                             <View style={styles.arrowRight}>
@@ -89,7 +89,7 @@ const Home = (props) => {
                             </View>
 
                         </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
                 </View>
             </ScrollView>
@@ -113,14 +113,14 @@ const styles = StyleSheet.create({
     education: { color: color.white, fontWeight: '600', fontSize: 12, marginTop: 5, letterSpacing: 2, lineHeight: 17 },
     backgroundContainer: { alignSelf: 'flex-end', padding: 18, },
     perchant: { color: color.white, fontWeight: '700', fontSize: 22 },
-    status: { fontFamily: font.acari, color: color.white, fontSize: 14, alignSelf: 'center', fontWeight: '500', marginTop: 10 },
-    number: { fontFamily: font.acari, color: color.white, fontSize: 28, alignSelf: 'center', fontWeight: '700', marginTop: 23 },
+    status: { fontFamily: font.acari, color: color.white, fontSize: 14, alignSelf: 'center', fontWeight: '500', lineHeight: 35 },
+    number: { fontFamily: font.acari, color: color.white, fontSize: 28, alignSelf: 'center', fontWeight: '700' },
     conatiner: { padding: 15 },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 52 },
     title: { fontFamily: font.acari, fontWeight: '800', color: color.black, fontSize: 16, marginBottom: 18, marginTop: 3 },
     bookContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     sell: { marginTop: 12, backgroundColor: color.yellow, width: 80, textAlign: 'center', paddingTop: 5, paddingBottom: 5, borderRadius: 30, color: color.darkBlue },
-    sellContainer: { height: 75, backgroundColor: color.darkBlue, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: 10 },
+    sellContainer: { height: 75, backgroundColor: color.dividerColor, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: 10 },
     arrowBox: { height: 40, backgroundColor: 'white', width: 40, justifyContent: 'center', borderRadius: 8, margin: 12 },
     accountContainer: { height: 75, backgroundColor: color.darkBlue, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: 10 },
     arrowRight: { height: 40, backgroundColor: '#CDCDCDE5', width: 40, justifyContent: 'center', borderRadius: 8, margin: 12 }

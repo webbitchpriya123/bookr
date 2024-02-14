@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import * as images from '../config/constants';
-import * as color from '../config/constants';
+import * as color from '../../colors/colors';
 import LinearGradient from 'react-native-linear-gradient';
 
 
@@ -19,7 +19,7 @@ import LinearGradient from 'react-native-linear-gradient';
 export default function Verified(props) {
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <LinearGradient colors={['#241D60', '#4F45A1']} start={{ x: 0.1, y: 0.4 }}
+            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.imageView}>
                     <Image source={images.verified} />
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
     },
-    loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color: color.darkBlue, fontWeight: '600' },
+    loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color:color.darkBlack, fontWeight: '600' },
     logView: { height: 50, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
 
 

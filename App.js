@@ -33,16 +33,16 @@ import BookHistory from './src/component/screens/BookHistory.js';
 import BookDetail from './src/component/screens/BookDetail.js';
 import Profile from './src/component/screens/Profile.js';
 import HeaderComp from './src/component/header/header.js';
+import FAQ from './src/component/screens/Faq.js';
+import EditProfile from './src/component/screens/EditProfile.js';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
 
 const Stack = createNativeStackNavigator();
-
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
-
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -50,7 +50,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Home'
+        initialRouteName='Login'
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
@@ -72,12 +72,8 @@ const App = () => {
         <Stack.Screen name="BookDetails" component={BookDetail} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="header" component={HeaderComp} />
-
-
-
-
-
-
+        <Stack.Screen name="FAQ" component={FAQ} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
       </Stack.Navigator>
     </NavigationContainer>
 

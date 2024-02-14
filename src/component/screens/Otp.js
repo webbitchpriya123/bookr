@@ -21,7 +21,7 @@ export default function Otp(props) {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <LinearGradient colors={['#241D60', '#4F45A1']} start={{ x: 0.1, y: 0.4 }}
+            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <TouchableOpacity style={styles.arrow} onPress={() => props.navigation.goBack()} >
                     <AntDesign name='arrowleft' size={30} color={color.white} />
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     arrow: { flex: 0.14, justifyContent: 'flex-end' },
     bottom: { flex: 0.25, justifyContent: 'flex-end', paddingBottom: 10 },
     loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color: '#241D60', fontWeight: '600' },
-    divider: { height: 1.2, backgroundColor: '#6A62AD' },
+    divider: { height: 1.2, backgroundColor: color.dividerColor },
     login: { fontSize: 14, color: '#CDCDCDE5', fontWeight: '500', textAlign: 'center', marginTop: 15, fontFamily: font.acari, lineHeight: 22 },
     website: { fontSize: 12, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30, alignSelf: 'center', marginTop: 5 },
     underlineStyleBase: {

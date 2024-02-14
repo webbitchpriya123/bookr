@@ -22,7 +22,7 @@ export default function Login(props) {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <LinearGradient colors={['#241D60', '#4F45A1']} start={{ x: 0.1, y: 0.4 }}
+            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.imageContainer}>
                     <Image source={images.MainLogo} />
@@ -59,10 +59,10 @@ export default function Login(props) {
                                 name={eye ? "eye" : 'eye-off'} size={23} color={'#ABABAB'} />
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('ForgetPassword')}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('Otp')}>
                         <Text style={styles.forget}>Forget Password?</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.logView} onPress={() => props.navigation.navigate('Otp')}>
+                    <TouchableOpacity style={styles.logView} onPress={() => props.navigation.navigate('ForgetPassword')}>
                         <Text style={styles.loginText}>LOGIN</Text>
                     </TouchableOpacity>
                 </View>
@@ -84,10 +84,10 @@ const styles = StyleSheet.create({
         paddingRight: 20,
     },
     bottom: { flex: 0.25, justifyContent: 'flex-end', paddingBottom: 10 },
-    loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color: color.appColor, fontWeight: '600' },
+    loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color: color.darkBlack, fontWeight: '600' },
     logView: { height: 50, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
     forget: { marginTop: 15, color: '#FFFFFF', fontSize: 13, alignSelf: 'flex-end', textDecorationLine: 'underline' },
-    divider: { height: 1.2, backgroundColor: '#6A62AD', marginTop: 20 },
+    divider: { height: 1.2, backgroundColor:color.dividerColor, marginTop: 20 },
     login: { fontSize: 14, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30 },
     website: { fontSize: 12, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30, alignSelf: 'center', marginTop: 5 },
     input: {
