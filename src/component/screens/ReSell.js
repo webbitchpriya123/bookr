@@ -7,7 +7,8 @@ import {
     View,
     TouchableOpacity,
     FlatList,
-    TextInput
+    TextInput,
+    Dimensions
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
@@ -43,6 +44,7 @@ export default function ReSell(props) {
 
         },
     ]
+    const windowWidth = Dimensions.get('window').width;
 
     console.log("setstate", imagesss)
 
@@ -70,22 +72,20 @@ export default function ReSell(props) {
                     placeholderTextColor={'#7F8192'}
                 />
                 <Text style={[styles.title, { marginTop: 15 }]}>Add your book images</Text>
+                <View style={styles.wrap}>
                 {images.slice(0, 4).length ?
                     <FlatList
                         data={images.slice(0, 4)}
                         numColumns={3}
-                        style={{backgroundColor:'red'}}
+                        style={{width:windowWidth}}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item, index }) =>
                             <View style={{ padding: 6 }} key={index}>
-                                <Image source={{ uri: 'https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?cs=srgb&dl=pexels-pixabay-56866.jpg&fm=jpg' }} style={{ height: 130, width: 100 }} />
+                                <Image source={{ uri: item.path }} style={styles.imageUpload} />
                                 <TouchableOpacity onPress={() => removeItem(index)} style={styles.remove}>
-                                    <AntDesign name="close" size={25} color={'red'} />
-
+                                    <AntDesign name="close" size={20} color={'red'} />
                                 </TouchableOpacity>
-
                             </View>
-
                         }
                         keyExtractor={item => item}
                     /> : null}
@@ -93,7 +93,8 @@ export default function ReSell(props) {
                     <TouchableOpacity onPress={openImagePicker} style={styles.imageContainer}>
                         <AntDesign name="pluscircleo" size={35} color={color.darkBlue} style={{ alignSelf: 'center' }} />
                     </TouchableOpacity> : null}
-
+                </View>
+               
             </View>
             <View style={styles.submitFlex}>
                 <TouchableOpacity style={styles.submitView} onPress={() => props.navigation.navigate('BookHistory')}>
@@ -130,6 +131,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         marginTop: 15
     },
+    wrap:{ flexWrap:'wrap'},
     submitView: { backgroundColor: color.yellow, marginTop: 20, height: 55, justifyContent: 'center', borderRadius: 10 },
     icon: {
         marginRight: 5,
@@ -150,8 +152,9 @@ const styles = StyleSheet.create({
         height: 40,
         fontSize: 16,
     },
-    remove: { borderWidth: 1, borderColor: 'red', position: 'absolute', borderRadius: 30, marginTop: 5, right: 4 },
-    submitFlex: { flex: 0.13, paddingLeft: 15, paddingRight: 15 }
+    remove: { borderWidth: 1, backgroundColor: color.white, borderColor: 'red', position: 'absolute', borderRadius: 30, right: -5 },
+    submitFlex: { flex: 0.13, paddingLeft: 15, paddingRight: 15 },
+    imageUpload:{ height: 120, width: 100, marginTop: 8 }
 
 
 })

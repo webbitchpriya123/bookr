@@ -42,9 +42,10 @@ export default function Otp(props) {
                             pinCount={4}
                             code={code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
                             onCodeChanged={code => setCode(code)}
-                            autoFocusOnLoad
+                            // autoFocusOnLoad
+                            autoFocusOnLoad={false}
                             codeInputFieldStyle={styles.underlineStyleBase}
-                            // codeInputHighlightStyle={styles.underlineStyleHighLighted}
+                            codeInputHighlightStyle={styles.underlineStyleHighLighted}
                             onCodeFilled={(code => {
                                 console.log(`Code is ${code}, you are good to go!`)
                             })}

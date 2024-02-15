@@ -44,15 +44,15 @@ export default function EditProfile(props) {
 
     })
     const [isFocus, setIsFocus] = useState(false);
-    const data = [
-        { label: 'Item 1 Item 1 Item 1 Item 1 Item 1', value: '1' },
-        { label: 'Item 2', value: '2' },
-        { label: 'Item 3', value: '3' },
-        { label: 'Item 4', value: '4' },
-        { label: 'Item 5', value: '5' },
-        { label: 'Item 6', value: '6' },
-        { label: 'Item 7', value: '7' },
-        { label: 'Item 8', value: '8' },
+    const states = [
+        { label: 'Andrapradesh', value: '1' },
+        { label: 'Arunachal Pradesh', value: '2' },
+        { label: 'Assam', value: '3' },
+        { label: 'Bihar', value: '4' },
+        { label: 'Goa', value: '5' },
+        { label: 'Tamil Nadu', value: '6' },
+        { label: 'Sikkim', value: '7' },
+        { label: 'Uttar Pradesh', value: '8' },
     ]
 
     const onTextChange = (name) => (value) => {
@@ -133,7 +133,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Name</Text>
                         <TextInput
                             value={state.Name}
-                            style={[styles.input, { borderWidth: state.Name || error.nameError ? 1 : 0, borderColor: state.Name || error.nameError ? 'gray' : '',backgroundColor:state.Name || error.nameError ? color.white :'#F5F6FA' }]}
+                            style={[styles.input, { borderWidth: state.Name || error.nameError ? 1 : 0, borderColor: state.Name || error.nameError ? 'gray' : '', backgroundColor: state.Name || error.nameError ? color.white : '#F5F6FA' }]}
                             placeholder="Andrew Ainsely"
                             placeholderTextColor={'#7F8192'}
                             onChangeText={onTextChange("Name")}
@@ -144,7 +144,7 @@ export default function EditProfile(props) {
 
                         <TextInput
                             value={state.Email}
-                            style={[styles.input, { borderWidth: state.Email || error.emailError  ? 1 : 0, borderColor: state.Email || error.emailError ? 'gray' : '' ,backgroundColor:state.Email || error.emailError ? color.white :'#F5F6FA' }]}
+                            style={[styles.input, { borderWidth: state.Email || error.emailError ? 1 : 0, borderColor: state.Email || error.emailError ? 'gray' : '', backgroundColor: state.Email || error.emailError ? color.white : '#F5F6FA' }]}
                             placeholder="andrew@gmail.com"
                             placeholderTextColor={'#7F8192'}
                             onChangeText={onTextChange("Email")}
@@ -153,7 +153,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Phone Number</Text>
 
                         <TextInput
-                            style={[styles.input, { borderWidth: state.Phone || error.phoneError ? 1 : 0, borderColor: state.Phone || error.phoneError ? 'gray' : '',backgroundColor:state.Phone || error.phoneError ? color.white :'#F5F6FA' }]}
+                            style={[styles.input, { borderWidth: state.Phone || error.phoneError ? 1 : 0, borderColor: state.Phone || error.phoneError ? 'gray' : '', backgroundColor: state.Phone || error.phoneError ? color.white : '#F5F6FA' }]}
                             value={state.Phone}
                             placeholder="+91 9878748978"
                             placeholderTextColor={'#7F8192'}
@@ -166,13 +166,13 @@ export default function EditProfile(props) {
 
                         <Text style={styles.name}>State</Text>
                         <Dropdown
-                            style={[styles.dropdown, { borderWidth: state.state || state.stateError ? 1 : 0, borderColor: state.state || state.stateError ? 'gray' : '' ,backgroundColor:state.state || error.stateError ? color.white :'#F5F6FA' }]}
+                            style={[styles.dropdown, { borderWidth: state.state || state.stateError ? 1 : 0, borderColor: state.state || state.stateError ? 'gray' : '', backgroundColor: state.state || error.stateError ? color.white : '#F5F6FA' }]}
                             placeholderStyle={styles.placeholderStyle}
                             selectedTextStyle={styles.selectedTextStyle}
                             inputSearchStyle={styles.inputSearchStyle}
                             iconStyle={styles.iconStyle}
-                            data={data}
-                            containerStyle={{ borderRadius: 15 }}
+                            data={states}
+                            containerStyle={{ borderRadius: 15,backgroundColor:'red',marginBottom:40}}
                             // search
                             maxHeight={300}
                             labelField="label"
@@ -180,7 +180,7 @@ export default function EditProfile(props) {
                             placeholder={!isFocus ? 'State' : '...'}
                             searchPlaceholder="Search..."
                             value={state.state}
-                            itemTextStyle={{ color: color.darkBlack }}
+                            itemTextStyle={{ color: color.darkBlack,backgroundColor:'yellow'}}
                             // onFocus={() => setIsFocus(true)}
                             // onBlur={() => setIsFocus(false)}
                             // onChange={item => {
@@ -197,12 +197,12 @@ export default function EditProfile(props) {
                             <View style={styles.flex4}>
                                 <Text style={styles.name}>District</Text>
                                 <Dropdown
-                                    style={[styles.dropdown, { borderWidth: state.district || error.districtError ? 1 : 0, borderColor: state.district || error.districtError ? 'gray' : '',backgroundColor:state.district || error.districtError ? color.white :'#F5F6FA' }]}
+                                    style={[styles.dropdown, { borderWidth: state.district || error.districtError ? 1 : 0, borderColor: state.district || error.districtError ? 'gray' : '', backgroundColor: state.district || error.districtError ? color.white : '#F5F6FA' }]}
                                     placeholderStyle={styles.placeholderStyle}
                                     selectedTextStyle={styles.selectedTextStyle}
                                     inputSearchStyle={styles.inputSearchStyle}
                                     iconStyle={styles.iconStyle}
-                                    data={data}
+                                    data={states}
                                     containerStyle={{ borderRadius: 15 }}
                                     // search
                                     maxHeight={300}
@@ -229,12 +229,12 @@ export default function EditProfile(props) {
                                 <Text style={styles.name}>City</Text>
 
                                 <Dropdown
-                                    style={[styles.dropdown, { borderWidth: state.city || error.cityError ? 1 : 0, borderColor: state.city || error.cityError ? 'gray' : '',backgroundColor:state.city || error.cityError ? color.white :'#F5F6FA' }]}
+                                    style={[styles.dropdown, { borderWidth: state.city || error.cityError ? 1 : 0, borderColor: state.city || error.cityError ? 'gray' : '', backgroundColor: state.city || error.cityError ? color.white : '#F5F6FA' }]}
                                     placeholderStyle={styles.placeholderStyle}
                                     selectedTextStyle={styles.selectedTextStyle}
                                     inputSearchStyle={styles.inputSearchStyle}
                                     iconStyle={styles.iconStyle}
-                                    data={data}
+                                    data={states}
                                     containerStyle={{ borderRadius: 15, borderWidth: 1, borderColor: 'gray' }}
                                     maxHeight={300}
                                     labelField="label"
@@ -260,7 +260,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Address</Text>
 
                         <TextInput
-                            style={[styles.input, { borderWidth: state.Address || error.AddressError ? 1 : 0, borderColor: state.Address || error.AddressError ? 'gray' : '',backgroundColor:state.Address || error.AddressError ? color.white :'#F5F6FA' }]}
+                            style={[styles.input, { borderWidth: state.Address || error.AddressError ? 1 : 0, borderColor: state.Address || error.AddressError ? 'gray' : '', backgroundColor: state.Address || error.AddressError ? color.white : '#F5F6FA' }]}
                             value={state.Address}
                             placeholder="11/24 - AI warsan"
                             placeholderTextColor={'#7F8192'}
@@ -272,7 +272,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Pin code</Text>
                         <TextInput
                             value={state.pinCode}
-                            style={[styles.input, { borderWidth: state.pinCode || error.pinError ? 1 : 0, borderColor: state.pinCode || error.pinError ? 'gray' : '' ,backgroundColor:state.pinCode || error.pinError ? color.white :'#F5F6FA'}]}
+                            style={[styles.input, { borderWidth: state.pinCode || error.pinError ? 1 : 0, borderColor: state.pinCode || error.pinError ? 'gray' : '', backgroundColor: state.pinCode || error.pinError ? color.white : '#F5F6FA' }]}
                             placeholder="623442"
                             placeholderTextColor={'#7F8192'}
                             onChangeText={onTextChange("pinCode")}
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F6FA',
         borderRadius: 10,
         paddingHorizontal: 8,
-        marginTop: 15
+        marginTop: 15,
     },
     icon: {
         marginRight: 5,
