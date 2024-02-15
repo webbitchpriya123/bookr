@@ -69,7 +69,7 @@ const Home = (props) => {
                         data={books}
                         contentContainerStyle={{ justifyContent: 'space-between', width: windowWidth - 30 }}
                         horizontal
-                        showsHorizontalScrollIndicator={false} 
+                        showsHorizontalScrollIndicator={false}
                         renderItem={({ item, index }) =>
                             <TouchableOpacity>
 
@@ -109,9 +109,8 @@ const Home = (props) => {
                     </TouchableOpacity>
                     <View style={{ marginTop: 20 }}>
                         <YoutubePlayer
-                            height={240}
+                            height={200}
                             play={playing}
-                            // webViewStyle={{borderRadius:30}}
                             volume={100}
                             videoId={"PR34ztnnTjI"}
                             onChangeState={onStateChange}
@@ -119,25 +118,21 @@ const Home = (props) => {
                         />
                     </View>
                     <View  >
-                        <Text style={{ fontWeight: '700', fontSize: 16, color: color.black }}>Chat with us</Text>
+                        <Text style={styles.chatText}>Chat with us</Text>
                     </View>
 
                     <TouchableOpacity style={{ marginTop: 10 }} onPress={() => sendWhatsAppMessage()}>
                         <View style={styles.accountContainer}>
-                            <View style={{ flex: 0.2 }}>
+                            <View style={styles.flex2}>
                                 <FontAwesome name="whatsapp" color={'#20B038'} size={50} style={{ alignSelf: 'center' }} />
-
                             </View>
-                            <View style={{ flex: 0.6 }}>
-                                <Text style={{ fontWeight: '500', fontSize: 15, fontFamily: font.acari, lineHeight: 17, color: color.white }}>Need Help?</Text>
-                                <Text style={{ fontWeight: '500', fontSize: 16, fontFamily: font.acari, lineHeight: 27, color: color.white }}>{chatUs}</Text>
+                            <View style={styles.flex6}>
+                                <Text style={styles.needHelp}>Need Help?</Text>
+                                <Text style={styles.chatUs}>{chatUs}</Text>
                             </View>
-                            <TouchableOpacity style={{ flex: 0.2 }}>
+                            <TouchableOpacity style={styles.flex2}>
                                 <AntDesign size={25} name="arrowright" color={color.darkBlack} style={styles.arrowRight} />
                             </TouchableOpacity>
-
-
-
                         </View>
                     </TouchableOpacity>
 
@@ -156,6 +151,8 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20,
     },
+    flex2:{ flex: 0.2 },
+    flex6:{ flex: 0.6 },
     arrowIcon: { alignSelf: 'center', marginTop: 12, color: color.darkBlue },
     arrow: { height: 45, backgroundColor: color.white, width: 45, borderRadius: 10 },
     sellBooks: { color: color.white, fontSize: 18, fontWeight: '500', fontFamily: font.acari, margin: 12 },
@@ -172,6 +169,9 @@ const styles = StyleSheet.create({
     sellContainer: { height: 75, backgroundColor: color.dividerColor, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: 10 },
     arrowBox: { height: 40, backgroundColor: 'white', width: 40, justifyContent: 'center', borderRadius: 8, margin: 12 },
     accountContainer: { height: 75, backgroundColor: color.black, flexDirection: 'row', alignItems: 'center', borderRadius: 10 },
-    arrowRight: { alignSelf: 'center', padding: 8, backgroundColor: color.white, borderRadius: 10 }
+    arrowRight: { alignSelf: 'center', padding: 8, backgroundColor: color.white, borderRadius: 10 },
+    needHelp: { fontWeight: '500', fontSize: 15, fontFamily: font.acari, lineHeight: 17, color: color.white },
+    chatUs: { fontWeight: '500', fontSize: 16, fontFamily: font.acari, lineHeight: 27, color: color.white },
+    chatText: { fontWeight: '700', fontSize: 16, color: color.black }
 
 })

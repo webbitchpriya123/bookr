@@ -13,6 +13,5 @@
         android:layout_height="127dp"
         android:layout_gravity="center"
         android:scaleType="centerCrop">
-
     </ImageView>
 </FrameLayout>
