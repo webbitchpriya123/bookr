@@ -50,7 +50,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='ReSell'
+        initialRouteName='Login'
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',

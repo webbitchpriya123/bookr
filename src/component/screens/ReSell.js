@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     SafeAreaView,
     StyleSheet,
@@ -18,35 +18,69 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 
 export default function ReSell(props) {
-    const [images, setImages] = useState([]);
-    const removeItem = (index) => {
-        const newImages = [...images];
-        newImages.splice(index, 1);
-        setImages(newImages);
+    const [isbn, setIsbn] = useState('');
+    const [isbnErr, setIsbnErr] = useState(false);
+    const [imageErr, setImageErr] = useState(false);
+    const windowWidth = Dimensions.get('window').width;
+    const [images, setImages] = useState([
+        {
+            name: 'Cover'
+        },
+        {
+            name: 'Spine'
+
+        },
+        {
+            name: 'Edge Side'
+
+        },
+        {
+            name: 'Middle'
+
+        },
+    ]);
+    const validation = images.every(item => item.name && item.path);
+
+    const removeItem = (data, index) => {
+        data.map((item) => {
+            if (item.name === index) {
+                item['path'] = '';
+            }
+            setImages([...data])
+        })
     }
-    const openImagePicker = () => {
+
+    useEffect(() => {
+        if (validation) {
+            setImageErr(false)
+        }
+    }, [validation]);
+
+    const onSubmit = () => {
+        if (!isbn) {
+            setIsbnErr('ISBN Number Required.');
+        } else if (!validation) {
+            setImageErr('Please upload all images.');
+        } else {
+            props.navigation.navigate('BookHistory')
+        }
+    }
+
+    const openImagePicker = (name) => {
         ImagePicker.openPicker({
-            multiple: true,
-            mediaType: "photo",
-        }).then(images => {
-            setImages([...images.slice(0, 4)])
+            width: 100,
+            height: 120,
+            cropping: true
+        }).then(image => {
+            images.map((dataItem) => {
+                if (dataItem.name === name) {
+                    dataItem.path = image.path;
+                }
+                setImages([...images])
+
+            })
         });
     };
-    const [isbn, setIsbn] = useState('');
-
-    const imagesss = [
-        {
-            path: 'https://placeimg.com/640/640/nature'
-
-        },
-        {
-            path: 'https://placeimg.com/640/640/nature'
-
-        },
-    ]
-    const windowWidth = Dimensions.get('window').width;
-
-    console.log("setstate", imagesss)
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
@@ -66,38 +100,58 @@ export default function ReSell(props) {
                 <Text style={styles.title}>Enter your book details</Text>
                 <TextInput
                     style={[styles.input, { backgroundColor: '#F5F6FA' }]}
-                    onChangeText={(text) => setIsbn(text)}
+                    onChangeText={(text) => {
+                        setIsbn(text);
+                        setIsbnErr(false)
+                    }}
                     value={isbn}
                     placeholder="ISBN (optional)"
                     placeholderTextColor={'#7F8192'}
                 />
+                {isbnErr ?
+                    <View>
+                        <Text style={[styles.errorMsg, { marginTop: 10 }]}>{isbnErr}</Text>
+                    </View> : null}
                 <Text style={[styles.title, { marginTop: 15 }]}>Add your book images</Text>
-                <View style={styles.wrap}>
-                {images.slice(0, 4).length ?
-                    <FlatList
-                        data={images.slice(0, 4)}
-                        numColumns={3}
-                        style={{width:windowWidth}}
-                        showsVerticalScrollIndicator={false}
-                        renderItem={({ item, index }) =>
-                            <View style={{ padding: 6 }} key={index}>
-                                <Image source={{ uri: item.path }} style={styles.imageUpload} />
-                                <TouchableOpacity onPress={() => removeItem(index)} style={styles.remove}>
-                                    <AntDesign name="close" size={20} color={'red'} />
-                                </TouchableOpacity>
-                            </View>
-                        }
-                        keyExtractor={item => item}
-                    /> : null}
-                {images.length < 4 ?
-                    <TouchableOpacity onPress={openImagePicker} style={styles.imageContainer}>
-                        <AntDesign name="pluscircleo" size={35} color={color.darkBlue} style={{ alignSelf: 'center' }} />
-                    </TouchableOpacity> : null}
-                </View>
-               
+
+                {imageErr ?
+                    <View>
+                        <Text style={[styles.errorMsg, { marginBottom: 10 }]}>{imageErr}</Text>
+                    </View> : null}
+                {/* <View style={styles.wrap}> */}
+                <FlatList
+                    data={images}
+                    // numColumns={3}
+                    contentContainerStyle={{ justifyContent: 'space-between', width: windowWidth - 30, flexWrap: 'wrap' }}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({ item, index }) =>
+                        <View style={{ padding: 6 }} key={index}>
+                            {item.path ?
+                                <View>
+                                    <Image source={{ uri: item.path }} style={styles.imageUpload} />
+                                    <TouchableOpacity onPress={() => removeItem(images, item.name)} style={styles.remove}>
+                                        <AntDesign name="close" size={20} color={'red'} />
+                                    </TouchableOpacity>
+                                </View> : null}
+
+
+                            {!item.path ?
+                                <TouchableOpacity onPress={() => openImagePicker(item.name)} style={styles.imageContainer}>
+                                    <AntDesign name="pluscircleo" size={35} color={color.darkBlue} style={{ alignSelf: 'center' }} />
+                                    <Text style={{ fontSize: 14, fontWeight: '500', textAlign: 'center', color: color.coverImage, marginTop: 5 }}>{item.name}</Text>
+                                </TouchableOpacity> : null}
+
+                        </View>
+                    }
+                    keyExtractor={item => item}
+                />
+
+                {/* </View> */}
+
             </View>
             <View style={styles.submitFlex}>
-                <TouchableOpacity style={styles.submitView} onPress={() => props.navigation.navigate('BookHistory')}>
+                <TouchableOpacity style={styles.submitView} onPress={() => onSubmit()}>
                     <Text style={styles.submitText}>SUBMIT</Text>
                 </TouchableOpacity>
             </View>
@@ -131,7 +185,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         marginTop: 15
     },
-    wrap:{ flexWrap:'wrap'},
+    wrap: { flexWrap: 'wrap' },
     submitView: { backgroundColor: color.yellow, marginTop: 20, height: 55, justifyContent: 'center', borderRadius: 10 },
     icon: {
         marginRight: 5,
@@ -154,7 +208,8 @@ const styles = StyleSheet.create({
     },
     remove: { borderWidth: 1, backgroundColor: color.white, borderColor: 'red', position: 'absolute', borderRadius: 30, right: -5 },
     submitFlex: { flex: 0.13, paddingLeft: 15, paddingRight: 15 },
-    imageUpload:{ height: 120, width: 100, marginTop: 8 }
+    imageUpload: { height: 120, width: 100, marginTop: 8 },
+    errorMsg: { fontSize: 14, color: color.red, fontWeight: '500' }
 
 
 })
