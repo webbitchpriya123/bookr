@@ -7,11 +7,18 @@
     android:orientation="vertical"
     android:background="@color/white"
     tools:context=".SplashActivity">
-    <ImageView
+    <!-- <ImageView
         android:src="@drawable/bookr"
         android:layout_width="165dp"
         android:layout_height="127dp"
         android:layout_gravity="center"
         android:scaleType="centerCrop">
-    </ImageView>
+    </ImageView> -->
+    <pl.droidsonroids.gif.GifImageView
+ android:layout_width="250dp"
+ android:layout_height="250dp"
+ android:layout_gravity="center"
+android:background="@drawable/bookrgif"
+android:scaleType="centerCrop" />
+
 </FrameLayout>

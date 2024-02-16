@@ -72,12 +72,12 @@ export default function ReSell(props) {
             height: 120,
             cropping: true
         }).then(image => {
+            console.log("imageeee", image)
             images.map((dataItem) => {
                 if (dataItem.name === name) {
-                    dataItem.path = image.path;
+                    dataItem['path'] = image.path;
                 }
                 setImages([...images])
-
             })
         });
     };
@@ -121,12 +121,11 @@ export default function ReSell(props) {
                 {/* <View style={styles.wrap}> */}
                 <FlatList
                     data={images}
-                    // numColumns={3}
                     contentContainerStyle={{ justifyContent: 'space-between', width: windowWidth - 30, flexWrap: 'wrap' }}
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     renderItem={({ item, index }) =>
-                        <View style={{ padding: 6 }} key={index}>
+                        <View style={{ padding: 6 }} key={item}>
                             {item.path ?
                                 <View>
                                     <Image source={{ uri: item.path }} style={styles.imageUpload} />
@@ -143,10 +142,10 @@ export default function ReSell(props) {
                                 </TouchableOpacity> : null}
 
                         </View>
+
                     }
                     keyExtractor={item => item}
                 />
-
                 {/* </View> */}
 
             </View>

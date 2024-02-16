@@ -109,7 +109,7 @@ const Home = (props) => {
                     </TouchableOpacity>
                     <View style={{ marginTop: 20 }}>
                         <YoutubePlayer
-                            height={200}
+                            height={230}
                             play={playing}
                             volume={100}
                             videoId={"PR34ztnnTjI"}

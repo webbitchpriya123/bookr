@@ -13,7 +13,6 @@ import Header from "../header/header";
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import { Dropdown } from 'react-native-element-dropdown';
-import { useScrollToTop } from '@react-navigation/native';
 
 
 
@@ -30,7 +29,6 @@ export default function EditProfile(props) {
         district: '',
         city: ''
     });
-
 
     const [error, setError] = useState({
         nameError: false,
@@ -110,10 +108,7 @@ export default function EditProfile(props) {
             setState({ state: '' })
             alert('submitted successfully!!!')
         }
-
     }
-
-
 
     // console.log("state", state)
     return (
@@ -143,6 +138,8 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Email</Text>
 
                         <TextInput
+                            spellCheck={false}
+                            autoCorrect={false}
                             value={state.Email}
                             style={[styles.input, { borderWidth: state.Email || error.emailError ? 1 : 0, borderColor: state.Email || error.emailError ? 'gray' : '', backgroundColor: state.Email || error.emailError ? color.white : '#F5F6FA' }]}
                             placeholder="andrew@gmail.com"
@@ -172,15 +169,14 @@ export default function EditProfile(props) {
                             inputSearchStyle={styles.inputSearchStyle}
                             iconStyle={styles.iconStyle}
                             data={states}
-                            containerStyle={{ borderRadius: 15,backgroundColor:'red',marginBottom:40}}
-                            // search
+                            containerStyle={{ borderRadius: 15}}
                             maxHeight={300}
                             labelField="label"
                             valueField="value"
                             placeholder={!isFocus ? 'State' : '...'}
                             searchPlaceholder="Search..."
                             value={state.state}
-                            itemTextStyle={{ color: color.darkBlack,backgroundColor:'yellow'}}
+                            itemTextStyle={{ color: color.darkBlack}}
                             // onFocus={() => setIsFocus(true)}
                             // onBlur={() => setIsFocus(false)}
                             // onChange={item => {
