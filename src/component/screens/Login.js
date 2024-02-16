@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import book from '../../assets/book.png';
 import { Divider } from 'react-native-paper';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -11,11 +10,7 @@ import * as color from '../../colors/colors';
 import * as images  from  '../config/constants';
 
 
-
-
-
 export default function Login(props) {
-
     const [mobileNumber, setMobileNumber] = useState('');
     const [Password, setPassword] = useState('');
     const [eye, setEye] = useState(false);

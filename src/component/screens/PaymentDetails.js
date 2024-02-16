@@ -231,7 +231,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F6FA'
     },
     submitText: { color: color.darkBlack, fontSize: 14, fontFamily: Font.acari, fontWeight: '600', textAlign: 'center' },
-    container: { padding: 15 },
     header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
     title: { fontFamily: Font.acari, fontWeight: '800', color: color.black, fontSize: 16 },
@@ -242,9 +241,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
     },
     submitView: { backgroundColor: color.yellow, marginTop: 20, height: 55, justifyContent: 'center', borderRadius: 10, marginLeft: 15, marginRight: 15 },
-    icon: {
-        marginRight: 5,
-    },
+   
 
     placeholderStyle: {
         fontSize: 16,

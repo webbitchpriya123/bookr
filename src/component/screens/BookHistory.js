@@ -1,9 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Text, FlatList, SafeAreaView, Image, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import * as images from '../config/constants';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import AntDesign from 'react-native-vector-icons/AntDesign'
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
 import Header from '../header/header';
@@ -125,8 +122,6 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20,
     },
-    status: { fontFamily: font.acari, color: color.white, fontSize: 14, alignSelf: 'center', fontWeight: '500', marginTop: 10 },
-    number: { fontFamily: font.acari, color: color.white, fontSize: 28, alignSelf: 'center', fontWeight: '700', marginTop: 23 },
     conatiner: { padding: 15 },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 52 },
     title: { fontFamily: font.acari, fontWeight: '800', color: color.black, fontSize: 16, marginBottom: 10, marginTop: 3 },

@@ -10,11 +10,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 
-
-
-
-
-
 export default function FAQ() {
     const [expanded, setExpanded] = React.useState(false);
     const handlePress = () => setExpanded(!expanded);

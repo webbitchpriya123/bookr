@@ -2,22 +2,15 @@ import React, { Component } from "react";
 import {
     SafeAreaView,
     ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
-    Image,
-    useColorScheme,
     View,
     TouchableOpacity,
-    ImageBackground,
-    FlatList,
-    TextInput
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
-
 import LinearGradient from 'react-native-linear-gradient';
 
 

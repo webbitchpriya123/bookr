@@ -54,7 +54,7 @@ export default function BookDetail(props) {
     const [offer, setOffer] = useState('');
 
 
-    console.log("setstate", images)
+    // console.log("setstate", images)
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}

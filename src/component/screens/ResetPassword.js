@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
     divider:{ height: 1.2, backgroundColor: color.dividerColor},
     login:{ fontSize: 14, color: '#CDCDCDE5', fontWeight: '500',textAlign:'center',marginTop:15 ,fontFamily:font.acari,lineHeight:20,paddingLeft:25,paddingRight:25},
     website:{ fontSize: 12, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30 ,alignSelf:'center',marginTop:5},
-   
     input: {
         borderRadius: 30,
         marginLeft: 10,

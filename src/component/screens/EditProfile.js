@@ -307,13 +307,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         color: '#7F8192',
         marginTop: 12,
-        // backgroundColor: '#F5F6FA'
-        // backgroundColor:color.white
     },
-    flex7: { flex: 0.67 },
-    flex3: { flex: 0.33 },
     flexContainer: { flexDirection: 'row', marginTop: 20, alignSelf: 'center' },
-    editProfile: { color: color.red, textAlign: 'right', lineHeight: 21, fontSize: 14, fontWeight: '500', textDecorationLine: 'underline' },
     imageContainer: { height: 120, width: 120, borderRadius: 60, alignSelf: 'center' },
     userName: { fontWeight: '700', fontSize: 20, lineHeight: 24, color: color.black, alignSelf: 'center' },
     number: { color: color.liteBlack, fontWeight: '500', fontSize: 14, lineHeight: 21, alignSelf: 'center' },

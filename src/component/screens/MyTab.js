@@ -104,7 +104,6 @@ export default function MyTab() {
 }
 
 const styles = StyleSheet.create({
-    imageStyle: { tintColor: 'white' },
     label: { marginLeft: 7, fontSize: 12, fontWeight: '500', color: color.darkBlue },
     tabContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: color.yellow, height:40,width:90,borderRadius: 23,justifyContent:'center'}
 

@@ -50,7 +50,6 @@ export default function Otp(props) {
                                 console.log(`Code is ${code}, you are good to go!`)
                             })}
                         />
-
                     <TouchableOpacity>
                         <Text style={styles.timer} >(00:59)</Text>
                     </TouchableOpacity>
@@ -64,12 +63,7 @@ export default function Otp(props) {
                 <View style={styles.bottom}>
                     <Divider style={styles.divider} />
                     <Text style={styles.website}>www.usedbookr.com</Text>
-
-
-
-
                 </View>
-
             </LinearGradient>
         </SafeAreaView>
 
@@ -85,7 +79,6 @@ const styles = StyleSheet.create({
     resendView:{flexDirection:'row',alignItems:'center',alignSelf:'center',marginTop:30},
     arrow: { flex: 0.14, justifyContent: 'flex-end' },
     bottom: { flex: 0.25, justifyContent: 'flex-end', paddingBottom: 10 },
-    loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color: '#241D60', fontWeight: '600' },
     divider: { height: 1.2, backgroundColor: color.dividerColor },
     login: { fontSize: 14, color: '#CDCDCDE5', fontWeight: '500', textAlign: 'center', marginTop: 15, fontFamily: font.acari, lineHeight: 22 },
     website: { fontSize: 12, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30, alignSelf: 'center', marginTop: 5 },
@@ -108,17 +101,8 @@ const styles = StyleSheet.create({
     width: '75%',
     height: 70,
     alignSelf: "center",
-    // marginTop: 5,
-    // marginBottom: 20
-},
-    input: {
-    borderRadius: 30,
-    marginLeft: 10,
-    width: '80%',
-    color: "#47436A"
 },
     welcome: { fontSize: 25, color: '#FFFFFFE5', fontWeight: '600', lineHeight: 30, marginTop: 20 },
     imageContainer: { flex: 0.31, justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 30 },
-    // textInputView: { backgroundColor: "white", height: 55, borderRadius: 8 },
 
 })

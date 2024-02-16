@@ -177,34 +177,7 @@ const styles = StyleSheet.create({
     header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
     title: { fontFamily: Font.acari, fontWeight: '800', color: color.black, fontSize: 16, marginBottom: 18, marginTop: 3 },
-    dropdown: {
-        height: 57,
-        backgroundColor: '#F5F6FA',
-        borderRadius: 10,
-        paddingHorizontal: 8,
-        marginTop: 15
-    },
-    wrap: { flexWrap: 'wrap' },
     submitView: { backgroundColor: color.yellow, marginTop: 20, height: 55, justifyContent: 'center', borderRadius: 10 },
-    icon: {
-        marginRight: 5,
-    },
-    placeholderStyle: {
-        fontSize: 16,
-        color: '#7F8192',
-    },
-    selectedTextStyle: {
-        fontSize: 16,
-        color: '#7F8192',
-    },
-    iconStyle: {
-        width: 20,
-        height: 20,
-    },
-    inputSearchStyle: {
-        height: 40,
-        fontSize: 16,
-    },
     remove: { borderWidth: 1, backgroundColor: color.white, borderColor: 'red', position: 'absolute', borderRadius: 30, right: -5 },
     submitFlex: { flex: 0.13, paddingLeft: 15, paddingRight: 15 },
     imageUpload: { height: 120, width: 100, marginTop: 8 },
