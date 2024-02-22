@@ -27,7 +27,6 @@ import HeaderComp from '../header/headerComp';
 
 export default function PaymentDetails(props) {
 
-    const [images, setImages] = useState([]);
     const [checked, setChecked] = React.useState('first');
 
 
@@ -177,7 +176,7 @@ export default function PaymentDetails(props) {
 
             <View style={{ flex: 0.13 }}>
 
-                <TouchableOpacity style={styles.submitView}>
+                <TouchableOpacity style={styles.submitView} onPress={()=>props.navigation.navigate('BookHistory')}>
                     <Text style={styles.submitText}>SUBMIT</Text>
                 </TouchableOpacity>
             </View>
