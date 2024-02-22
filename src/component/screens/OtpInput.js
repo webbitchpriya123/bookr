@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image,TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import book from '../../assets/book.png';
 import { Divider } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
@@ -25,7 +24,6 @@ export default function Otp(props) {
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <TouchableOpacity style={styles.arrow} onPress={() => props.navigation.goBack()} >
                     <AntDesign name='arrowleft' size={30} color={color.white} />
-
                 </TouchableOpacity>
                 <View style={styles.imageContainer}>
                     <Image source={images.MainLogo} />
@@ -35,7 +33,6 @@ export default function Otp(props) {
                 <View style={{ flex: 0.05 }}>
                     <Divider style={styles.divider} />
                 </View>
-
                 <View style={{ flex: 0.25}}>
                         <OTPInputView
                             style={styles.otpContainer}
@@ -47,6 +44,7 @@ export default function Otp(props) {
                             codeInputFieldStyle={styles.underlineStyleBase}
                             codeInputHighlightStyle={styles.underlineStyleHighLighted}
                             onCodeFilled={(code => {
+                                props.navigation.navigate('Home')
                                 console.log(`Code is ${code}, you are good to go!`)
                             })}
                         />
@@ -56,17 +54,14 @@ export default function Otp(props) {
                     <View style={styles.resendView}>
                         <Text style={styles.resend}>Didn't receive a code? </Text>
                         <Text style={[styles.resend,{color:color.yellow,textDecorationLine:'underline'}]}>Resend Code</Text>
-
                     </View>
                 </View>
-
                 <View style={styles.bottom}>
                     <Divider style={styles.divider} />
                     <Text style={styles.website}>www.usedbookr.com</Text>
                 </View>
             </LinearGradient>
         </SafeAreaView>
-
     )
 }
 

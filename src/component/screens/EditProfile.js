@@ -13,6 +13,7 @@ import Header from "../header/header";
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import { Dropdown } from 'react-native-element-dropdown';
+import HeaderComp from "../header/headerComp";
 
 
 
@@ -113,7 +114,7 @@ export default function EditProfile(props) {
     // console.log("state", state)
     return (
         <SafeAreaView style={styles.containerView}>
-            <Header />
+            <HeaderComp props={props} name={'Edit Profile'} />
             <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false}>
                 <View style={styles.container}>
 
@@ -169,14 +170,14 @@ export default function EditProfile(props) {
                             inputSearchStyle={styles.inputSearchStyle}
                             iconStyle={styles.iconStyle}
                             data={states}
-                            containerStyle={{ borderRadius: 15}}
+                            containerStyle={{ borderRadius: 15 }}
                             maxHeight={300}
                             labelField="label"
                             valueField="value"
                             placeholder={!isFocus ? 'State' : '...'}
                             searchPlaceholder="Search..."
                             value={state.state}
-                            itemTextStyle={{ color: color.darkBlack}}
+                            itemTextStyle={{ color: color.darkBlack }}
                             // onFocus={() => setIsFocus(true)}
                             // onBlur={() => setIsFocus(false)}
                             // onChange={item => {

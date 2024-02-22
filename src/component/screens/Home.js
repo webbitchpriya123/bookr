@@ -1,13 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, Linking, FlatList, Image, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { View, StyleSheet, Text, SafeAreaView, Linking, FlatList,TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
 import * as images from '../config/constants';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
 import YoutubePlayer from "react-native-youtube-iframe";
+import Header from '../header/header';
 
 
 
@@ -50,18 +49,7 @@ const Home = (props) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
-                end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('Profile')}>
-                        <Image source={images.homeBook} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('Notification')}>
-                        <Ionicons name='notifications-outline' color={color.white} size={25} />
-                    </TouchableOpacity>
-                </View>
-            </LinearGradient>
-
+            <Header props={props} />
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.conatiner}>
                     <Text style={styles.title}>Dashboard</Text>
@@ -72,7 +60,6 @@ const Home = (props) => {
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item, index }) =>
                             <TouchableOpacity>
-
                                 <TouchableOpacity style={{ height: windowWidth / 4, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth / 4, borderRadius: 10, marginLeft: 8, marginRight: 8, justifyContent: 'center' }}>
                                     <Text style={styles.number}>{item.number}</Text>
                                     <Text style={styles.status}>{item.status}</Text>
@@ -151,8 +138,8 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20,
     },
-    flex2:{ flex: 0.2 },
-    flex6:{ flex: 0.6 },
+    flex2: { flex: 0.2 },
+    flex6: { flex: 0.6 },
     sellBooks: { color: color.white, fontSize: 18, fontWeight: '500', fontFamily: font.acari, margin: 12 },
     education: { color: color.white, fontWeight: '600', fontSize: 12, marginTop: 5, letterSpacing: 2, lineHeight: 17 },
     perchant: { color: color.white, fontWeight: '700', fontSize: 22 },

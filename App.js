@@ -21,7 +21,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import Login from './src/component/screens/Login';
-import Otp from './src/component/screens/Otp.js';
+import Otp from './src/component/screens/OtpInput.js';
 import MyTab from './src/component/screens/MyTab.js';
 import Verified from './src/component/screens/Verified.js';
 import ForgetPassword from './src/component/screens/ForgetPassword';
@@ -37,6 +37,8 @@ import FAQ from './src/component/screens/Faq.js';
 import EditProfile from './src/component/screens/EditProfile.js';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import OtpLogin from './src/component/screens/OtpLogin.js';
+import Register from './src/component/screens/Register.js';
 
 
 
@@ -50,7 +52,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Login'
+        initialRouteName='Home'
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
@@ -62,6 +64,8 @@ const App = () => {
         />
         <Stack.Screen name="Home" component={MyTab} />
         <Stack.Screen name="Otp" component={Otp} />
+        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="OtpLogin" component={OtpLogin} />
         <Stack.Screen name="Verified" component={Verified} />
         <Stack.Screen name="ForgetPassword" component={ForgetPassword} options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="ResetPassword" component={ResetPassword} />
@@ -71,12 +75,10 @@ const App = () => {
         <Stack.Screen name="BookHistory" component={BookHistory} />
         <Stack.Screen name="BookDetails" component={BookDetail} />
         <Stack.Screen name="Profile" component={Profile} />
-        <Stack.Screen name="header" component={HeaderComp} />
         <Stack.Screen name="FAQ" component={FAQ} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
       </Stack.Navigator>
     </NavigationContainer>
-
   );
 };
 

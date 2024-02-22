@@ -1,32 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
 import * as color from '../../colors/colors';
-import * as images from '../config/constants';
 import * as font from '../../fonts/fonts';
 import { List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import LinearGradient from 'react-native-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Header from '../header/header';
 
 
 
-export default function FAQ() {
+export default function FAQ(props) {
     const [expanded, setExpanded] = React.useState(false);
     const handlePress = () => setExpanded(!expanded);
     // console.log("global",this.props.route.params.bottom)
     return (
         <SafeAreaView style={styles.safeArea}>
-            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
-                end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('Profile')}>
-                        <Image source={images.homeBook} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('Notification')}>
-                        <Ionicons name='notifications-outline' color={color.white} size={25} />
-                    </TouchableOpacity>
-                </View>
-            </LinearGradient>
+            <Header props={props}/>
+           
             <View style={styles.container}>
                 <Text style={styles.title}>FAQ's</Text>
                 <List.Section >

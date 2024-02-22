@@ -70,7 +70,7 @@ const BookHistory = (props) => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
-            <Header />
+            <Header props={props} />
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.conatiner}>
                     <Text style={styles.title}>My Book History</Text>
@@ -93,7 +93,7 @@ const BookHistory = (props) => {
                                                 <Text style={{ color: item.status === 'Approved' ? '#056839' : item.status === 'Approved Pending' ? '#AB8912' : '#FF0000' }}>{item.status}</Text>
                                             </TouchableOpacity>
                                             {item.status === 'Approved' ?
-                                                <TouchableOpacity style={{ padding: 10, backgroundColor: item.payment === 'paid' ? '#20B52633' : item.payment === 'Payment Pending' ? '#FFD12F33' : '#FF2F2F33', marginLeft:5, borderRadius: 5 }}>
+                                                <TouchableOpacity style={{ padding: 10, backgroundColor: item.payment === 'paid' ? '#20B52633' : item.payment === 'Payment Pending' ? '#FFD12F33' : '#FF2F2F33', marginLeft: 5, borderRadius: 5 }}>
                                                     <Text style={{ color: item.payment === 'paid' ? '#056839' : item.payment === 'Payment Pending' ? '#AB8912' : '#FF0000' }}>{item.payment}</Text>
                                                 </TouchableOpacity> : null}
                                         </View>

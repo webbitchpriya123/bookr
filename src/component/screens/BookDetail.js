@@ -124,10 +124,10 @@ export default function BookDetail(props) {
                                 placeholderTextColor={'#7F8192'}
                             />
                             <TouchableOpacity>
-                            <Tooltip title="1300">
-                                <AntDesign name="questioncircleo" size={20} style={{ marginLeft: 10 }} color={color.black} />
+                                <Tooltip title="1300">
+                                    <AntDesign name="questioncircleo" size={20} style={{ marginLeft: 10 }} color={color.black} />
 
-                            </Tooltip>
+                                </Tooltip>
 
                             </TouchableOpacity>
 

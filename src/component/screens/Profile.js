@@ -17,10 +17,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 export default function Profile(props) {
     return (
         <SafeAreaView style={styles.containerView}>
-            <Header />
+            <Header props={props} />
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.container}>
-
                     <View style={styles.flexContainer}>
                         <View style={styles.flex7}>
                             <View style={styles.flexEnd}>

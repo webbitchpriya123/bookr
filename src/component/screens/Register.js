@@ -3,17 +3,21 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'reac
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Divider } from 'react-native-paper';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import Feather from 'react-native-vector-icons/Feather';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import * as color from '../../colors/colors';
 import * as images from '../config/constants';
 
 
-export default function Login(props) {
+export default function Register(props) {
     const [mobileNumber, setMobileNumber] = useState('');
+    const [email, setEmail] = useState('');
     const [Password, setPassword] = useState('');
     const [eye, setEye] = useState(false);
+    const [cnfmPassword, setCnfmPAssword] = useState('');
+    const [cnfmEye, setCnfmEye] = useState(false);
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -22,19 +26,30 @@ export default function Login(props) {
                 <View style={styles.imageContainer}>
                     <Image source={images.MainLogo} />
                     <Text style={styles.welcome}>Welcome Back</Text>
-                    <Text style={styles.login}>Login to your account </Text>
+                    <Text style={styles.login}>Register to your account </Text>
                 </View>
                 <View style={{ flex: 0.05 }}>
                     <Divider style={styles.divider} />
                 </View>
-                <View style={{ flex: 0.48 }}>
+                <View style={{ flex: 0.56 }}>
                     <View style={styles.textInputView}>
-                        <EvilIcons name="user" color="#241D60" size={35} style={{ paddingLeft: 5 }} />
+                        <Fontisto name="email" color="#241D60" size={25} style={{ paddingLeft: 10 }} />
+                        <TextInput
+                            style={[styles.input, { marginLeft: 6 }]}
+                            onChangeText={(text) => setEmail(text)}
+                            value={email}
+                            placeholder="Email"
+                            placeholderTextColor="#47436A"
+                        />
+                    </View>
+                    <View style={styles.textInputView}>
+                        <Feather name="phone-call" color="#241D60" size={25} style={{ paddingLeft: 10 }} />
+
                         <TextInput
                             style={[styles.input, { marginLeft: 6 }]}
                             onChangeText={(text) => setMobileNumber(text)}
                             value={mobileNumber}
-                            placeholder="Enter you email / Phone number"
+                            placeholder="Phone number"
                             placeholderTextColor="#47436A"
                         />
                     </View>
@@ -54,31 +69,38 @@ export default function Login(props) {
                                 name={eye ? "eye" : 'eye-off'} size={23} color={'#ABABAB'} />
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.loginView}>
-                        <TouchableOpacity onPress={() => props.navigation.navigate('OtpLogin')}>
-                            <Text style={styles.forget}>Login with OTP</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => props.navigation.navigate('ForgetPassword')}>
-                            <Text style={styles.forget}>Forget Password?</Text>
-                        </TouchableOpacity>
 
+                    <View style={styles.textInputView}>
+                        <SimpleLineIcons name="lock-open" color="#241D60" size={25} style={{ paddingLeft: 10 }} />
+                        <TextInput
+                            style={[styles.input, { width: '77%' }]}
+                            onChangeText={(text) => setCnfmPAssword(text)}
+                            value={cnfmPassword}
+                            placeholder="Confirm password"
+                            secureTextEntry={cnfmEye ? false : true}
+                            placeholderTextColor="#47436A"
+                        />
+                        <TouchableOpacity onPress={() => setCnfmEye(!cnfmEye)}>
+                            <Feather
+                                name={cnfmEye ? "eye" : 'eye-off'} size={23} color={'#ABABAB'} />
+                        </TouchableOpacity>
                     </View>
+
                     <TouchableOpacity style={styles.logView} onPress={() => props.navigation.navigate('Home')}>
-                        <Text style={styles.loginText}>LOGIN</Text>
+                        <Text style={styles.loginText}>REGISTER</Text>
                     </TouchableOpacity>
 
                     <View style={{ marginTop: 15 }}>
                         <Text style={styles.OrText}>OR</Text>
                         <View style={styles.registerView}>
-                            <Text style={styles.account}>Don't have an account?</Text>
-                            <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
-                                <Text style={styles.register}>Register</Text>
+                            <Text style={styles.account}>Already have an account?</Text>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('Login')}>
+                                <Text style={styles.register}>Login</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
 
                 </View>
-
 
                 <View style={styles.bottom}>
                     <Divider style={styles.divider} />
@@ -99,7 +121,7 @@ const styles = StyleSheet.create({
     },
     bottom: { flex: 0.1, justifyContent: 'flex-end', paddingBottom: 10 },
     loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color: color.darkBlack, fontWeight: '600' },
-    logView: { height: 50, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
+    logView: { height: 50, backgroundColor: '#FFCB00', marginTop: 35, borderRadius: 8 },
     forget: { marginTop: 15, color: '#FFFFFF', fontSize: 13, textDecorationLine: 'underline' },
     divider: { height: 1.2, backgroundColor: color.dividerColor, marginTop: 20 },
     login: { fontSize: 14, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30 },
@@ -116,7 +138,7 @@ const styles = StyleSheet.create({
     OrText: { textAlign: 'center', fontWeight: '500', color: color.white, fontSize: 14, lineHeight: 17 },
     loginView: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, marginBottom: 5 },
     welcome: { fontSize: 25, color: '#FFFFFFE5', fontWeight: '600', lineHeight: 30, marginTop: 10 },
-    imageContainer: { flex: 0.38, justifyContent: 'flex-end', alignItems: 'center' },
+    imageContainer: { flex: 0.3, justifyContent: 'flex-end', alignItems: 'center' },
     textInputView: { flexDirection: 'row', width: "99%", alignSelf: "center", alignItems: "center", backgroundColor: "white", height: 55, borderRadius: 8, marginTop: 15 },
 
 })

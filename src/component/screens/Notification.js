@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
     SafeAreaView,
     ScrollView,
@@ -17,10 +17,12 @@ import LinearGradient from 'react-native-linear-gradient';
 export default function Notification(props) {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+
+
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.header}>
-                    <TouchableOpacity style={{ flex: 0.15 }}>
+                    <TouchableOpacity style={{ flex: 0.15 }} onPress={() => props.navigation.goBack()} >
                         <AntDesign name='arrowleft' size={30} color={color.white} />
 
                     </TouchableOpacity>

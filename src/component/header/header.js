@@ -6,16 +6,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as color from '../../colors/colors';
 
 
-
 const Header = (props) => {
     return (
         <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
             end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => props.navigation.navigate('Profile')}>
-                    <Image source={images.homeBook} />
+                <TouchableOpacity onPress={() => props.props.navigation.navigate('Profile')}>
+                    <Image source={images.homeBook} style={{ height: 13, width: 130 }} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => props.navigation.navigate('Notification')}>
+                <TouchableOpacity onPress={() => props.props.navigation.navigate('Notification')}>
                     <Ionicons name='notifications-outline' color={color.white} size={25} />
                 </TouchableOpacity>
             </View>

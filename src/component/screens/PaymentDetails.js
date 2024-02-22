@@ -21,6 +21,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImagePicker from 'react-native-image-crop-picker';
 import { RadioButton } from 'react-native-paper';
+import HeaderComp from '../header/headerComp';
 
 
 
@@ -42,32 +43,14 @@ export default function PaymentDetails(props) {
     ]
 
 
-
-
-
-
-    const [text, setText] = useState('');
     const [name, setName] = useState('');
     const [isbn, setIsbn] = useState('');
-    const [offer, setOffer] = useState('');
     const [value, setValue] = useState('');
     const [isFocus, setIsFocus] = useState(false);
-    const [conValue, setConVal] = useState('');
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
-            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
-                end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
-                <View style={styles.header}>
-                    <TouchableOpacity style={{ flex: 0.15 }} onPress={() => props.navigation.goBack()}>
-                        <AntDesign name='arrowleft' size={30} color={color.white} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{ flex: 0.85 }}>
-                        <Text style={styles.notify}>Payment details</Text>
-                    </TouchableOpacity>
-                </View>
-            </LinearGradient>
-            {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+            <HeaderComp name={'Payment Details'} props={props}/>
             <View style={{ flex: 0.73 }}>
                 <View style={styles.radio}>
                     <RadioButton
@@ -147,10 +130,6 @@ export default function PaymentDetails(props) {
                     </View> : null}
 
 
-
-
-
-
                 <View style={styles.radio}>
                     <RadioButton
                         value="second"
@@ -175,7 +154,7 @@ export default function PaymentDetails(props) {
                     </View>
                     : null}
 
-                <View style={styles.radio}>
+                {/* <View style={styles.radio}>
                     <RadioButton
                         value="third"
                         color={color.yellow}
@@ -191,12 +170,7 @@ export default function PaymentDetails(props) {
                             <Text style={styles.uploadText}>UPLOAD</Text>
                         </TouchableOpacity>
                         <Image source={Images.QRCode} style={{ marginTop: 20 }} />
-                    </View> : null}
-
-
-
-
-
+                    </View> : null} */}
 
             </View>
 
@@ -207,9 +181,6 @@ export default function PaymentDetails(props) {
                     <Text style={styles.submitText}>SUBMIT</Text>
                 </TouchableOpacity>
             </View>
-
-
-            {/* </ScrollView> */}
 
         </SafeAreaView>
     )

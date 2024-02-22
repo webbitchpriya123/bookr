@@ -4,16 +4,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Divider } from 'react-native-paper';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import Feather from 'react-native-vector-icons/Feather';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import * as color from '../../colors/colors';
 import * as images from '../config/constants';
 
 
-export default function Login(props) {
+export default function OtpLogin(props) {
     const [mobileNumber, setMobileNumber] = useState('');
-    const [Password, setPassword] = useState('');
-    const [eye, setEye] = useState(false);
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -39,35 +36,22 @@ export default function Login(props) {
                         />
                     </View>
 
-                    <View style={styles.textInputView}>
-                        <SimpleLineIcons name="lock-open" color="#241D60" size={25} style={{ paddingLeft: 10 }} />
-                        <TextInput
-                            style={[styles.input, { width: '77%' }]}
-                            onChangeText={(text) => setPassword(text)}
-                            value={Password}
-                            placeholder="Password"
-                            secureTextEntry={eye ? false : true}
-                            placeholderTextColor="#47436A"
-                        />
-                        <TouchableOpacity onPress={() => setEye(!eye)}>
-                            <Feather
-                                name={eye ? "eye" : 'eye-off'} size={23} color={'#ABABAB'} />
-                        </TouchableOpacity>
-                    </View>
+                  
                     <View style={styles.loginView}>
-                        <TouchableOpacity onPress={() => props.navigation.navigate('OtpLogin')}>
-                            <Text style={styles.forget}>Login with OTP</Text>
+                        <TouchableOpacity onPress={() => props.navigation.navigate('Login')}>
+                            <Text style={styles.forget}>Login with Password</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => props.navigation.navigate('ForgetPassword')}>
                             <Text style={styles.forget}>Forget Password?</Text>
                         </TouchableOpacity>
 
                     </View>
-                    <TouchableOpacity style={styles.logView} onPress={() => props.navigation.navigate('Home')}>
-                        <Text style={styles.loginText}>LOGIN</Text>
+                    <TouchableOpacity style={styles.logView} onPress={() => props.navigation.navigate('Otp')}>
+                        <Text style={styles.loginText}>GET OTP</Text>
                     </TouchableOpacity>
 
-                    <View style={{ marginTop: 15 }}>
+                    
+                    <View style={styles.option}>
                         <Text style={styles.OrText}>OR</Text>
                         <View style={styles.registerView}>
                             <Text style={styles.account}>Don't have an account?</Text>
@@ -76,10 +60,9 @@ export default function Login(props) {
                             </TouchableOpacity>
                         </View>
                     </View>
-
                 </View>
 
-
+               
                 <View style={styles.bottom}>
                     <Divider style={styles.divider} />
                     <Text style={styles.website}>www.usedbookr.com</Text>
@@ -100,7 +83,7 @@ const styles = StyleSheet.create({
     bottom: { flex: 0.1, justifyContent: 'flex-end', paddingBottom: 10 },
     loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color: color.darkBlack, fontWeight: '600' },
     logView: { height: 50, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
-    forget: { marginTop: 15, color: '#FFFFFF', fontSize: 13, textDecorationLine: 'underline' },
+    forget: { marginTop: 15, color: '#FFFFFF', fontSize: 13,textDecorationLine:'underline' },
     divider: { height: 1.2, backgroundColor: color.dividerColor, marginTop: 20 },
     login: { fontSize: 14, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30 },
     website: { fontSize: 12, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30, alignSelf: 'center', marginTop: 5 },
@@ -110,13 +93,14 @@ const styles = StyleSheet.create({
         width: '80%',
         color: "#47436A"
     },
-    account: { fontWeight: '500', color: color.white, fontSize: 14, lineHeight: 37 },
-    registerView: { flexDirection: 'row', alignItems: 'center', alignSelf: 'center' },
-    register: { marginLeft: 5, color: '#FFCB00', textDecorationLine: 'underline' },
-    OrText: { textAlign: 'center', fontWeight: '500', color: color.white, fontSize: 14, lineHeight: 17 },
-    loginView: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, marginBottom: 5 },
+    loginView:{ flexDirection: 'row', justifyContent: 'space-between',marginTop:5,marginBottom:5 },
     welcome: { fontSize: 25, color: '#FFFFFFE5', fontWeight: '600', lineHeight: 30, marginTop: 10 },
     imageContainer: { flex: 0.38, justifyContent: 'flex-end', alignItems: 'center' },
     textInputView: { flexDirection: 'row', width: "99%", alignSelf: "center", alignItems: "center", backgroundColor: "white", height: 55, borderRadius: 8, marginTop: 15 },
+    account:{fontWeight:'500',color:color.white,fontSize:14,lineHeight:37},
+    registerView:{flexDirection:'row',alignItems:'center',alignSelf:'center'},
+    register:{marginLeft:5,color:'#FFCB00',textDecorationLine:'underline'},
+    OrText:{textAlign:'center',fontWeight:'500',color:color.white,fontSize:14,lineHeight:17},
+    option:{ marginTop: 15 }
 
 })

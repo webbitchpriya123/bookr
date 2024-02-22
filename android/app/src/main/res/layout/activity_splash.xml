@@ -15,10 +15,10 @@
         android:scaleType="centerCrop">
     </ImageView> -->
     <pl.droidsonroids.gif.GifImageView
- android:layout_width="250dp"
- android:layout_height="250dp"
- android:layout_gravity="center"
-android:background="@drawable/bookrgif"
-android:scaleType="centerCrop" />
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:layout_gravity="center"
+        android:background="@drawable/booktree"
+        android:scaleType="centerCrop" />
 
 </FrameLayout>
