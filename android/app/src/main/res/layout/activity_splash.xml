@@ -8,7 +8,7 @@
     android:background="@color/white"
     tools:context=".SplashActivity">
     <!-- <ImageView
-        android:src="@drawable/bookr"
+       android:src="@drawable/bookr"
         android:layout_width="165dp"
         android:layout_height="127dp"
         android:layout_gravity="center"

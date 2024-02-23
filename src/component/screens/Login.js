@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, Button, ToastAndroid } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Divider } from 'react-native-paper';
@@ -14,6 +14,29 @@ export default function Login(props) {
     const [mobileNumber, setMobileNumber] = useState('');
     const [Password, setPassword] = useState('');
     const [eye, setEye] = useState(false);
+    const [mobileErr, setMobileErr] = useState(false);
+    const [passErr, setPassErr] = useState(false);
+
+
+    const Login = () => {
+    
+        if (mobileNumber === '') {
+            setMobileErr('Email or Phone Number Required')
+        }
+        else if (Password === '') {
+            setPassErr('Password Required')
+        } else {
+
+
+
+            ToastAndroid.show('Login successfully !', ToastAndroid.SHORT);
+            props.navigation.navigate('Home')
+        }
+
+    }
+
+
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -32,19 +55,31 @@ export default function Login(props) {
                         <EvilIcons name="user" color="#241D60" size={35} style={{ paddingLeft: 5 }} />
                         <TextInput
                             style={[styles.input, { marginLeft: 6 }]}
-                            onChangeText={(text) => setMobileNumber(text)}
+                            onChangeText={(text) => {
+
+                                setMobileNumber(text)
+                                setMobileErr(false)
+                            }}
                             value={mobileNumber}
                             placeholder="Enter you email / Phone number"
                             placeholderTextColor="#47436A"
                         />
                     </View>
+                    {mobileErr ?
+                        <View style={{ marginTop: 8 }}>
+                            <Text style={styles.errorCode}>{mobileErr}</Text>
+                        </View> : null}
 
                     <View style={styles.textInputView}>
                         <SimpleLineIcons name="lock-open" color="#241D60" size={25} style={{ paddingLeft: 10 }} />
                         <TextInput
                             style={[styles.input, { width: '77%' }]}
-                            onChangeText={(text) => setPassword(text)}
+                            onChangeText={(text) => {
+                                setPassword(text)
+                                setPassErr(false)
+                            }}
                             value={Password}
+                            maxLength={8}
                             placeholder="Password"
                             secureTextEntry={eye ? false : true}
                             placeholderTextColor="#47436A"
@@ -54,6 +89,11 @@ export default function Login(props) {
                                 name={eye ? "eye" : 'eye-off'} size={23} color={'#ABABAB'} />
                         </TouchableOpacity>
                     </View>
+
+                    {passErr ?
+                        <View style={{ marginTop: 8 }}>
+                            <Text  style={styles.errorCode}>{passErr}</Text>
+                        </View> : null}
                     <View style={styles.loginView}>
                         <TouchableOpacity onPress={() => props.navigation.navigate('OtpLogin')}>
                             <Text style={styles.forget}>Login with OTP</Text>
@@ -63,7 +103,7 @@ export default function Login(props) {
                         </TouchableOpacity>
 
                     </View>
-                    <TouchableOpacity style={styles.logView} onPress={() => props.navigation.navigate('Home')}>
+                    <TouchableOpacity style={styles.logView} onPress={() => Login()}>
                         <Text style={styles.loginText}>LOGIN</Text>
                     </TouchableOpacity>
 
@@ -110,6 +150,7 @@ const styles = StyleSheet.create({
         width: '80%',
         color: "#47436A"
     },
+    errorCode:{ color: 'red', fontSize: 13, fontWeight: '500' },
     account: { fontWeight: '500', color: color.white, fontSize: 14, lineHeight: 37 },
     registerView: { flexDirection: 'row', alignItems: 'center', alignSelf: 'center' },
     register: { marginLeft: 5, color: '#FFCB00', textDecorationLine: 'underline' },

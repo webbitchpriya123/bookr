@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image,TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Divider } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
-import * as images  from  '../config/constants';
+import * as images from '../config/constants';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
 
 
@@ -16,7 +16,37 @@ import OTPInputView from '@twotalltotems/react-native-otp-input'
 export default function Otp(props) {
 
     const [code, setCode] = useState('');
+    const [minutes, setMinutes] = useState(1);
+    const [seconds, setSeconds] = useState(0);
 
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (seconds >= 0) {
+                console.log("logssss11");
+                setSeconds(seconds - 1);
+            }
+            if (seconds === 0) {
+                console.log("logssss22");
+                if (minutes === 0) {
+                    clearInterval(interval);
+                } else {
+                    console.log("duration")
+                    setSeconds(59);
+                    setMinutes(minutes - 1);
+                }
+            }
+        }, 1000);
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [seconds]);
+
+    const resendOTP = () => {
+        setMinutes(1);
+        setSeconds(0);
+    };
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -33,27 +63,32 @@ export default function Otp(props) {
                 <View style={{ flex: 0.05 }}>
                     <Divider style={styles.divider} />
                 </View>
-                <View style={{ flex: 0.25}}>
-                        <OTPInputView
-                            style={styles.otpContainer}
-                            pinCount={4}
-                            code={code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
-                            onCodeChanged={code => setCode(code)}
-                            // autoFocusOnLoad
-                            autoFocusOnLoad={false}
-                            codeInputFieldStyle={styles.underlineStyleBase}
-                            codeInputHighlightStyle={styles.underlineStyleHighLighted}
-                            onCodeFilled={(code => {
-                                props.navigation.navigate('Home')
-                                console.log(`Code is ${code}, you are good to go!`)
-                            })}
-                        />
+                <View style={{ flex: 0.25 }}>
+                    <OTPInputView
+                        style={styles.otpContainer}
+                        pinCount={4}
+                        code={code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
+                        onCodeChanged={code => setCode(code)}
+                        // autoFocusOnLoad
+                        autoFocusOnLoad={false}
+                        codeInputFieldStyle={styles.underlineStyleBase}
+                        codeInputHighlightStyle={styles.underlineStyleHighLighted}
+                        onCodeFilled={(code => {
+                            props.navigation.navigate('Home')
+                            console.log(`Code is ${code}, you are good to go!`)
+                        })}
+                    />
+
                     <TouchableOpacity>
-                        <Text style={styles.timer} >(00:59)</Text>
+                        <Text style={styles.timer} >00:
+                            {seconds < 10 ? `0${seconds == -1 ? 0 : seconds}` : seconds}</Text>
                     </TouchableOpacity>
                     <View style={styles.resendView}>
                         <Text style={styles.resend}>Didn't receive a code? </Text>
-                        <Text style={[styles.resend,{color:color.yellow,textDecorationLine:'underline'}]}>Resend Code</Text>
+                        <TouchableOpacity disabled={seconds > 0 || minutes > 0} onPress={() => resendOTP()}>
+                            <Text style={[styles.resend, { color: seconds > 0 || minutes > 0 ? '#CDCDCDE5' : color.yellow, textDecorationLine: 'underline' }]}>Resend Code</Text>
+
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.bottom}>
@@ -71,7 +106,7 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20,
     },
-    resendView:{flexDirection:'row',alignItems:'center',alignSelf:'center',marginTop:30},
+    resendView: { flexDirection: 'row', alignItems: 'center', alignSelf: 'center', marginTop: 30 },
     arrow: { flex: 0.14, justifyContent: 'flex-end' },
     bottom: { flex: 0.25, justifyContent: 'flex-end', paddingBottom: 10 },
     divider: { height: 1.2, backgroundColor: color.dividerColor },
@@ -80,23 +115,23 @@ const styles = StyleSheet.create({
     underlineStyleBase: {
         width: 52,
         height: 52,
-        borderRadius:10,
-        backgroundColor:'white',
+        borderRadius: 10,
+        backgroundColor: 'white',
         color: "black",
         fontSize: 24
     },
-    resend:{fontSize:15,fontWeight:'500',fontFamily:font.acari,color:'#CDCDCDE5'},
-    timer:{alignSelf:'center',color:color.yellow,textDecorationLine:'underline',marginTop:10},
-    underlineStyleHighLighted:{
-        backgroundColor:color.yellow,
-        borderColor:color.yellow
+    resend: { fontSize: 15, fontWeight: '500', fontFamily: font.acari, color: '#CDCDCDE5' },
+    timer: { alignSelf: 'center', color: color.yellow, textDecorationLine: 'underline', marginTop: 10 },
+    underlineStyleHighLighted: {
+        backgroundColor: color.yellow,
+        borderColor: color.yellow
     },
 
     otpContainer: {
-    width: '75%',
-    height: 70,
-    alignSelf: "center",
-},
+        width: '75%',
+        height: 70,
+        alignSelf: "center",
+    },
     welcome: { fontSize: 25, color: '#FFFFFFE5', fontWeight: '600', lineHeight: 30, marginTop: 20 },
     imageContainer: { flex: 0.31, justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 30 },
 

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, Linking, FlatList,TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView, RefreshControl, Linking, FlatList, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
 import * as images from '../config/constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -28,6 +28,7 @@ const Home = (props) => {
 
     const windowWidth = Dimensions.get('window').width;
     const [playing, setPlaying] = useState(false);
+    const [refreshing, setRefreshing] = React.useState(false);
 
     const onStateChange = useCallback((state) => {
         if (state === "ended") {
@@ -46,11 +47,20 @@ const Home = (props) => {
             .catch((err) => console.error('An error occurred: ', err));
     };
     console.log("logss", windowWidth / 3.5)
+    
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 1000);
+    }, []);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Header props={props} />
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
                 <View style={styles.conatiner}>
                     <Text style={styles.title}>Dashboard</Text>
                     <FlatList
@@ -87,7 +97,7 @@ const Home = (props) => {
 
                     </View>
 
-                    <TouchableOpacity onPress={() => props.navigation.navigate('BookHistory')} style={styles.sellContainer}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('ReSell')} style={styles.sellContainer}>
                         <Text style={styles.sellBooks}>Sell your book</Text>
                         <View style={styles.arrowBox}>
                             <AntDesign name="arrowright" color={color.darkBlue} size={25} style={{ alignSelf: 'center' }} />
