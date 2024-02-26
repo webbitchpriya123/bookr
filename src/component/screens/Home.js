@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, RefreshControl, Linking, FlatList, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
+import React, { useState, useCallback ,useEffect } from 'react';
+import { View, StyleSheet, Text, SafeAreaView,RefreshControl, Linking, FlatList, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
 import * as images from '../config/constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -7,12 +7,15 @@ import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
 import YoutubePlayer from "react-native-youtube-iframe";
 import Header from '../header/header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
 
 
 const Home = (props) => {
+    const [local, setLocal] = useState('')
     const books = [{
         number: 130,
         status: 'Sold books'
@@ -25,6 +28,23 @@ const Home = (props) => {
         number: 19,
         status: 'Declined'
     }]
+
+    useEffect(() => {
+        loadStoredValue();
+      }, []);
+    
+      // Function to load stored value
+      const loadStoredValue = async () => {
+        try {
+          const value = await AsyncStorage.getItem('phone');
+          if (value !== null) {
+            setLocal(value);
+          }
+         
+        } catch (error) {
+          console.error('Error loading stored value:', error);
+        }
+      };
 
     const windowWidth = Dimensions.get('window').width;
     const [playing, setPlaying] = useState(false);
@@ -46,7 +66,7 @@ const Home = (props) => {
             .then(() => console.log('WhatsApp opened'))
             .catch((err) => console.error('An error occurred: ', err));
     };
-    console.log("logss", windowWidth / 3.5)
+    console.log("logss", windowWidth / 3.5 , local)
     
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);

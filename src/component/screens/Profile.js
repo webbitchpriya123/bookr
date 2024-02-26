@@ -13,6 +13,7 @@ import Header from "../header/header";
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Profile(props) {
     return (
@@ -107,7 +108,10 @@ export default function Profile(props) {
                             placeholderTextColor={'#7F8192'}
                         />
                     </View>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('Login')} style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
+                    <TouchableOpacity onPress={() =>{
+                        AsyncStorage.removeItem('phone');
+                         props.navigation.navigate('Login')
+                         }} style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
                         <MaterialCommunityIcons name="logout" size={25} color={color.red} />
                         <Text style={styles.logout} >Logout</Text>
 

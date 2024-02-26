@@ -8,7 +8,9 @@ import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
 import * as images from '../config/constants';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
-
+import { ApiUrl, api, verifyCode } from '../constant/constant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 
 
@@ -18,6 +20,42 @@ export default function Otp(props) {
     const [code, setCode] = useState('');
     const [minutes, setMinutes] = useState(1);
     const [seconds, setSeconds] = useState(0);
+
+
+    useEffect(() => {
+        loadStoredValue();
+    }, [code]);
+
+    // Function to load stored value
+    const loadStoredValue = async () => {
+        try {
+            const value = await AsyncStorage.getItem('phone');
+            console.log("valueeeeeee", value)
+            if (!value) {
+                axios.post(ApiUrl + api + verifyCode, {
+                    verification_code: code,
+                    user_id: 2
+                })
+                    .then((response) => {
+                        console.log("ressponseeee", response.data)
+                        if (response.data.status === 'success') {
+                            props.navigation.navigate('Verified')
+                        }
+
+                    })
+                    .catch((error) => {
+                        console.log("error", error)
+                        // setLoad(false)
+                        // props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber })
+                        // // setMessage(error.data.message)
+                        // setVisible(true)
+
+                    });
+            }
+        } catch (error) {
+            console.error('Error loading stored value:', error);
+        }
+    };
 
 
     useEffect(() => {
@@ -37,7 +75,6 @@ export default function Otp(props) {
                 }
             }
         }, 1000);
-
         return () => {
             clearInterval(interval);
         };
@@ -48,6 +85,8 @@ export default function Otp(props) {
         setSeconds(0);
     };
 
+
+    // console.log('propsspsps', props.route.params.email_or_phoneNumber)
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
@@ -58,7 +97,9 @@ export default function Otp(props) {
                 <View style={styles.imageContainer}>
                     <Image source={images.MainLogo} />
                     <Text style={styles.welcome}>Verify Code</Text>
-                    <Text style={styles.login}>Check your SMS inbox ,we have sent you the coed at <Text style={[styles.login, { color: color.white, fontWeight: '700' }]}>+91 8236820589</Text></Text>
+                    <Text style={styles.login}>Check your SMS inbox ,we have sent you the coed at <Text style={[styles.login, { color: color.white, fontWeight: '700' }]}>+91
+                        {props.route.params.email_or_phoneNumber}
+                    </Text></Text>
                 </View>
                 <View style={{ flex: 0.05 }}>
                     <Divider style={styles.divider} />
@@ -69,12 +110,12 @@ export default function Otp(props) {
                         pinCount={4}
                         code={code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
                         onCodeChanged={code => setCode(code)}
-                        // autoFocusOnLoad
-                        autoFocusOnLoad={false}
+                        autoFocusOnLoad
+                        // autoFocusOnLoad={false}
                         codeInputFieldStyle={styles.underlineStyleBase}
                         codeInputHighlightStyle={styles.underlineStyleHighLighted}
                         onCodeFilled={(code => {
-                            props.navigation.navigate('Home')
+                            // props.navigation.navigate('Home')
                             console.log(`Code is ${code}, you are good to go!`)
                         })}
                     />

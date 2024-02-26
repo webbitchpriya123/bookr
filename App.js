@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -20,6 +20,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Login from './src/component/screens/Login';
 import Otp from './src/component/screens/OtpInput.js';
 import MyTab from './src/component/screens/MyTab.js';
@@ -32,7 +33,6 @@ import PaymentDetails from './src/component/screens/PaymentDetails.js';
 import BookHistory from './src/component/screens/BookHistory.js';
 import BookDetail from './src/component/screens/BookDetail.js';
 import Profile from './src/component/screens/Profile.js';
-import HeaderComp from './src/component/header/header.js';
 import FAQ from './src/component/screens/Faq.js';
 import EditProfile from './src/component/screens/EditProfile.js';
 import { NavigationContainer } from '@react-navigation/native';
@@ -41,23 +41,47 @@ import OtpLogin from './src/component/screens/OtpLogin.js';
 import Register from './src/component/screens/Register.js';
 
 
-
 const Stack = createNativeStackNavigator();
 const App = () => {
+
+  const [localValue, setLocal] = useState(null);
   const isDarkMode = useColorScheme() === 'dark';
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  useEffect(() => {
+    loadStoredValue();
+  }, []);
+
+  // Function to load stored value
+  const loadStoredValue = async () => {
+    try {
+      const value = await AsyncStorage.getItem('phone');
+      if (value) {
+        setLocal(value);
+      } else {
+        setLocal(false)
+      }
+    } catch (error) {
+      console.error('Error loading stored value:', error);
+    }
+  };
+
+  console.log("local", localValue)
+  if (localValue === null) {
+    return <View />;
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Login'
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
           animationTypeForReplace: 'pop',
-        }}>
+        }}
+        initialRouteName={localValue ? "Home" : "ForgetPassword"}
+      >
         <Stack.Screen
           name="Login"
           component={Login}

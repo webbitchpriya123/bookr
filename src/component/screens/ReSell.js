@@ -8,7 +8,8 @@ import {
     TouchableOpacity,
     FlatList,
     TextInput,
-    Dimensions
+    Dimensions,
+    AsyncStorage
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
@@ -85,8 +86,6 @@ export default function ReSell(props) {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
             <HeaderComp name={'Add your book'} props={props} />
-
-
             <View style={styles.container}>
                 <Text style={styles.title}>Enter your book details</Text>
                 <TextInput
@@ -131,9 +130,7 @@ export default function ReSell(props) {
                                     <AntDesign name="pluscircleo" size={35} color={color.darkBlue} style={{ alignSelf: 'center' }} />
                                     <Text style={{ fontSize: 14, fontWeight: '500', textAlign: 'center', color: color.coverImage, marginTop: 5 }}>{item.name}</Text>
                                 </TouchableOpacity> : null}
-
                         </View>
-
                     }
                     keyExtractor={item => item}
                 />
