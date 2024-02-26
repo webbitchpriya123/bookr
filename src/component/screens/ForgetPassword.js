@@ -91,7 +91,7 @@ export default function ForgetPassword(props) {
                             <Text style={styles.errorCode}>{mobErr}</Text>
                         </View> : null}
 
-                    <TouchableOpacity disabled={load} style={styles.logView} onPress={() => send()}>
+                    <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 0.9 }]} onPress={() => send()}>
                         <View style={{ flexDirection: 'row', height: 50, alignItems: 'center' }}>
 
                             <View style={{ flex: 0.53 }}>

@@ -46,10 +46,8 @@ export default function Otp(props) {
                     .catch((error) => {
                         console.log("error", error)
                         // setLoad(false)
-                        // props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber })
                         // // setMessage(error.data.message)
                         // setVisible(true)
-
                     });
             }
         } catch (error) {
