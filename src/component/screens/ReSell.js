@@ -25,7 +25,8 @@ export default function ReSell(props) {
     const windowWidth = Dimensions.get('window').width;
     const [images, setImages] = useState([
         {
-            name: 'Cover'
+            name: 'Cover',
+
         },
         {
             name: 'Spine'
@@ -40,6 +41,8 @@ export default function ReSell(props) {
 
         },
     ]);
+
+    console.log("imagess",images)
     const validation = images.every(item => item.name && item.path);
 
     const removeItem = (data, index) => {

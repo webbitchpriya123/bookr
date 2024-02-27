@@ -9,14 +9,12 @@ import * as font from '../../fonts/fonts';
 import * as images from '../config/constants';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
 import { ApiUrl, api, verifyCode } from '../constant/constant';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 
 
 
 export default function Otp(props) {
-
     const [code, setCode] = useState('');
     const [minutes, setMinutes] = useState(1);
     const [seconds, setSeconds] = useState(0);
@@ -24,35 +22,31 @@ export default function Otp(props) {
 
     useEffect(() => {
         loadStoredValue();
-    }, [code]);
+    }, []);
+
 
     // Function to load stored value
     const loadStoredValue = async () => {
-        try {
-            const value = await AsyncStorage.getItem('phone');
-            console.log("valueeeeeee", value)
-            if (!value) {
-                axios.post(ApiUrl + api + verifyCode, {
-                    verification_code: code,
-                    user_id: 2
-                })
-                    .then((response) => {
-                        console.log("ressponseeee", response.data)
-                        if (response.data.status === 'success') {
-                            props.navigation.navigate('Verified')
-                        }
+      await axios.post(ApiUrl + api + verifyCode, {
+            verification_code: `${JSON.stringify(props.route.params.code)}`,
+            user_id: props.route.params.user_id
+        })
+            .then((response) => {
+                console.log("ressponseeee", response.data)
+                if (response.data.status === 'success') {
+                    setCode(`${props.route.params.code}`)
+                    setTimeout(() => {
+                        props.navigation.navigate(props.route.params.type,{mobile:props.route.params.email_or_phoneNumber})
+                    }, 700);
+                }
+            })
+            .catch((error) => {
+                console.log("error", error)
+                // setLoad(false)
+                // // setMessage(error.data.message)
+                // setVisible(true)
+            });
 
-                    })
-                    .catch((error) => {
-                        console.log("error", error)
-                        // setLoad(false)
-                        // // setMessage(error.data.message)
-                        // setVisible(true)
-                    });
-            }
-        } catch (error) {
-            console.error('Error loading stored value:', error);
-        }
     };
 
 
@@ -84,7 +78,6 @@ export default function Otp(props) {
     };
 
 
-    // console.log('propsspsps', props.route.params.email_or_phoneNumber)
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
@@ -113,7 +106,13 @@ export default function Otp(props) {
                         codeInputFieldStyle={styles.underlineStyleBase}
                         codeInputHighlightStyle={styles.underlineStyleHighLighted}
                         onCodeFilled={(code => {
+                            // loadStoredValue()
                             // props.navigation.navigate('Home')
+                            if (code) {
+                                props.navigation.navigate('Verified')
+
+                            }
+
                             console.log(`Code is ${code}, you are good to go!`)
                         })}
                     />

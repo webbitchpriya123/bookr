@@ -30,9 +30,8 @@ export default function Login(props) {
         })
             .then((response) => {
                 setLoad(false)
-                console.log("response", response.data.message);
                 if (response.data.data) {
-                    AsyncStorage.setItem("phone", JSON.stringify(response.data.data.user.id))
+                    alert('Login Successfully!!!')
                     AsyncStorage.setItem("token", JSON.stringify(response.data.data.token))
                     // ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
                     setVisible(true);
@@ -138,7 +137,7 @@ export default function Login(props) {
                         </TouchableOpacity>
 
                     </View>
-                    <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 0.9 }]} onPress={() => Login()}>
+                    <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => Login()}>
                         <View style={styles.loaderView}>
                             <View style={{ flex: 0.55 }}>
                                 <Text style={styles.loginText}>LOGIN</Text>

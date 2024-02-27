@@ -23,6 +23,8 @@ export default function ForgetPassword(props) {
 
     const windowWidth = Dimensions.get('window').width;
 
+    console.log("foregteee", mobileNumber.toString(), JSON.stringify(mobileNumber))
+
 
     const send = () => {
         if (mobileNumber === '') {
@@ -31,21 +33,19 @@ export default function ForgetPassword(props) {
             setLoad(true)
             axios.post(ApiUrl + api + forgetPassword, {
                 phone_or_email: mobileNumber,
+            }).then((response) => {
+                console.log("ressponsee", response.data.data.id)
+                if (response.data.result === 'success') {
+                    setLoad(false)
+                    setVisible(true);
+                    setMessage(response.data.result)
+                    props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.verification_code, user_id: response.data.data.id, type: 'ResetPassword' })
+                } else {
+                    setLoad(false)
+                    setVisible(true);
+                    setMessage('Please Enter register PhoneNumber or Email')
+                }
             })
-                .then((response) => {
-                    if (response.data.result === 'success') {
-                        setLoad(false)
-                        setVisible(true);
-                        setMessage(response.data.result)
-                        props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber })
-
-                    } else {
-                        setLoad(false)
-                        setVisible(true);
-                        setMessage(response.data.result)
-                    }
-
-                })
                 .catch((error) => {
                     setLoad(false)
                     props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber })
@@ -92,7 +92,7 @@ export default function ForgetPassword(props) {
                         </View> : null}
 
                     <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 0.9 }]} onPress={() => send()}>
-                        <View style={{ flexDirection: 'row', height: 50, alignItems: 'center' }}>
+                        <View style={styles.loadView}>
 
                             <View style={{ flex: 0.53 }}>
                                 <Text style={styles.loginText}>SEND</Text>
@@ -155,5 +155,6 @@ const styles = StyleSheet.create({
     welcome: { fontSize: 25, color: '#FFFFFFE5', fontWeight: '600', lineHeight: 30, marginTop: 20 },
     imageContainer: { flex: 0.31, justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 30 },
     textInputView: { backgroundColor: "white", height: 55, borderRadius: 8 },
+    loadView: { flexDirection: 'row', height: 50, alignItems: 'center' }
 
 })

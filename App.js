@@ -57,7 +57,7 @@ const App = () => {
   // Function to load stored value
   const loadStoredValue = async () => {
     try {
-      const value = await AsyncStorage.getItem('phone');
+      const value = await AsyncStorage.getItem('user_id');
       if (value) {
         setLocal(value);
       } else {
@@ -80,7 +80,7 @@ const App = () => {
           animation: 'slide_from_right',
           animationTypeForReplace: 'pop',
         }}
-        initialRouteName={localValue ? "Home" : "ForgetPassword"}
+        initialRouteName={localValue ? "Home" : "Login"}
       >
         <Stack.Screen
           name="Login"

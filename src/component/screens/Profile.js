@@ -109,7 +109,7 @@ export default function Profile(props) {
                         />
                     </View>
                     <TouchableOpacity onPress={() =>{
-                        AsyncStorage.removeItem('phone');
+                        AsyncStorage.removeItem('user_id');
                          props.navigation.navigate('Login')
                          }} style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
                         <MaterialCommunityIcons name="logout" size={25} color={color.red} />

@@ -36,7 +36,7 @@ const Home = (props) => {
       // Function to load stored value
       const loadStoredValue = async () => {
         try {
-          const value = await AsyncStorage.getItem('phone');
+          const value = await AsyncStorage.getItem('user_id');
           if (value !== null) {
             setLocal(value);
           }

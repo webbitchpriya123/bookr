@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Divider } from 'react-native-paper';
@@ -9,6 +9,10 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import * as color from '../../colors/colors';
 import * as images from '../config/constants';
+import axios from 'axios';
+import { ApiUrl, registerOtp, api } from '../constant/constant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 export default function Register(props) {
@@ -22,16 +26,50 @@ export default function Register(props) {
     const [numberErr, setNumberErr] = useState(false);
     const [passwordErr, setPassErr] = useState(false);
     const [cnfmPassErr, setCnfmPassErr] = useState(false);
-    const [Name , setName] = useState('');
-    const [nameErr , setNameErr] = useState(false)
+    const [Name, setName] = useState('');
+    const [nameErr, setNameErr] = useState(false);
+    const [load, setLoad] = useState(false);
 
+
+
+    const onRegister = async () => {
+        await axios.post(ApiUrl + api + registerOtp, {
+            name: Name,
+            email: email,
+            password: Password,
+            password_confirmation: cnfmPassword,
+            phone: mobileNumber
+        }).then((response) => {
+            setLoad(false);
+            if (response.data.status === 'success') {
+                global.userId = response.data.data.user.id;
+                AsyncStorage.setItem("user_id", JSON.stringify(response.data.data.user.id))
+                AsyncStorage.setItem("phone", JSON.stringify(response.data.data.user.phone))
+                AsyncStorage.setItem("email", JSON.stringify(response.data.data.user.email))
+                alert('Register sucessfully');
+                props.navigation.navigate('Login')
+
+            } else {
+                alert('Already exists')
+            }
+        }).catch((error) => {
+            setLoad(false)
+            alert('Already exists ')
+            console.log("error", error)
+        });
+
+    }
+
+    const login = () => {
+        props.navigation.navigate('Login')
+    }
 
 
 
     const Register = () => {
         const strongRegex = new RegExp("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
         const phoneNumberRegex = /^\d{10}$/;
-        if (Name === ''){
+        if (Name === '') {
             setNameErr('Name is Required')
         }
         else if (email === '') {
@@ -47,14 +85,21 @@ export default function Register(props) {
         }
         else if (Password === '') {
             setPassErr('Password is Required')
-        } else if (cnfmPassword === '') {
+        } else if (Password.length !== 8) {
+            setPassErr('Minimum Password length is 8.')
+        }
+
+        else if (cnfmPassword === '') {
             setCnfmPassErr('Confirm Password is Required')
-        } else if (Password !== cnfmPassword) {
+        }
+        else if (Password !== cnfmPassword) {
             setCnfmPassErr('Mismatch password and confirm password')
         }
         else {
-            ToastAndroid.show('Register successfully !', ToastAndroid.SHORT);
-            props.navigation.navigate('Login')
+            setLoad(true)
+            onRegister();
+            // ToastAndroid.show('Register successfully !', ToastAndroid.SHORT);
+            // props.navigation.navigate('Login')
         }
 
     }
@@ -70,9 +115,9 @@ export default function Register(props) {
                 <View style={{ flex: 0.03 }}>
                     <Divider style={styles.divider} />
                 </View>
-                <View style={{ flex: 0.64}}>
-                <View style={styles.textInputView}>
-                        <EvilIcons name="user" color="#241D60" size={35}  />
+                <View style={{ flex: 0.64 }}>
+                    <View style={styles.textInputView}>
+                        <EvilIcons name="user" color="#241D60" size={35} />
                         <TextInput
                             style={[styles.input, { marginLeft: 6 }]}
                             onChangeText={(text) => {
@@ -176,15 +221,27 @@ export default function Register(props) {
                             <Text style={styles.errorCode}>{cnfmPassErr}</Text>
                         </View> : null}
 
-                    <TouchableOpacity style={styles.logView} onPress={() => Register()}>
-                        <Text style={styles.loginText}>REGISTER</Text>
+
+
+                    <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => Register()}>
+                        <View style={styles.loaderView}>
+                            <View style={{ flex: 0.55 }}>
+                                <Text style={styles.loginText}>REGISTER</Text>
+                            </View>
+                            {load ?
+                                <View style={{ flex: 0.45 }}>
+                                    <ActivityIndicator size="large" color="#FFFFFF" />
+                                </View> : null}
+                        </View>
                     </TouchableOpacity>
+
+
 
                     <View style={{ marginTop: 15 }}>
                         <Text style={styles.OrText}>OR</Text>
                         <View style={styles.registerView}>
                             <Text style={styles.account}>Already have an account?</Text>
-                            <TouchableOpacity onPress={()=>props.navigation.navigate('Login')}>
+                            <TouchableOpacity onPress={() => login()}>
                                 <Text style={styles.register}>Login</Text>
                             </TouchableOpacity>
                         </View>
@@ -210,10 +267,12 @@ const styles = StyleSheet.create({
         paddingRight: 20,
     },
     bottom: { flex: 0.1, justifyContent: 'flex-end', paddingBottom: 10 },
-    loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color: color.darkBlack, fontWeight: '600' },
+    loginText: { alignSelf: 'flex-end', fontSize: 14, color: color.darkBlack, fontWeight: '600' },
     logView: { height: 50, backgroundColor: '#FFCB00', marginTop: 35, borderRadius: 8 },
+    loaderView: { flexDirection: 'row', alignItems: 'center', height: 50 },
+
     forget: { marginTop: 15, color: '#FFFFFF', fontSize: 13, textDecorationLine: 'underline' },
-    divider: { height: 1.2, backgroundColor: color.dividerColor, marginTop:10 },
+    divider: { height: 1.2, backgroundColor: color.dividerColor, marginTop: 10 },
     login: { fontSize: 14, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30 },
     website: { fontSize: 12, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30, alignSelf: 'center', marginTop: 5 },
     input: {
@@ -222,7 +281,7 @@ const styles = StyleSheet.create({
         width: '80%',
         color: "#47436A"
     },
-    errorCode:{ color: 'red', fontSize: 13, fontWeight: '500' },
+    errorCode: { color: 'red', fontSize: 13, fontWeight: '500' },
     account: { fontWeight: '500', color: color.white, fontSize: 14, lineHeight: 37 },
     registerView: { flexDirection: 'row', alignItems: 'center', alignSelf: 'center' },
     register: { marginLeft: 5, color: '#FFCB00', textDecorationLine: 'underline' },
