@@ -16,12 +16,15 @@ import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import ImagePicker from 'react-native-image-crop-picker';
 import HeaderComp from "../header/headerComp";
+import { ApiUrl, product, api } from '../constant/constant';
+import axios from 'axios';
 
 
 export default function ReSell(props) {
     const [isbn, setIsbn] = useState('');
     const [isbnErr, setIsbnErr] = useState(false);
     const [imageErr, setImageErr] = useState(false);
+    const [array, setArray] = useState([]);
     const windowWidth = Dimensions.get('window').width;
     const [images, setImages] = useState([
         {
@@ -42,7 +45,8 @@ export default function ReSell(props) {
         },
     ]);
 
-    console.log("imagess",images)
+
+    // console.log("imagess", images)
     const validation = images.every(item => item.name && item.path);
 
     const removeItem = (data, index) => {
@@ -60,23 +64,88 @@ export default function ReSell(props) {
         }
     }, [validation]);
 
-    const onSubmit = () => {
-        if (!isbn) {
-            setIsbnErr('ISBN Number Required.');
-        } else if (!validation) {
-            setImageErr('Please upload all images.');
-        } else {
-            props.navigation.navigate('PaymentDetails')
-        }
+    const onRequest = async () => {
+        console.log("array", array)
+
+        // const formData = new FormData();
+        // images.forEach((image, index) => {
+        //     formData.append(`image${index}`, {
+        //         name: `image${index}.jpg`,
+        //         type: 'image/jpeg',
+        //         uri: Platform.OS === 'android' ? image.path : image.path.replace('file://', ''),
+        //         photoName: image.name
+        //     });
+        // });
+
+        // formData._parts.forEach((part, index) => {
+        //     const fieldName = part[0];
+        //     const fieldData = part[1];
+        //     console.log(`Field ${fieldName}:`, fieldData);
+        //   })
+
+        //   console.log("formdata",formData._parts)
+
+        console.log("isbn", isbn)
+
+       await axios({
+            method: 'post',
+            url: ApiUrl + api + product,
+            data: {
+                isbn_no: isbn,
+                images:images
+            }
+        }).then((response) => {
+                console.log("responsee", response.data)
+                // if (response.data.result === 'success') {
+                //     setLoad(false);
+                //     setMessage(response.data.result)
+                //     props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.verification_code, user_id: response.data.data.id, type: 'Verified', name: 'OtpLogin' })
+                // } else {
+                //     setLoad(false);
+                //     setMessage('Please Enter register PhoneNumber or Email')
+                // }
+            })
+            .catch((error) => {
+                console.log("errrr", error)
+                // setLoad(false)
+                // setMessage(error.data.message)
+            });
+
+        // console.log("imagesssssssss", formData, Platform.OS)
+
+        // props.navigation.navigate('PaymentDetails')
+
     }
 
+
+
+
+    const onSubmit = () => {
+        // if (!isbn) {
+        //     setIsbnErr('ISBN Number Required.');
+        // } else if (!validation) {
+        //     setImageErr('Please upload all images.');
+        // } else {
+        onRequest();
+        // }
+    }
+
+    console.log("array", array)
+
     const openImagePicker = (name) => {
+        var arrays = [];
         ImagePicker.openPicker({
             width: 100,
             height: 120,
             cropping: true
         }).then(image => {
-            console.log("imageeee", image)
+            // console.log("imagepath",image.path)
+            // arrays.push(image.path);
+            // setArray(...arrays)
+            // setArray([...array, image.path]);   
+            // setArray((prevImageURIs) => [...prevImageURIs, image.path]);
+
+
             images.map((dataItem) => {
                 if (dataItem.name === name) {
                     dataItem['path'] = image.path;
@@ -114,8 +183,9 @@ export default function ReSell(props) {
                 {/* <View style={styles.wrap}> */}
                 <FlatList
                     data={images}
-                    contentContainerStyle={{ justifyContent: 'space-between', width: windowWidth - 30, flexWrap: 'wrap' }}
-                    horizontal
+                    contentContainerStyle={{ width: windowWidth - 30 }}
+                    // horizontal
+                    numColumns={3}
                     showsHorizontalScrollIndicator={false}
                     renderItem={({ item, index }) =>
                         <View style={{ padding: 6 }} key={item}>
@@ -126,7 +196,6 @@ export default function ReSell(props) {
                                         <AntDesign name="close" size={20} color={'red'} />
                                     </TouchableOpacity>
                                 </View> : null}
-
 
                             {!item.path ?
                                 <TouchableOpacity onPress={() => openImagePicker(item.name)} style={styles.imageContainer}>

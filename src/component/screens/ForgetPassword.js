@@ -20,10 +20,7 @@ export default function ForgetPassword(props) {
     const [message, setMessage] = useState('');
     const [load, setLoad] = useState(false);
     const [mobErr, setMobErr] = useState('');
-
     const windowWidth = Dimensions.get('window').width;
-
-    console.log("foregteee", mobileNumber.toString(), JSON.stringify(mobileNumber))
 
 
     const send = () => {
@@ -34,16 +31,18 @@ export default function ForgetPassword(props) {
             axios.post(ApiUrl + api + forgetPassword, {
                 phone_or_email: mobileNumber,
             }).then((response) => {
-                console.log("ressponsee", response.data.data.id)
                 if (response.data.result === 'success') {
                     setLoad(false)
                     setVisible(true);
                     setMessage(response.data.result)
-                    props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.verification_code, user_id: response.data.data.id, type: 'ResetPassword' })
+                    setTimeout(() => {
+                        props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.verification_code, user_id: response.data.data.id, type: 'ResetPassword', name: 'ForgetPassword' })
+                    }, 1000);
                 } else {
                     setLoad(false)
                     setVisible(true);
                     setMessage('Please Enter register PhoneNumber or Email')
+
                 }
             })
                 .catch((error) => {

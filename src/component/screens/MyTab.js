@@ -12,8 +12,6 @@ import FAQ from './Faq';
 
 
 
-
-
 const Tab = createBottomTabNavigator();
 
 export default function MyTab() {

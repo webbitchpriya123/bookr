@@ -5,3 +5,4 @@ export const forgetPassword = '/forget-password';
 export const verifyCode = '/verification-code';
 export const registerOtp = '/register-send-otp';
 export const resetPassword = '/reset-password';
+export const product = '/products';

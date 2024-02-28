@@ -30,16 +30,15 @@ export default function Verified(props) {
                     <TouchableOpacity style={styles.logView} onPress={() => props.navigation.navigate('Home')}>
                         <Text style={styles.loginText}>DONE</Text>
                     </TouchableOpacity>
-
                 </View>
             </LinearGradient>
-         
+
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
-  
+
     verifiedPhone: { fontSize: 15, fontWeight: '500', color: '#CDCDCDE5', textAlign: "center", lineHeight: 23, marginTop: 10, marginBottom: 10 },
     verify: { fontSize: 25, fontWeight: '600', color: '#FFFFFF', textAlign: "center", lineHeight: 24 },
     phonenumber: { padding: 15, flex: 0.2, justifyContent: "center" },
@@ -49,7 +48,7 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
     },
-    loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color:color.darkBlack, fontWeight: '600' },
+    loginText: { alignSelf: 'center', marginTop: 15, fontSize: 14, color: color.darkBlack, fontWeight: '600' },
     logView: { height: 50, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
 
 

@@ -80,7 +80,7 @@ const App = () => {
           animation: 'slide_from_right',
           animationTypeForReplace: 'pop',
         }}
-        initialRouteName={localValue ? "Home" : "Login"}
+        initialRouteName={localValue ? "Home" : "ReSell"}
       >
         <Stack.Screen
           name="Login"

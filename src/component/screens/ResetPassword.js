@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator ,Dimensions} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Divider } from 'react-native-paper';
+import { Divider, Snackbar } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import * as color from '../../colors/colors';
@@ -23,6 +23,11 @@ export default function ResetPassword(props) {
     const [passErr, setPassErr] = useState('');
     const [resetErr, setResetErr] = useState('');
     const [load, setLoad] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [message, setMessage] = useState('');
+    const windowWidth = Dimensions.get('window').width;
+
+
 
     const Continue = async () => {
         axios.post(ApiUrl + api + resetPassword, {
@@ -32,8 +37,11 @@ export default function ResetPassword(props) {
             .then((response) => {
                 setLoad(false)
                 if (response.data.status === 'success') {
-                    alert('password updated successfully!!!')
-                    props.navigation.navigate('Login')
+                    setVisible(true);
+                    setMessage('password updated successfully')
+                    setTimeout(() => {
+                        props.navigation.navigate('Login');
+                    }, 1000);
                 }
             })
             .catch((error) => {
@@ -47,6 +55,9 @@ export default function ResetPassword(props) {
     const reset = () => {
         if (Password === '') {
             setPassErr('Password is Required')
+        }
+        else if (Password.length != 8) {
+            setResetErr('Minimum Password length is 8')
         }
         else if (ResetPassword === '') {
             setResetErr('Resetpssword is Required')
@@ -89,7 +100,7 @@ export default function ResetPassword(props) {
                             placeholder="Password"
                             secureTextEntry={eye ? false : true}
                             placeholderTextColor="#47436A"
-                            maxLength={9}
+                            maxLength={8}
 
                         />
                         <TouchableOpacity onPress={() => setEye(!eye)}>
@@ -115,7 +126,7 @@ export default function ResetPassword(props) {
                             placeholder="Confirm password"
                             secureTextEntry={Eye ? false : true}
                             placeholderTextColor="#47436A"
-                            maxLength={9}
+                            maxLength={8}
                         />
                         <TouchableOpacity onPress={() => reSetEye(!Eye)}>
                             <Feather
@@ -151,6 +162,20 @@ export default function ResetPassword(props) {
                     <Text style={styles.website}>www.usedbookr.com</Text>
                 </View>
             </LinearGradient>
+
+            <Snackbar
+                style={{ width: windowWidth - 20 }}
+                visible={visible}
+                onDismiss={() => setVisible(false)}
+                duration={1000}
+                action={{
+                    label: 'UNDO',
+                    onPress: () => {
+                        setVisible(false)
+                    },
+                }}>
+                {message}
+            </Snackbar>
         </SafeAreaView>
 
     )

@@ -15,7 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Home = (props) => {
-    const [local, setLocal] = useState('')
+
+    const [local, setLocal] = useState('');
     const books = [{
         number: 130,
         status: 'Sold books'

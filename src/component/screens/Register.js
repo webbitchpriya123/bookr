@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator,Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Divider } from 'react-native-paper';
+import { Divider, Snackbar } from 'react-native-paper';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Feather from 'react-native-vector-icons/Feather';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -11,7 +11,6 @@ import * as color from '../../colors/colors';
 import * as images from '../config/constants';
 import axios from 'axios';
 import { ApiUrl, registerOtp, api } from '../constant/constant';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -29,10 +28,13 @@ export default function Register(props) {
     const [Name, setName] = useState('');
     const [nameErr, setNameErr] = useState(false);
     const [load, setLoad] = useState(false);
-
+    const [visible, setVisible] = useState(false);
+    const [message, setMessage] = useState('');
+    const windowWidth = Dimensions.get('window').width;
 
 
     const onRegister = async () => {
+
         await axios.post(ApiUrl + api + registerOtp, {
             name: Name,
             email: email,
@@ -42,19 +44,19 @@ export default function Register(props) {
         }).then((response) => {
             setLoad(false);
             if (response.data.status === 'success') {
+                setVisible(true)
                 global.userId = response.data.data.user.id;
-                AsyncStorage.setItem("user_id", JSON.stringify(response.data.data.user.id))
-                AsyncStorage.setItem("phone", JSON.stringify(response.data.data.user.phone))
-                AsyncStorage.setItem("email", JSON.stringify(response.data.data.user.email))
-                alert('Register sucessfully');
-                props.navigation.navigate('Login')
-
+                setMessage('Register sucessfully');
+                setTimeout(() => {
+                    // props.navigation.navigate('Login')
+                    props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.user.verification_code, user_id: response.data.data.user.id, type: 'Login',name:'Register' })
+                }, 1000);
             } else {
-                alert('Already exists')
+                setMessage('Already exists')
             }
         }).catch((error) => {
             setLoad(false)
-            alert('Already exists ')
+            setMessage('Already exists')
             console.log("error", error)
         });
 
@@ -85,7 +87,7 @@ export default function Register(props) {
         }
         else if (Password === '') {
             setPassErr('Password is Required')
-        } else if (Password.length !== 8) {
+        } else if (Password.length != 8) {
             setPassErr('Minimum Password length is 8.')
         }
 
@@ -98,8 +100,7 @@ export default function Register(props) {
         else {
             setLoad(true)
             onRegister();
-            // ToastAndroid.show('Register successfully !', ToastAndroid.SHORT);
-            // props.navigation.navigate('Login')
+           
         }
 
     }
@@ -255,6 +256,20 @@ export default function Register(props) {
                 </View>
 
             </LinearGradient>
+
+            <Snackbar
+                style={{ width: windowWidth - 20 }}
+                visible={visible}
+                onDismiss={() => setVisible(false)}
+                duration={900}
+                action={{
+                    label: 'UNDO',
+                    onPress: () => {
+                        setVisible(false)
+                    },
+                }}>
+                {message}
+            </Snackbar>
         </SafeAreaView>
 
     )

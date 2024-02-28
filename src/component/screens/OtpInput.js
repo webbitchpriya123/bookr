@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Divider } from 'react-native-paper';
+import { Divider, Snackbar } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
@@ -10,6 +10,7 @@ import * as images from '../config/constants';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
 import { ApiUrl, api, verifyCode } from '../constant/constant';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -18,33 +19,45 @@ export default function Otp(props) {
     const [code, setCode] = useState('');
     const [minutes, setMinutes] = useState(1);
     const [seconds, setSeconds] = useState(0);
+    const [visible, setVisible] = useState(false);
+    const [message, setMessage] = useState('');
+    const windowWidth = Dimensions.get('window').width;
 
 
-    useEffect(() => {
-        loadStoredValue();
-    }, []);
+    // useEffect(() => {
+    //     loadStoredValue();
+    // }, []);
 
 
     // Function to load stored value
-    const loadStoredValue = async () => {
-      await axios.post(ApiUrl + api + verifyCode, {
+    const loadStoredValue = async (code) => {
+        await axios.post(ApiUrl + api + verifyCode, {
             verification_code: `${JSON.stringify(props.route.params.code)}`,
             user_id: props.route.params.user_id
         })
             .then((response) => {
-                console.log("ressponseeee", response.data)
-                if (response.data.status === 'success') {
-                    setCode(`${props.route.params.code}`)
+                if (response.data.status === 'success' && code == props.route.params.code) {
+                    setVisible(true);
+                    setMessage('Verfied Successfully');
+                    if (props.route.params.type === 'Verified') {
+                        AsyncStorage.setItem("user_id", JSON.stringify(props.route.params.user_id))
+                        AsyncStorage.setItem("token", JSON.stringify(props.route.params.token))
+                    }
                     setTimeout(() => {
-                        props.navigation.navigate(props.route.params.type,{mobile:props.route.params.email_or_phoneNumber})
-                    }, 700);
+                        // setCode(code);
+                        props.navigation.navigate(props.route.params.type, { mobile: props.route.params.email_or_phoneNumber })
+                    }, 1000);
+                } else {
+                    setVisible(true);
+                    setMessage('invalid otp code');
+                    resendOTP();
+                   
                 }
             })
             .catch((error) => {
                 console.log("error", error)
-                // setLoad(false)
-                // // setMessage(error.data.message)
-                // setVisible(true)
+                setMessage('invalid Otp')
+
             });
 
     };
@@ -73,6 +86,7 @@ export default function Otp(props) {
     }, [seconds]);
 
     const resendOTP = () => {
+        setCode('')
         setMinutes(1);
         setSeconds(0);
     };
@@ -108,10 +122,11 @@ export default function Otp(props) {
                         onCodeFilled={(code => {
                             // loadStoredValue()
                             // props.navigation.navigate('Home')
-                            if (code) {
-                                props.navigation.navigate('Verified')
+                            loadStoredValue(code);
+                            // if (code) {
+                            //     props.navigation.navigate('Verified')
 
-                            }
+                            // }
 
                             console.log(`Code is ${code}, you are good to go!`)
                         })}
@@ -134,6 +149,23 @@ export default function Otp(props) {
                     <Text style={styles.website}>www.usedbookr.com</Text>
                 </View>
             </LinearGradient>
+
+            <Snackbar
+                style={{ width: windowWidth - 20 }}
+                visible={visible}
+                onDismiss={() => setVisible(false)}
+                duration={900}
+                action={{
+                    label: 'UNDO',
+                    onPress: () => {
+                        setVisible(false);
+                        setCode('');
+                    },
+                }}>
+                {message}
+            </Snackbar>
+
+
         </SafeAreaView>
     )
 }

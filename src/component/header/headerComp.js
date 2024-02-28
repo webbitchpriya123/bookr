@@ -6,7 +6,7 @@ import * as Font from '../../fonts/fonts';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const HeaderComp = ({ props, name }) => {
-    console.log("headercomp", name, props)
+    // console.log("headercomp", name, props)
     return (
         <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
             end={{ x: 1.0, y: 1.0 }} style={[styles.linearGradient, { flex: name === 'Edit Profile' ? 0 : 0.14 }]}>

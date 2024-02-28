@@ -31,12 +31,14 @@ export default function Login(props) {
             .then((response) => {
                 setLoad(false)
                 if (response.data.data) {
-                    alert('Login Successfully!!!')
+                    AsyncStorage.setItem("user_id", JSON.stringify(response.data.data.user.id))
                     AsyncStorage.setItem("token", JSON.stringify(response.data.data.token))
+                    setMessage(response.data.message)
                     // ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
                     setVisible(true);
-                    setMessage(response.data.message)
-                    props.navigation.navigate('Home')
+                    setTimeout(() => {
+                        props.navigation.navigate('Home')
+                    }, 1000);
 
                 } else {
                     setVisible(true);
@@ -57,6 +59,9 @@ export default function Login(props) {
         }
         else if (Password === '') {
             setPassErr('Password Required')
+        }
+        else if (Password.length != 8) {
+            setPassErr('Minimum Password length is 8 ')
         } else {
             setLoad(true);
             authLogin();
@@ -70,7 +75,7 @@ export default function Login(props) {
 
     }
 
-
+console.log("globall",global.user_id)
 
     return (
         <SafeAreaView style={{ flex: 1 }}>

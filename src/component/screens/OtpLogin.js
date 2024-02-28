@@ -7,7 +7,6 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import * as color from '../../colors/colors';
 import * as images from '../config/constants';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ApiUrl, forgetPassword, api } from '../constant/constant';
 
 
@@ -27,19 +26,17 @@ export default function OtpLogin(props) {
                 phone_or_email: mobileNumber,
             }).then((response) => {
                 if (response.data.result === 'success') {
-                    setLoad(false)
-                    // alert()
-                    // setMessage(response.data.result)
-                    props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.verification_code, user_id: response.data.data.id, type: 'Verified' })
+                    setLoad(false);
+                    setMessage(response.data.result)
+                    props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.verification_code, user_id: response.data.data.id, type: 'Verified', name: 'OtpLogin' })
                 } else {
-                    setLoad(false)
-                    // setMessage('Please Enter register PhoneNumber or Email')
+                    setLoad(false);
+                    setMessage('Please Enter register PhoneNumber or Email')
                 }
             })
                 .catch((error) => {
                     setLoad(false)
-                    props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber })
-                    // setMessage(error.data.message)
+                    setMessage(error.data.message)
                 });
         }
     }
