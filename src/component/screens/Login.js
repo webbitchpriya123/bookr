@@ -33,7 +33,7 @@ export default function Login(props) {
                 if (response.data.data) {
                     AsyncStorage.setItem("user_id", JSON.stringify(response.data.data.user.id))
                     AsyncStorage.setItem("token", JSON.stringify(response.data.data.token))
-                    setMessage(response.data.message)
+                    setMessage('Login Successfully.')
                     // ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
                     setVisible(true);
                     setTimeout(() => {

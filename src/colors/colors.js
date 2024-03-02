@@ -11,4 +11,6 @@ export const red = '#FF0000';
 export const dividerColor = '#3CB043';
 export const darkBlack = '#000000';
 export const gray = '#A1A1AA';
-export const coverImage ='#3D3D3DE5'
+export const coverImage ='#3D3D3DE5';
+export const green ='#3CB043';
+export const darkGrey = '#7F8192'

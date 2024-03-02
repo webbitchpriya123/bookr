@@ -41,7 +41,7 @@ export default function Otp(props) {
                     setMessage('Verfied Successfully');
                     if (props.route.params.type === 'Verified') {
                         AsyncStorage.setItem("user_id", JSON.stringify(props.route.params.user_id))
-                        AsyncStorage.setItem("token", JSON.stringify(props.route.params.token))
+                        AsyncStorage.setItem("token", JSON.stringify(response.data.data.token))
                     }
                     setTimeout(() => {
                         // setCode(code);
@@ -51,15 +51,12 @@ export default function Otp(props) {
                     setVisible(true);
                     setMessage('invalid otp code');
                     resendOTP();
-                   
                 }
             })
             .catch((error) => {
                 console.log("error", error)
                 setMessage('invalid Otp')
-
             });
-
     };
 
 
@@ -125,9 +122,7 @@ export default function Otp(props) {
                             loadStoredValue(code);
                             // if (code) {
                             //     props.navigation.navigate('Verified')
-
                             // }
-
                             console.log(`Code is ${code}, you are good to go!`)
                         })}
                     />

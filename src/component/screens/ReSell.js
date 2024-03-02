@@ -9,7 +9,7 @@ import {
     FlatList,
     TextInput,
     Dimensions,
-    AsyncStorage
+    ActivityIndicator
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
@@ -18,14 +18,22 @@ import ImagePicker from 'react-native-image-crop-picker';
 import HeaderComp from "../header/headerComp";
 import { ApiUrl, product, api } from '../constant/constant';
 import axios from 'axios';
+import { Snackbar } from 'react-native-paper';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 
 export default function ReSell(props) {
     const [isbn, setIsbn] = useState('');
     const [isbnErr, setIsbnErr] = useState(false);
     const [imageErr, setImageErr] = useState(false);
-    const [array, setArray] = useState([]);
+    const [visible, setVisible] = useState(false);
+    const [message, setMessage] = useState('');
+    const [arrays, setArray] = useState([]);
+    const [load, setLoad] = useState(false);
+
     const windowWidth = Dimensions.get('window').width;
+    let imgName = [...arrays];
     const [images, setImages] = useState([
         {
             name: 'Cover',
@@ -45,18 +53,38 @@ export default function ReSell(props) {
         },
     ]);
 
-
-    // console.log("imagess", images)
     const validation = images.every(item => item.name && item.path);
 
     const removeItem = (data, index) => {
+        const nameVal = arrays.filter(arrayItem => arrayItem !== index);
+        setArray(nameVal);
         data.map((item) => {
             if (item.name === index) {
                 item['path'] = '';
             }
-            setImages([...data])
+            setImages([...data]);
         })
     }
+
+    const openImagePicker = (name) => {
+        imgName.push(name);
+        setArray(imgName);
+        ImagePicker.openPicker({
+            width: 100,
+            height: 120,
+            cropping: true
+        }).then(image => {
+            let filename = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length)
+            images.map((dataItem) => {
+                if (dataItem.name === name) {
+                    dataItem['path'] = image.path;
+                    dataItem['fileName'] = filename;
+                    dataItem['name'] = dataItem.name
+                }
+                setImages([...images])
+            })
+        });
+    };
 
     useEffect(() => {
         if (validation) {
@@ -65,54 +93,65 @@ export default function ReSell(props) {
     }, [validation]);
 
     const onRequest = async () => {
-        console.log("array", array)
-
-        // const formData = new FormData();
+        const token = await AsyncStorage.getItem('token');
+        const value = await AsyncStorage.getItem('user_id');
+        const formData = new FormData();
         // images.forEach((image, index) => {
-        //     formData.append(`image${index}`, {
-        //         name: `image${index}.jpg`,
-        //         type: 'image/jpeg',
-        //         uri: Platform.OS === 'android' ? image.path : image.path.replace('file://', ''),
-        //         photoName: image.name
-        //     });
+        //     if(image.path != undefined){
+        //     // Append images with a unique key (e.g., image1, image2, etc.)
+        //     formData.append(`images[]`, { uri: image.path, name: `image${index + 1}.jpg`, type: 'image/jpeg' });
+        //     }
         // });
+        images.map((image) => {
+            let fileName = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length);
+            const imageObject = {
+                name: fileName,
+                type: 'image/jpeg',
+                uri: Platform.OS === 'android' ? image.path : image.path.replace('file://', ''),
+                photoName: image.name
+            };
+            formData.append('images[]', imageObject);
+            formData.append('isbn_no', isbn);
+            formData.append('page_name', arrays);
+            formData.append('user_id', value)
+        });
 
-        // formData._parts.forEach((part, index) => {
-        //     const fieldName = part[0];
-        //     const fieldData = part[1];
-        //     console.log(`Field ${fieldName}:`, fieldData);
-        //   })
-
-        //   console.log("formdata",formData._parts)
-
-        console.log("isbn", isbn)
-
-       await axios({
-            method: 'post',
-            url: ApiUrl + api + product,
-            data: {
-                isbn_no: isbn,
-                images:images
-            }
-        }).then((response) => {
-                console.log("responsee", response.data)
-                // if (response.data.result === 'success') {
-                //     setLoad(false);
-                //     setMessage(response.data.result)
-                //     props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.verification_code, user_id: response.data.data.id, type: 'Verified', name: 'OtpLogin' })
-                // } else {
-                //     setLoad(false);
-                //     setMessage('Please Enter register PhoneNumber or Email')
-                // }
-            })
-            .catch((error) => {
-                console.log("errrr", error)
-                // setLoad(false)
-                // setMessage(error.data.message)
+        if (token) {
+            console.log('arrayy', arrays)
+            await axios.post(
+                ApiUrl + api + product,
+                formData,
+                {
+                    headers: {
+                        Authorization: "Bearer " + JSON.parse(token),
+                        "Content-Type": "multipart/form-data",
+                        Accept: 'application/json'
+                    },
+                }
+            ).then((response) => {
+                if (response.data.status === true) {
+                    setLoad(false);
+                    setArray([]);
+                    // setImages([]);
+                    setVisible(true);
+                    setMessage(response.data.message)
+                    setTimeout(() => {
+                        props.navigation.navigate('Home')
+                    }, 1000);
+                } else {
+                    setArray([]);
+                    setImages([]);
+                    setVisible(true)
+                    setMessage('please upload all mandatory fields.')
+                }
+            }).catch((error) => {
+                setArray([]);
+                setImages([]);
+                setVisible(true)
+                console.log("error", error)
             });
-
+        }
         // console.log("imagesssssssss", formData, Platform.OS)
-
         // props.navigation.navigate('PaymentDetails')
 
     }
@@ -121,39 +160,18 @@ export default function ReSell(props) {
 
 
     const onSubmit = () => {
-        // if (!isbn) {
-        //     setIsbnErr('ISBN Number Required.');
-        // } else if (!validation) {
-        //     setImageErr('Please upload all images.');
-        // } else {
-        onRequest();
-        // }
+        if (!isbn) {
+            setIsbnErr('ISBN Number Required.');
+        } else if (!validation) {
+            setImageErr('Please upload all images.');
+        } else {
+            setLoad(true)
+            onRequest();
+        }
     }
 
-    console.log("array", array)
-
-    const openImagePicker = (name) => {
-        var arrays = [];
-        ImagePicker.openPicker({
-            width: 100,
-            height: 120,
-            cropping: true
-        }).then(image => {
-            // console.log("imagepath",image.path)
-            // arrays.push(image.path);
-            // setArray(...arrays)
-            // setArray([...array, image.path]);   
-            // setArray((prevImageURIs) => [...prevImageURIs, image.path]);
 
 
-            images.map((dataItem) => {
-                if (dataItem.name === name) {
-                    dataItem['path'] = image.path;
-                }
-                setImages([...images])
-            })
-        });
-    };
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
@@ -180,7 +198,6 @@ export default function ReSell(props) {
                     <View>
                         <Text style={[styles.errorMsg, { marginBottom: 10 }]}>{imageErr}</Text>
                     </View> : null}
-                {/* <View style={styles.wrap}> */}
                 <FlatList
                     data={images}
                     contentContainerStyle={{ width: windowWidth - 30 }}
@@ -192,7 +209,7 @@ export default function ReSell(props) {
                             {item.path ?
                                 <View>
                                     <Image source={{ uri: item.path }} style={styles.imageUpload} />
-                                    <TouchableOpacity onPress={() => removeItem(images, item.name)} style={styles.remove}>
+                                    <TouchableOpacity onPress={() => removeItem(images, item.name, arrays)} style={styles.remove}>
                                         <AntDesign name="close" size={20} color={'red'} />
                                     </TouchableOpacity>
                                 </View> : null}
@@ -206,14 +223,40 @@ export default function ReSell(props) {
                     }
                     keyExtractor={item => item}
                 />
-                {/* </View> */}
 
             </View>
             <View style={styles.submitFlex}>
+                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => onSubmit()}>
+                    <View style={styles.loaderView}>
+                        <View style={{ flex: 0.55 }}>
+                            <Text style={styles.loginText}>SUBMIT</Text>
+                        </View>
+                        {load ?
+                            <View style={{ flex: 0.45 }}>
+                                <ActivityIndicator size="large" color="#FFFFFF" />
+                            </View> : null}
+                    </View>
+                </TouchableOpacity>
+            </View>
+
+            {/* <View style={styles.submitFlex}>
                 <TouchableOpacity style={styles.submitView} onPress={() => onSubmit()}>
                     <Text style={styles.submitText}>SUBMIT</Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
+            <Snackbar
+                style={{ width: windowWidth - 20 }}
+                visible={visible}
+                onDismiss={() => setVisible(false)}
+                duration={900}
+                action={{
+                    label: 'UNDO',
+                    onPress: () => {
+                        setVisible(false)
+                    },
+                }}>
+                {message}
+            </Snackbar>
         </SafeAreaView>
     )
 }
@@ -241,7 +284,9 @@ const styles = StyleSheet.create({
     remove: { borderWidth: 1, backgroundColor: color.white, borderColor: 'red', position: 'absolute', borderRadius: 30, right: -5 },
     submitFlex: { flex: 0.13, paddingLeft: 15, paddingRight: 15 },
     imageUpload: { height: 120, width: 100, marginTop: 8 },
-    errorMsg: { fontSize: 14, color: color.red, fontWeight: '500' }
-
+    errorMsg: { fontSize: 14, color: color.red, fontWeight: '500' },
+    loginText: { alignSelf: 'flex-end', fontSize: 14, color: color.darkBlack, fontWeight: '600' },
+    logView: { height: 55, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
+    loaderView: { flexDirection: 'row', alignItems: 'center', height: 55 }
 
 })

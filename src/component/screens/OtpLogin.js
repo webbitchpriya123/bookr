@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator,Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Divider } from 'react-native-paper';
+import { Divider, Snackbar } from 'react-native-paper';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import * as color from '../../colors/colors';
 import * as images from '../config/constants';
 import axios from 'axios';
 import { ApiUrl, forgetPassword, api } from '../constant/constant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -15,7 +16,10 @@ export default function OtpLogin(props) {
     const [mobileNumber, setMobileNumber] = useState('');
     const [load, setLoad] = useState(false);
     const [mobErr, setMobErr] = useState('');
+    const [visible, setVisible] = useState(false);
+    const [message, setMessage] = useState('');
 
+    const windowWidth = Dimensions.get('window').width;
 
     const Send = () => {
         if (mobileNumber === '') {
@@ -26,15 +30,20 @@ export default function OtpLogin(props) {
                 phone_or_email: mobileNumber,
             }).then((response) => {
                 if (response.data.result === 'success') {
+                    AsyncStorage.setItem("user_id", JSON.stringify(response.data.data.id))
+                    AsyncStorage.setItem("token", JSON.stringify(response.data.data.token))
+                    setVisible(true);
                     setLoad(false);
                     setMessage(response.data.result)
                     props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.verification_code, user_id: response.data.data.id, type: 'Verified', name: 'OtpLogin' })
                 } else {
+                    setVisible(true);
                     setLoad(false);
                     setMessage('Please Enter register PhoneNumber or Email')
                 }
             })
                 .catch((error) => {
+                    setVisible(true);
                     setLoad(false)
                     setMessage(error.data.message)
                 });
@@ -114,6 +123,19 @@ export default function OtpLogin(props) {
                 </View>
 
             </LinearGradient>
+            <Snackbar
+                style={{ width: windowWidth - 20 }}
+                visible={visible}
+                onDismiss={() => setVisible(false)}
+                duration={900}
+                action={{
+                    label: 'UNDO',
+                    onPress: () => {
+                        setVisible(false)
+                    },
+                }}>
+                {message}
+            </Snackbar>
         </SafeAreaView>
 
     )

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     SafeAreaView,
     ScrollView,
@@ -11,234 +11,127 @@ import {
     TouchableOpacity,
     ImageBackground,
     FlatList,
-    TextInput
+    TextInput,
+    ActivityIndicator,
+    Dimensions
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
-import * as Images from '../config/constants'
-import LinearGradient from 'react-native-linear-gradient';
-import { Dropdown } from 'react-native-element-dropdown';
-import ImagePicker from 'react-native-image-crop-picker';
-import { RadioButton } from 'react-native-paper';
+import * as Images from '../config/constants';
+import axios from 'axios';
+import { RadioButton, Snackbar } from 'react-native-paper';
 import HeaderComp from '../header/headerComp';
+import { ApiUrl, api, banks, selectBankAccount } from '../constant/constant';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
 export default function PaymentDetails(props) {
-
-    const [checked, setChecked] = React.useState('first');
-
-
-    const data = [
-        { label: 'Item 1 Item 1 Item 1 Item 1 Item 1', value: '1' },
-        { label: 'Item 2', value: '2' },
-        { label: 'Item 3', value: '3' },
-        { label: 'Item 4', value: '4' },
-        { label: 'Item 5', value: '5' },
-        { label: 'Item 6', value: '6' },
-        { label: 'Item 7', value: '7' },
-        { label: 'Item 8', value: '8' },
-    ]
+    const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height
+    const [load, setLoad] = useState(false);
+    const [bank, setBank] = useState([]);
 
 
-    const [name, setName] = useState('');
-    const [isbn, setIsbn] = useState('');
-    const [value, setValue] = useState('');
-    const [isFocus, setIsFocus] = useState(false);
+
+    useEffect(() => {
+        setLoad(true);
+        getApi();
+    }, []);
+
+
+
+
+    const getApi = async () => {
+
+        const value = await AsyncStorage.getItem('user_id');
+        const token = await AsyncStorage.getItem('token');
+        if (value) {
+            console.log("valllll", value)
+            axios({
+                method: 'post',
+                url: ApiUrl + api + selectBankAccount,
+                headers: {
+                    Authorization: "Bearer " + JSON.parse(token),
+                },
+                data: {
+                    user_id: value,
+                }
+            }).then((response) => {
+                console.log("response", response.data)
+                if (response.data.result === true) {
+                    setBank(response.data.data)
+                    setLoad(false);
+
+                }
+            }).catch((error) => {
+                console.log("error", error)
+            })
+        }
+    }
+
+
+
+
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
-            <HeaderComp name={'Payment Details'} props={props}/>
-            <View style={{ flex: 0.73 }}>
-                <View style={styles.radio}>
-                    <RadioButton
-                        value="first"
-                        color={color.yellow}
-                        status={checked === 'first' ? 'checked' : 'unchecked'}
-                        onPress={() => setChecked('first')}
-                    />
-                    <Text style={[styles.title, { fontWeight: checked === 'first' ? '700' : '600' }]}>Bank Account Details</Text>
-
-                </View>
-                {checked === 'first' ?
-                    <View style={styles.radioContainer}>
-                        <Dropdown
-                            style={styles.dropdown}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            iconStyle={styles.iconStyle}
-                            data={data}
-                            containerStyle={styles.containerStyle}
-                            // search
-                            maxHeight={300}
-                            labelField="label"
-                            valueField="value"
-                            placeholder={!isFocus ? 'Bank' : '...'}
-                            searchPlaceholder="Search..."
-                            value={value}
-                            itemTextStyle={{ color: "black" }}
-                            // onFocus={() => setIsFocus(true)}
-                            // onBlur={() => setIsFocus(false)}
-                            onChange={item => {
-                                setValue(item.value);
-                                setIsFocus(false)
-                            }}
-                        />
-
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={(text) => setName(text)}
-                            value={name}
-                            placeholder="Account holders name"
-                            placeholderTextColor={'#7F8192'}
-                        />
-
-                        <View style={styles.ifsc}>
-                            <TextInput
-                                style={{
-                                    width: '88%', marginLeft: 5, color: '#7F8192',
-                                }}
-                                onChangeText={(text) => setIsbn(text)}
-                                value={isbn}
-                                placeholder="IFSC"
-                                placeholderTextColor={'#7F8192'}
-                            />
-                            <TouchableOpacity>
-                                <AntDesign name="questioncircleo" size={20} style={styles.questionCircle} />
-
+            <HeaderComp name={'Payment Details'} props={props} />
+            <View style={{ flex: 0.73, padding: 15 }}>
+                <Text style={styles.title}>Default account</Text>
+                {!bank ?
+                    <View style={styles.mainContainer}>
+                        <View style={{ padding: 15 }}>
+                            <View style={styles.flexContainer}>
+                                <Text style={styles.name}>{bank.account_holder_name}</Text>
+                                <Text style={[styles.name, { color: color.green, }]}>Default Account</Text>
+                            </View>
+                            <Text style={styles.textStyle}>{bank.bank_name}</Text>
+                            <Text style={styles.textStyle}>IFSC - {bank.ifsc}</Text>
+                            <TouchableOpacity style={styles.flexContainer} onPress={()=>props.navigation.navigate('')}>
+                                <Text style={styles.textStyle}>A/C No - {bank.account_number}</Text>
+                                <AntDesign name="right" size={20} color={color.darkGrey} />
                             </TouchableOpacity>
-
                         </View>
-                        <View style={styles.ifsc}>
+                    </View> : <TouchableOpacity onPress={()=>props.navigation.navigate('AllPayment')} style={[[styles.flexContainer],[styles.addAccount]]}>
+                        <Text style={[styles.textStyle,{marginLeft:20}]}>Add a new account</Text>
+                        <AntDesign name="right" size={20} color={color.darkGrey} style={{marginRight:10}} />
 
-                            <TextInput
-                                style={{ width: '88%', marginLeft: 5, color: '#7F8192' }}
-                                onChangeText={(text) => setIsbn(text)}
-                                value={isbn}
-                                placeholder="Account Number"
-                                placeholderTextColor={'#7F8192'}
-                            />
-                            <TouchableOpacity>
-                                <AntDesign name="questioncircleo" size={20} style={styles.questionCircle} />
-
-                            </TouchableOpacity>
-
-                        </View>
-                    </View> : null}
-
-
-                <View style={styles.radio}>
-                    <RadioButton
-                        value="second"
-                        color={color.yellow}
-                        status={checked === 'second' ? 'checked' : 'unchecked'}
-                        onPress={() => setChecked('second')}
-                    />
-                    <Text style={[styles.title, { fontWeight: checked === 'second' ? '700' : '600' }]}>UPI Details</Text>
-
-                </View>
-
-
-                {checked === 'second' ?
-                    <View style={styles.viewConatiner}>
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={(text) => setName(text)}
-                            value={name}
-                            placeholder="Enter Your UPI ID"
-                            placeholderTextColor={'#7F8192'}
-                        />
-                    </View>
-                    : null}
-
-                {/* <View style={styles.radio}>
-                    <RadioButton
-                        value="third"
-                        color={color.yellow}
-                        status={checked === 'third' ? 'checked' : 'unchecked'}
-                        onPress={() => setChecked('third')}
-                    />
-                    <Text style={[styles.title, { fontWeight: checked === 'third' ? '700' : '600' }]}>Upload QR Code</Text>
-                </View>
-
-                {checked === 'third' ?
-                    <View style={styles.viewConatiner}>
-                        <TouchableOpacity style={styles.uploadView}>
-                            <Text style={styles.uploadText}>UPLOAD</Text>
-                        </TouchableOpacity>
-                        <Image source={Images.QRCode} style={{ marginTop: 20 }} />
-                    </View> : null} */}
-
+                    </TouchableOpacity>}
             </View>
-
-
-            <View style={{ flex: 0.13 }}>
-
-                <TouchableOpacity style={styles.submitView} onPress={()=>props.navigation.navigate('BookHistory')}>
-                    <Text style={styles.submitText}>SUBMIT</Text>
+            <View style={styles.submit}>
+                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => onSubmit()}>
+                    <View style={styles.loaderView}>
+                        <View style={{ flex: 0.55 }}>
+                            <Text style={styles.loginText}>SUBMIT</Text>
+                        </View>
+                        {load ?
+                            <View style={{ flex: 0.45 }}>
+                                <ActivityIndicator size="large" color="#FFFFFF" />
+                            </View> : null}
+                    </View>
                 </TouchableOpacity>
             </View>
-
+            {load ?
+                <View style={[styles.loader, { top: windowHeight / 2 }]}>
+                    <ActivityIndicator size={'large'} color={color.green} />
+                </View> : null}
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
-    linearGradient: {
-        height: 110,
-        paddingLeft: 20,
-        paddingRight: 20,
-        flex: 0.14
-    },
-    input: {
-        height: 57,
-        padding: 10,
-        borderRadius: 10,
-        color: '#7F8192',
-        marginTop: 12,
-        backgroundColor: '#F5F6FA'
-    },
-    submitText: { color: color.darkBlack, fontSize: 14, fontFamily: Font.acari, fontWeight: '600', textAlign: 'center' },
-    header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },
-    notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
+    addAccount:{height:60,borderWidth:0.2, borderColor: 'border: Mixed solid #00000017',borderRadius:5,marginTop:20},
+    loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
+    name: { fontWeight: '500', color: color.black, fontSize: 14, lineHeight: 25 },
     title: { fontFamily: Font.acari, fontWeight: '800', color: color.black, fontSize: 16 },
-    dropdown: {
-        height: 57,
-        backgroundColor: '#F5F6FA',
-        borderRadius: 10,
-        paddingHorizontal: 8,
-    },
-    submitView: { backgroundColor: color.yellow, marginTop: 20, height: 55, justifyContent: 'center', borderRadius: 10, marginLeft: 15, marginRight: 15 },
-   
-
-    placeholderStyle: {
-        fontSize: 16,
-        color: '#7F8192',
-
-    },
-    selectedTextStyle: {
-        fontSize: 16,
-        color: '#7F8192',
-
-    },
-    iconStyle: {
-        width: 20,
-        height: 20,
-    },
-    inputSearchStyle: {
-        height: 40,
-        fontSize: 16,
-    },
-    uploadView: { backgroundColor: '#ECEAFF', width: 100, justifyContent: 'center', borderRadius: 8, borderWidth: 1, borderColor: color.darkBlue, marginTop: 10 },
-    uploadText: { padding: 18, color: color.darkBlue, fontSize: 12, fontWeight: '400', textAlign: 'center' },
-    ifsc: { height: 57, backgroundColor: '#F5F6FA', borderRadius: 10, marginTop: 12, flexDirection: 'row', alignItems: 'center' },
-    radio: { flexDirection: 'row', alignItems: 'center', paddingLeft: 7, paddingRight: 7, marginTop: 10 },
-    radioContainer: { marginTop: 10, marginBottom: 10, paddingLeft: 15, paddingRight: 15 },
-    questionCircle: { marginLeft: 10 },
-    viewConatiner: { paddingLeft: 15, paddingRight: 15 },
-    containerStyle: { borderRadius: 15, borderWidth: 1, borderColor: 'gray' }
-
+    textStyle: { fontWeight: '500', color: color.darkGrey, fontSize: 14, lineHeight: 25 },
+    loginText: { alignSelf: 'flex-end', fontSize: 14, color: color.darkBlack, fontWeight: '600' },
+    logView: { height: 55, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
+    loaderView: { flexDirection: 'row', alignItems: 'center', height: 55 },
+    submit: { flex: 0.13, marginLeft: 15, marginRight: 15 },
+    flexContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    mainContainer: { backgroundColor: '#F1FFF1', height: 130, marginTop: 20, borderWidth: 0.2, borderRadius: 5, borderColor: 'border: Mixed solid #00000017' }
 
 })

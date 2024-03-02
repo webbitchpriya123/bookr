@@ -29,7 +29,7 @@ import ForgetPassword from './src/component/screens/ForgetPassword';
 import ResetPassword from './src/component/screens/ResetPassword.js';
 import Notification from './src/component/screens/Notification.js';
 import ReSell from './src/component/screens/ReSell.js';
-import PaymentDetails from './src/component/screens/PaymentDetails.js';
+import AccountDetails from './src/component/screens/AccountDetails.js';
 import BookHistory from './src/component/screens/BookHistory.js';
 import BookDetail from './src/component/screens/BookDetail.js';
 import Profile from './src/component/screens/Profile.js';
@@ -39,6 +39,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import OtpLogin from './src/component/screens/OtpLogin.js';
 import Register from './src/component/screens/Register.js';
+import PaymentDetails from './src/component/screens/PaymentDetails.js';
+import AllPayment from './src/component/screens/AllPayment.js';
 
 
 const Stack = createNativeStackNavigator();
@@ -80,7 +82,7 @@ const App = () => {
           animation: 'slide_from_right',
           animationTypeForReplace: 'pop',
         }}
-        initialRouteName={localValue ? "Home" : "ReSell"}
+        initialRouteName={localValue ? "AllPayment" : "Login"}
       >
         <Stack.Screen
           name="Login"
@@ -95,12 +97,14 @@ const App = () => {
         <Stack.Screen name="ResetPassword" component={ResetPassword} />
         <Stack.Screen name="Notification" component={Notification} />
         <Stack.Screen name="ReSell" component={ReSell} />
+        <Stack.Screen name="AccountDetails" component={AccountDetails} />
         <Stack.Screen name="PaymentDetails" component={PaymentDetails} />
         <Stack.Screen name="BookHistory" component={BookHistory} />
         <Stack.Screen name="BookDetails" component={BookDetail} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="FAQ" component={FAQ} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
+        <Stack.Screen name="AllPayment" component={AllPayment} />
       </Stack.Navigator>
     </NavigationContainer>
   );

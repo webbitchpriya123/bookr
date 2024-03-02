@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
     StyleSheet,
     Text,
@@ -7,15 +7,61 @@ import {
     Image,
     TouchableOpacity,
     TextInput,
-    ScrollView
+    ScrollView,
+    ActivityIndicator
 } from 'react-native';
 import Header from "../header/header";
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ApiUrl, api, getProfile } from '../constant/constant';
+import axios from 'axios';
+
+
 
 export default function Profile(props) {
+
+    const [load, setLoad] = useState(true);
+    const [profile, setProfile] = useState({});
+
+    useEffect(() => {
+        getProfile();
+        setLoad(true);
+    }, []);
+
+    // Function to load stored value
+    const getProfile = async () => {
+        try {
+            const value = await AsyncStorage.getItem('user_id');
+            const token = await AsyncStorage.getItem('token');
+            if (value) {
+                axios({
+                    method: 'post',
+                    url: ApiUrl + api + getProfile,
+                    headers: {
+                        Authorization: "Bearer " + JSON.parse(token),
+                    },
+                    data: {
+                        user_id: value,
+                    }
+                }).then((response) => {
+                    if(response.data.result === true){
+                        setProfile(response.data.data);
+                        setLoad(false);
+                    }else{
+                        alert('failed')
+                    }
+                }).catch((error) => {
+                    console.log("error", error)
+                });
+            }
+        }
+        catch (error) {
+            console.error('Error loading stored value:', error);
+        }
+    };
+
     return (
         <SafeAreaView style={styles.containerView}>
             <Header props={props} />
@@ -24,12 +70,12 @@ export default function Profile(props) {
                     <View style={styles.flexContainer}>
                         <View style={styles.flex7}>
                             <View style={styles.flexEnd}>
-                                <Image source={{ uri: 'https://img.freepik.com/free-vector/portrait-boy-with-brown-hair-brown-eyes_1308-146018.jpg' }} style={styles.imageContainer} />
+                                <Image source={{ uri: profile.image }} style={styles.imageContainer} />
                                 <Text style={styles.userName}>Andrew Ainsley</Text>
                                 <Text style={styles.number}>+91 8745946943</Text>
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.flex3} onPress={()=>props.navigation.navigate('EditProfile')}>
+                        <TouchableOpacity style={styles.flex3} onPress={() => props.navigation.navigate('EditProfile')}>
                             <Text style={styles.editProfile}>Edit Profile</Text>
                         </TouchableOpacity>
                     </View>
@@ -39,16 +85,15 @@ export default function Profile(props) {
                         <TextInput
                             editable={false}
                             style={styles.input}
-                            placeholder="Andrew Ainsely"
+                            placeholder={profile.name ? profile.name : 'Name'}
                             placeholderTextColor={'#7F8192'}
                         />
-
                         <Text style={styles.name}>Email</Text>
 
                         <TextInput
                             style={styles.input}
                             editable={false}
-                            placeholder="andrew@gmail.com"
+                            placeholder={profile.email ? profile.email : 'Email'}
                             placeholderTextColor={'#7F8192'}
                         />
 
@@ -57,36 +102,32 @@ export default function Profile(props) {
                         <TextInput
                             style={styles.input}
                             editable={false}
-                            placeholder="+91 9878748978"
+                            placeholder={profile.phone ? profile.phone : 'Phone Number'}
                             placeholderTextColor={'#7F8192'}
                         />
                         <Text style={styles.name}>State</Text>
                         <TextInput
                             editable={false}
                             style={styles.input}
-                            placeholder="TamilNadu"
+                            placeholder= {profile.state ? profile.state : 'State'}
                             placeholderTextColor={'#7F8192'}
                         />
-
-
                         <View style={styles.flexEven}>
                             <View style={styles.flex4}>
                                 <Text style={styles.name}>District</Text>
                                 <TextInput
                                     style={styles.input}
                                     editable={false}
-                                    placeholder="Coimbatore"
+                                    placeholder= {profile.district ? profile.district : 'District'}
                                     placeholderTextColor={'#7F8192'}
                                 />
-
                             </View>
                             <View style={styles.flex4}>
                                 <Text style={styles.name}>City</Text>
-
                                 <TextInput
                                     style={styles.input}
                                     editable={false}
-                                    placeholder="R.S Puram"
+                                    placeholder={profile.city ? profile.city :'City'}
                                     placeholderTextColor={'#7F8192'}
                                 />
                             </View>
@@ -97,27 +138,31 @@ export default function Profile(props) {
                         <TextInput
                             style={styles.input}
                             editable={false}
-                            placeholder="11/24 - AI warsan"
+                            placeholder={profile.address ? profile.address :'Address'}
                             placeholderTextColor={'#7F8192'}
                         />
                         <Text style={styles.name}>Pin code</Text>
                         <TextInput
                             editable={false}
                             style={styles.input}
-                            placeholder="623442"
+                            placeholder={profile.pin_code ? profile.pin_code :'Pin Code'}
                             placeholderTextColor={'#7F8192'}
                         />
                     </View>
-                    <TouchableOpacity onPress={() =>{
+                    <TouchableOpacity onPress={() => {
                         AsyncStorage.removeItem('user_id');
-                         props.navigation.navigate('Login')
-                         }} style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
+                        props.navigation.navigate('Login')
+                    }} style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
                         <MaterialCommunityIcons name="logout" size={25} color={color.red} />
                         <Text style={styles.logout} >Logout</Text>
-
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
+            {load ?
+                <View style={{ flex: 0.45 }}>
+                    <ActivityIndicator size="large" color={color.black} />
+                </View> : null}
 
 
         </SafeAreaView>
