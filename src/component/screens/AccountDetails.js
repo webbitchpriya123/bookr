@@ -6,7 +6,6 @@ import {
     StyleSheet,
     Text,
     Image,
-    useColorScheme,
     View,
     TouchableOpacity,
     ImageBackground,
@@ -18,15 +17,14 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
-import * as Images from '../config/constants';
 import axios from 'axios';
-import LinearGradient from 'react-native-linear-gradient';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImagePicker from 'react-native-image-crop-picker';
-import { RadioButton,Snackbar } from 'react-native-paper';
+import { RadioButton, Snackbar } from 'react-native-paper';
 import HeaderComp from '../header/headerComp';
-import { ApiUrl, api, banks, addBankDetails } from '../constant/constant';
+import { ApiUrl, api, addBankDetails } from '../constant/constant';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getBank } from "../config/getAllApi";
 
 
 
@@ -46,7 +44,6 @@ export default function AccountDetails(props) {
         acNo: '',
         upi: ''
     })
-
     const [error, setError] = useState({
         bankErr: '',
         nameErr: '',
@@ -57,20 +54,14 @@ export default function AccountDetails(props) {
     const [isFocus, setIsFocus] = useState(false);
 
     useEffect(() => {
-        getBank();
+        getBanks();
     }, []);
 
-    const getBank = async () => {
-        await axios({
-            method: 'get',
-            url: ApiUrl + api + banks,
-        }).then((response) => {
-            setBank(response.data.data)
-        }).catch((error) => {
-            console.log("error", error)
-        });
+    const getBanks = async () =>{
+        const bank = await getBank();
+        setBank(bank);
+    }
 
-    };
 
     const onTextChange = (name) => (value) => {
         setData({
@@ -80,11 +71,10 @@ export default function AccountDetails(props) {
         setError({ error: false })
     };
 
-
     const getApi = async () => {
-
         const value = await AsyncStorage.getItem('user_id');
         const token = await AsyncStorage.getItem('token');
+        console.log("vallalala",value , token)
         const formData = new FormData();
         formData.append('user_id', value);
         formData.append('bank_name', data.value);
@@ -93,14 +83,12 @@ export default function AccountDetails(props) {
         formData.append('account_number', data.acNo);
         {
             data.upi ?
-            formData.append('upi_id', data.upi) : null
+                formData.append('upi_id', data.upi) : null
         }
         {
             data.image ?
-            formData.append('qr_code', image) : null
+                formData.append('qr_code', image) : null
         }
-
-
         if (value) {
             await axios.post(
                 ApiUrl + api + addBankDetails,
@@ -113,13 +101,13 @@ export default function AccountDetails(props) {
                     },
                 }
             ).then((response) => {
-                console.log("response", response.data)
+                console.log("ressssss",response.data)
                 if (response.data.status === 'success') {
                     setLoad(false);
                     setVisible(true)
                     setMessage(response.data.message)
                     setTimeout(() => {
-                        props.navigation.goBack();
+                        props.navigation.navigate('AllPayment',{id :''});
                     }, 1000);
                     setData('')
 
@@ -148,12 +136,10 @@ export default function AccountDetails(props) {
             };
             console.log('imageee', image.uri)
             setImage(imageObject)
-
         });
     };
 
     const onSubmit = () => {
-
         if (checked === 'first') {
             if (!data.value) {
                 setError({ bankErr: 'Bank name is required.' });
@@ -161,10 +147,8 @@ export default function AccountDetails(props) {
                 setError({ nameErr: 'Enter Account Holders Name.' });
             } else if (!data.ifsc) {
                 setError({ ifscErr: 'Enter your IFSC Code.' });
-
             } else if (!data.acNo) {
                 setError({ acErr: 'Enter your Account Number' });
-
             } else {
                 setLoad(true)
                 getApi();
@@ -172,7 +156,6 @@ export default function AccountDetails(props) {
         } else if (checked === 'second') {
             if (data.upi === '') {
                 setError({ upiErr: 'Enter your UPI ID' });
-
             } else {
                 setLoad(true)
                 getApi();
@@ -239,7 +222,6 @@ export default function AccountDetails(props) {
                         />
                         {error.nameErr ? <Text style={styles.errorStyle}>{error.nameErr}</Text> : null}
 
-
                         <View style={styles.ifsc}>
                             <TextInput
                                 style={{
@@ -260,7 +242,6 @@ export default function AccountDetails(props) {
                         {error.ifscErr ? <Text style={styles.errorStyle}>{error.ifscErr}</Text> : null}
 
                         <View style={styles.ifsc}>
-
                             <TextInput
                                 style={{ width: '88%', marginLeft: 5, color: '#7F8192' }}
                                 onChangeText={onTextChange("acNo")}
@@ -287,7 +268,6 @@ export default function AccountDetails(props) {
                         onPress={() => setChecked('second')}
                     />
                     <Text style={[styles.title, { fontWeight: checked === 'second' ? '700' : '600' }]}>UPI Details</Text>
-
                 </View>
 
 
@@ -308,7 +288,6 @@ export default function AccountDetails(props) {
 
                     : null}
 
-
                 <View style={styles.radio}>
                     <RadioButton
                         value="third"
@@ -324,8 +303,6 @@ export default function AccountDetails(props) {
                         <TouchableOpacity style={styles.uploadView} onPress={() => openImagePicker()}>
                             <Text style={styles.uploadText}>UPLOAD</Text>
                         </TouchableOpacity>
-
-                        {console.log("imageuri", image)}
                         {image.uri ?
                             <Image source={{ uri: image.uri }} style={{ marginTop: 20, height: 120, width: 120 }} /> : null}
                     </View> : null}

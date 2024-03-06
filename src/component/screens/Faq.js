@@ -1,64 +1,85 @@
-import React from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, FlatList, TouchableOpacity, Dimensions, ActivityIndicator, ScrollView } from 'react-native';
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
 import { List } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaFrame } from 'react-native-safe-area-context';
 import Header from '../header/header';
+import { getFaq } from "../config/getAllApi";
+import { useIsFocused } from "@react-navigation/native";
 
 
 
 export default function FAQ(props) {
     const [expanded, setExpanded] = React.useState(false);
+    const [FAQ, setFAQ] = useState([]);
+    const [load, setLoad] = useState(false);
+
+    const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height
     const handlePress = () => setExpanded(!expanded);
-    // console.log("global",this.props.route.params.bottom)
+
+    const isFocused = useIsFocused();
+  
+    useEffect(() => {
+        getFAQ();
+        setLoad(true)
+    }, [isFocused]);
+
+    const getFAQ = async () => {
+        const state = await getFaq();
+        setLoad(false);
+        setFAQ(state);
+    }
+
     return (
         <SafeAreaView style={styles.safeArea}>
-            <Header props={props}/>
-           
+            <Header props={props} />
+            <ScrollView>
+
+
             <View style={styles.container}>
                 <Text style={styles.title}>FAQ's</Text>
-                <List.Section >
-                    <View style={styles.listSection}
-                    >
+                <FlatList
+                    data={FAQ}
+                    contentContainerStyle={{ width: windowWidth - 30 }}
+                    vertical
+                    // numColumns={3}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ item, index }) =>
+                        <List.Section >
+                            <View style={styles.listSection}
+                            >
+                                <List.Accordion
+                                    // expanded={expanded}
+                                    // onPress={handlePress}
+                                    title={item.question}
+                                    titleStyle={{ color: color.darkBlack }}
+                                    style={{ backgroundColor: color.white, borderRadius: 10 }}
+                                >
+                                    <Text style={styles.accordianList}>{item.answer}</Text>
+                                </List.Accordion>
+                            </View>
+                        </List.Section>
+                    }
+                    keyExtractor={item => item}
+                />
 
-                        <List.Accordion
-                            // expanded={expanded}
-                            // onPress={handlePress}
-                            title="What is Usedbookr?"
-                            titleStyle={{ color: color.darkBlack }}
-                            style={{ backgroundColor: color.white, borderRadius: 10 }}
-                        >
-                            <Text style={styles.accordianList}>Lorem ipsum dolor sit amet, consectetur adispicing elit. Vestibulum mollis nunc a molestic dictum.</Text>
-                        </List.Accordion>
-                    </View>
 
 
-                    <View style={styles.accordian}>
-                        <List.Accordion
-                            expanded={expanded}
-                            onPress={handlePress}
-                            title="Our Mission?"
-                            titleStyle={{ color: color.darkBlack }}
-                            style={{ backgroundColor: color.white, borderRadius: 10 }}
-                        >
-                            <Text style={styles.accordianList}>Lorem ipsum dolor sit amet, consectetur adispicing elit. Vestibulum mollis nunc a molestic dictum.</Text>
-                        </List.Accordion>
-                    </View>
-
-                    <View style={styles.accordian}>
-                        <List.Accordion
-                            // expanded={expanded}
-                            // onPress={handlePress}
-                            title="How do i Sign up?"
-                            titleStyle={{ color: color.darkBlack }}
-                            style={{ backgroundColor: color.white, borderRadius: 10 }}
-                        >
-                            <Text style={styles.accordianList}>Lorem ipsum dolor sit amet, consectetur adispicing elit. Vestibulum mollis nunc a molestic dictum.</Text>
-                        </List.Accordion>
-                    </View>
-                </List.Section>
             </View>
+
+            {!FAQ.length &&!load?
+                    <View style={{marginTop:windowHeight / 3,alignSelf:'center'}}>
+                        <Text style={styles.title}>No Data Found</Text>
+                    </View>:null}
+            </ScrollView>
+
+
+            {load ?
+                <View style={[styles.loader, { top: windowHeight / 2 }]}>
+                    <ActivityIndicator size={'large'} color={color.green} />
+                </View> : null}
 
         </SafeAreaView>
 
@@ -72,6 +93,7 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20,
     },
+    loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 52 },
     title: { fontWeight: '700', fontSize: 16, fontFamily: font.acari, color: color.black, paddingBottom: 10 },
     accordian: { backgroundColor: 'white', elevation: 5, marginTop: 15, borderRadius: 10 },

@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, {
+    useState, useEffect
+} from "react";
 import {
     SafeAreaView,
     ScrollView,
@@ -9,52 +11,42 @@ import {
     useColorScheme,
     View,
     TouchableOpacity,
-    ImageBackground,
     FlatList,
-    TextInput
+    TextInput,
+    ActivityIndicator,
+    Dimensions
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import LinearGradient from 'react-native-linear-gradient';
-import * as images from '../config/constants';
-import { Tooltip } from "react-native-paper";
-
+import { bookDetail } from "../config/getAllApi";
+import moment from "moment";
+import { useIsFocused } from "@react-navigation/native";
 
 
 export default function BookDetail(props) {
+    const windowHeight = Dimensions.get('window').height
+
+    const isFocused = useIsFocused();
+    const [bookData, setBookData] = useState([]);
+    const [load , setLoad] = useState(false);
+
+    useEffect(() => {
+        bookHistory();
+        setLoad(true);
+    }, [isFocused]);
+
+    console.log("propsss", props.route.params.id)
+
+    const bookHistory = async () => {
+        const allBook = await bookDetail(props.route.params.id);
+        setBookData(allBook);
+        setLoad(false);
+    }
+ 
 
 
-    const books = [
-        {
-            image: images.Book1,
-        },
-        {
-            image: images.Book2,
-        },
-        {
-            image: images.Book3,
-        },
-        {
-            image: images.Book4,
-        },
-        {
-            image: images.Book1,
-        },
-        {
-            image: images.Book2,
-        },
-    ]
-
-
-
-    const [text, setText] = useState('');
-    const [name, setName] = useState('');
-    const [isbn, setIsbn] = useState('');
-    const [offer, setOffer] = useState('');
-
-
-    // console.log("setstate", images)
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
@@ -72,46 +64,39 @@ export default function BookDetail(props) {
                 <View style={styles.container}>
                     <Text style={styles.title}>Your book details</Text>
                     <View>
-                        <Text style={styles.name}>Book Name</Text>
+                        <Text style={styles.name}>ISBN</Text>
                         <TextInput
                             editable={false}
                             style={styles.input}
-                            value={text}
-                            placeholder="sudha murthy english text book"
+                            placeholder={bookData.isbn_no}
                             placeholderTextColor={'#7F8192'}
                         />
-
-                        <Text style={styles.name}>Author Name</Text>
+                        <Text style={styles.name}>Upload Date</Text>
 
                         <TextInput
                             style={styles.input}
-                            value={name}
                             editable={false}
-                            placeholder="Lisa Jewel"
+                            placeholder={moment(bookData.created_at).format('DD/MM/YYYY')}
                             placeholderTextColor={'#7F8192'}
                         />
-
-                        <Text style={styles.name}>ISBN Number</Text>
+                        <Text style={styles.name}>Approved Date</Text>
 
                         <TextInput
                             style={styles.input}
-                            value={isbn}
                             editable={false}
-                            placeholder="8255532223454"
+                            placeholder={bookData.approved_date ? moment(bookData.approved_date).format('DD/MM/YYYY')  : '-'}
                             placeholderTextColor={'#7F8192'}
                         />
-                        <Text style={styles.name}>Category</Text>
+                        <Text style={styles.name}>Approved amount</Text>
                         <TextInput
                             editable={false}
                             style={styles.input}
-                            onChangeText={(text) => setOffer(text)}
-                            value={offer}
-                            placeholder="Education"
+                            placeholder={bookData.amount ? bookData.amount : '-'}
                             placeholderTextColor={'#7F8192'}
                         />
 
 
-                        <Text style={styles.name}>Book printed price</Text>
+                        {/* <Text style={styles.name}>Book printed price</Text>
 
                         <View style={styles.printedView}>
 
@@ -131,9 +116,9 @@ export default function BookDetail(props) {
 
                             </TouchableOpacity>
 
-                        </View>
+                        </View> */}
 
-                        <Text style={styles.name}>Condition</Text>
+                        {/* <Text style={styles.name}>Condition</Text>
                         <TextInput
                             style={styles.input}
                             onChangeText={(text) => setOffer(text)}
@@ -141,9 +126,9 @@ export default function BookDetail(props) {
                             editable={false}
                             placeholder="Good"
                             placeholderTextColor={'#7F8192'}
-                        />
+                        /> */}
 
-                        <Text style={styles.name}>Offered price</Text>
+                        {/* <Text style={styles.name}>Offered price</Text>
 
                         <TextInput
                             style={styles.input}
@@ -152,18 +137,18 @@ export default function BookDetail(props) {
                             editable={false}
                             placeholder="750"
                             placeholderTextColor={'#7F8192'}
-                        />
+                        /> */}
 
                     </View>
                     <Text style={[styles.title, { marginTop: 15, marginBottom: 10 }]}>Add your book images</Text>
 
                     <FlatList
-                        data={books}
+                        data={bookData.images}
                         horizontal
-                        showsVerticalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
                         renderItem={({ item, index }) =>
                             <View style={{ padding: 6 }} key={index}>
-                                <Image source={item.image} />
+                                <Image source={{ uri: item.path }} style={{ height: 140, width: 100 }} />
                             </View>
 
                         }
@@ -173,6 +158,10 @@ export default function BookDetail(props) {
                 </View>
 
             </ScrollView>
+            {load ?
+                <View style={[styles.loader, { top: windowHeight / 2 }]}>
+                    <ActivityIndicator size={'large'} color={color.green} />
+                </View> : null}
 
         </SafeAreaView>
     )
@@ -192,6 +181,7 @@ const styles = StyleSheet.create({
         marginTop: 12,
         backgroundColor: '#F5F6FA'
     },
+    loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
     container: { padding: 15 },
     header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },

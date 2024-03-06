@@ -36,15 +36,18 @@ import Profile from './src/component/screens/Profile.js';
 import FAQ from './src/component/screens/Faq.js';
 import EditProfile from './src/component/screens/EditProfile.js';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, TransitionPresets } from '@react-navigation/native-stack';
 import OtpLogin from './src/component/screens/OtpLogin.js';
 import Register from './src/component/screens/Register.js';
 import PaymentDetails from './src/component/screens/PaymentDetails.js';
 import AllPayment from './src/component/screens/AllPayment.js';
+import messaging from '@react-native-firebase/messaging';
 
 
 const Stack = createNativeStackNavigator();
 const App = () => {
+
+
 
   const [localValue, setLocal] = useState(null);
   const isDarkMode = useColorScheme() === 'dark';
@@ -54,7 +57,41 @@ const App = () => {
 
   useEffect(() => {
     loadStoredValue();
+    requestUserPermission();
+    getToken();
+
   }, []);
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+
+  const getToken = async () => {
+
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        console.log('Notification caused app to open from quit state:');
+        if (remoteMessage) {
+          console.log(remoteMessage.notification);
+        }
+      });
+    const fcmtoken = await messaging().getToken();
+    console.log("fcmmmm", fcmtoken)
+
+
+    // getDeviceToken.then( async (token) => {
+    //   console.log('promise token: ', token);
+    // }
+
+  }
+
 
   // Function to load stored value
   const loadStoredValue = async () => {
@@ -69,11 +106,16 @@ const App = () => {
       console.error('Error loading stored value:', error);
     }
   };
-
+  const forFade = ({ current }) => ({
+    cardStyle: {
+      opacity: current.progress,
+    },
+  });
   console.log("local", localValue)
   if (localValue === null) {
     return <View />;
   }
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -81,8 +123,10 @@ const App = () => {
           headerShown: false,
           animation: 'slide_from_right',
           animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          cardStyleInterpolator: forFade,
         }}
-        initialRouteName={localValue ? "AllPayment" : "Login"}
+        initialRouteName={localValue ? "Home" : "Login"}
       >
         <Stack.Screen
           name="Login"

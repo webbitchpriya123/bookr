@@ -23,6 +23,11 @@ export default function Login(props) {
     const [load, setLoad] = useState(false);
     const windowWidth = Dimensions.get('window').width;
 
+    const updateState = () => {
+        setMobileNumber('');
+        setPassword('');
+    }
+
     const authLogin = () => {
         axios.post(ApiUrl + api + login, {
             phone_or_email: mobileNumber,
@@ -33,6 +38,7 @@ export default function Login(props) {
                 if (response.data.data) {
                     AsyncStorage.setItem("user_id", JSON.stringify(response.data.data.user.id))
                     AsyncStorage.setItem("token", JSON.stringify(response.data.data.token))
+                    updateState();
                     setMessage('Login Successfully.')
                     // ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
                     setVisible(true);
@@ -41,11 +47,13 @@ export default function Login(props) {
                     }, 1000);
 
                 } else {
+                    updateState();
                     setVisible(true);
                     setMessage(response.data.message)
                 }
             })
             .catch((error) => {
+                updateState();
                 setLoad(false);
                 setVisible(true);
                 setMessage(error.data.message)
@@ -75,7 +83,7 @@ export default function Login(props) {
 
     }
 
-console.log("globall",global.user_id)
+    console.log("globall", global.user_id)
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -99,6 +107,7 @@ console.log("globall",global.user_id)
                                 setMobileNumber(text)
                                 setMobileErr(false)
                             }}
+                            contextMenuHidden={true}
                             value={mobileNumber}
                             placeholder="Enter you email / Phone number"
                             placeholderTextColor="#47436A"

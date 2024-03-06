@@ -1,5 +1,5 @@
-import React, { useState, useCallback ,useEffect } from 'react';
-import { View, StyleSheet, Text, SafeAreaView,RefreshControl, Linking, FlatList, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, StyleSheet, Text, SafeAreaView, RefreshControl, Linking, FlatList, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
 import * as images from '../config/constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -8,6 +8,7 @@ import * as font from '../../fonts/fonts';
 import YoutubePlayer from "react-native-youtube-iframe";
 import Header from '../header/header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { accountStatus, bookCounts } from "../config/getAllApi";
 
 
 
@@ -17,35 +18,66 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Home = (props) => {
 
     const [local, setLocal] = useState('');
-    const books = [{
-        number: 130,
-        status: 'Sold books'
-    },
-    {
-        number: 118,
-        status: 'Approved'
-    },
-    {
-        number: 19,
-        status: 'Declined'
-    }]
+    const [booksts, setBookSts] = useState({});
+    const [acSts, setAcSts] = useState({});
+    const [arr, setArr] = useState([]);
+  
 
     useEffect(() => {
         loadStoredValue();
-      }, []);
-    
-      // Function to load stored value
-      const loadStoredValue = async () => {
-        try {
-          const value = await AsyncStorage.getItem('user_id');
-          if (value !== null) {
-            setLocal(value);
-          }
-         
-        } catch (error) {
-          console.error('Error loading stored value:', error);
+    }, []);
+
+    // Function to load stored value
+    const loadStoredValue = async () => {
+        const bookStatus = await bookCounts();
+        const array = [];
+        if (bookStatus.soldbook) {
+            array.push({
+                number: bookStatus.soldbook,
+                status: 'Sold books'
+            });
+        }else{
+            array.push({
+                number: 0,
+                status: 'Sold books'
+            });
         }
-      };
+        if (bookStatus.approvedbook) {
+            array.push({
+                number: bookStatus.approvedbook,
+                status: 'Approved'
+            });
+        }else{
+            array.push({
+                number: 0,
+                status: 'Approved'
+            });
+        }
+        if (bookStatus.declinedbook) {
+            array.push({
+                number: bookStatus.declinedbook,
+                status: 'Declined'
+            });
+        }else{
+            array.push({
+                number: 0,
+                status: 'Declined'
+            });
+        }
+        setArr(array);
+        const account = await accountStatus();
+        setBookSts(bookStatus);
+        setAcSts(account);
+        try {
+            const value = await AsyncStorage.getItem('user_id');
+            if (value !== null) {
+                setLocal(value);
+            }
+
+        } catch (error) {
+            console.error('Error loading stored value:', error);
+        }
+    };
 
     const windowWidth = Dimensions.get('window').width;
     const [playing, setPlaying] = useState(false);
@@ -67,15 +99,17 @@ const Home = (props) => {
             .then(() => console.log('WhatsApp opened'))
             .catch((err) => console.error('An error occurred: ', err));
     };
-    console.log("logss", windowWidth / 3.5 , local)
-    
+    console.log("logss", windowWidth / 3.5, local)
+
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
             setRefreshing(false);
-        }, 1000);
+        }, 800);
     }, []);
 
+
+    console.log('accountSts', arr, booksts, acSts)
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Header props={props} />
@@ -85,13 +119,13 @@ const Home = (props) => {
                 <View style={styles.conatiner}>
                     <Text style={styles.title}>Dashboard</Text>
                     <FlatList
-                        data={books}
-                        contentContainerStyle={{ justifyContent: 'space-between', width: windowWidth - 30 }}
+                        data={arr}
+                        contentContainerStyle={{ justifyContent: 'space-between', width: windowWidth - 40 }}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item, index }) =>
                             <TouchableOpacity>
-                                <TouchableOpacity style={{ height: windowWidth / 4, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth / 4, borderRadius: 10, marginLeft: 8, marginRight: 8, justifyContent: 'center' }}>
+                                <TouchableOpacity style={{ height: windowWidth / 3.74, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth /3.74, borderRadius: 10, marginLeft: 8, marginRight: 8, justifyContent: 'center' }}>
                                     <Text style={styles.number}>{item.number}</Text>
                                     <Text style={styles.status}>{item.status}</Text>
                                 </TouchableOpacity>
@@ -125,6 +159,14 @@ const Home = (props) => {
                         </View>
 
                     </TouchableOpacity>
+                    {acSts.status === true ?
+                    <TouchableOpacity onPress={() => props.navigation.navigate('PaymentDetails')} style={[styles.sellContainer, { marginTop: 15, backgroundColor: '#FFCB00' }]}>
+                        <Text style={[styles.sellBooks, { color: color.black }]}>AccountDetails</Text>
+                        <View style={styles.arrowBox}>
+                            <AntDesign name="arrowright" color={color.darkBlue} size={25} style={{ alignSelf: 'center' }} />
+                        </View>
+
+                    </TouchableOpacity> :null}
                     <View style={{ marginTop: 20 }}>
                         <YoutubePlayer
                             height={230}

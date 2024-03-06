@@ -32,6 +32,14 @@ export default function Register(props) {
     const [message, setMessage] = useState('');
     const windowWidth = Dimensions.get('window').width;
 
+    const updateState = () =>{
+        setMobileNumber('');
+        setEmail('');
+        setPassword('');
+        setCnfmPAssword('');
+        setName('');
+    }
+
 
     const onRegister = async () => {
 
@@ -42,22 +50,30 @@ export default function Register(props) {
             password_confirmation: cnfmPassword,
             phone: mobileNumber
         }).then((response) => {
+
+            console.log("respoonnsfs",response.data)
+
             setLoad(false);
             if (response.data.status === 'success') {
-                setVisible(true)
+                setVisible(true);
                 global.userId = response.data.data.user.id;
                 setMessage('Register sucessfully');
+                updateState();
                 setTimeout(() => {
-                    // props.navigation.navigate('Login')
                     props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.user.verification_code, user_id: response.data.data.user.id, type: 'Login',name:'Register' })
                 }, 1000);
             } else {
-                setMessage('Already exists')
+                setLoad(false)
+                setVisible(true);
+                updateState();
+                setMessage('Already Exist.')
             }
         }).catch((error) => {
+            setVisible(true);
+            updateState();
+            setMessage('User Already Exist.')
             setLoad(false)
-            setMessage('Already exists')
-            console.log("error", error)
+            console.log("error", error.message)
         });
 
     }

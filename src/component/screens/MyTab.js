@@ -6,6 +6,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Home from './Home';
 import Profile from './Profile';
 import ReSell from './ReSell';
+import BookHistory from './BookHistory';
 import * as color from '../../colors/colors';
 import FAQ from './Faq';
 
@@ -34,11 +35,14 @@ export default function MyTab() {
                                     <View style={styles.tabContainer}>
                                         <AntDesign name="home" size={25} color={color.darkBlue} />
                                         <Text style={styles.label}>Home</Text>
-                                    </View> : <View><AntDesign name="home" size={25} color={color.darkBlue} /></View>}</View>
+                                    </View> : <View style={styles.flexContainer}>
+                                        <AntDesign name="home" size={25} color={color.darkBlue} />
+                                        <Text style={styles.label}>Home</Text>
+                                        </View>}</View>
                         ),
 
                     }} />
-                <Tab.Screen name="ReSell" component={ReSell}
+                <Tab.Screen name="BookHistory" component={BookHistory}
                     options={{
                         headerTitleAlign: 'center',
                         tabBarIcon: ({ focused }) => (
@@ -48,8 +52,9 @@ export default function MyTab() {
                                         <Feather name="book" size={23} color={color.darkBlue} />
                                         <Text style={styles.label}>Book</Text>
                                     </View> :
-                                    <View>
+                                    <View style={styles.flexContainer}>
                                         <Feather name="book" size={23} color={color.darkBlue} />
+                                        <Text style={styles.label}>Book</Text>
                                     </View>}
                             </View>
 
@@ -67,9 +72,9 @@ export default function MyTab() {
                                         <AntDesign name="questioncircleo" size={23} color={color.darkBlue} />
                                         <Text style={styles.label}>FAQ's</Text>
                                     </View> :
-                                    <View>
+                                    <View style={styles.flexContainer}>
                                         <AntDesign name="questioncircleo" size={23} color={color.darkBlue} />
-
+                                        <Text style={styles.label}>FAQ's</Text>
                                     </View>}
                             </View>
 
@@ -85,8 +90,9 @@ export default function MyTab() {
                                         <Feather name="user" size={24} color={color.darkBlue} />
                                         <Text style={styles.label}>Profile</Text>
                                     </View> :
-                                    <View>
+                                    <View style={styles.flexContainer}>
                                         <Feather name="user" size={24} color={color.darkBlue} />
+                                        <Text style={styles.label}>Profile</Text>
                                     </View>}
                             </View>
 
@@ -103,6 +109,7 @@ export default function MyTab() {
 
 const styles = StyleSheet.create({
     label: { marginLeft: 7, fontSize: 12, fontWeight: '500', color: color.darkBlue },
-    tabContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: color.yellow, height:40,width:90,borderRadius: 23,justifyContent:'center'}
+    tabContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: color.yellow, height:40,width:90,borderRadius: 23,justifyContent:'center'},
+    flexContainer:{flexDirection:'row',alignItems:'center'}
 
 })

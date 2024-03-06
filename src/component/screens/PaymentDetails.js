@@ -20,35 +20,34 @@ import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import * as Images from '../config/constants';
 import axios from 'axios';
-import { RadioButton, Snackbar } from 'react-native-paper';
 import HeaderComp from '../header/headerComp';
-import { ApiUrl, api, banks, selectBankAccount } from '../constant/constant';
+import { ApiUrl, api, selectBankAccount } from '../constant/constant';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from "@react-navigation/native";
 
 
 
 export default function PaymentDetails(props) {
-    const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height
     const [load, setLoad] = useState(false);
     const [bank, setBank] = useState([]);
+    const isFocused = useIsFocused();
 
 
 
     useEffect(() => {
         setLoad(true);
         getApi();
-    }, []);
+    }, [isFocused]);
 
 
 
 
     const getApi = async () => {
-
         const value = await AsyncStorage.getItem('user_id');
         const token = await AsyncStorage.getItem('token');
+        console.log("tokemee", token)
         if (value) {
-            console.log("valllll", value)
             axios({
                 method: 'post',
                 url: ApiUrl + api + selectBankAccount,
@@ -63,24 +62,23 @@ export default function PaymentDetails(props) {
                 if (response.data.result === true) {
                     setBank(response.data.data)
                     setLoad(false);
-
+                } else {
+                    setBank(false)
+                    setLoad(false)
                 }
             }).catch((error) => {
+                setLoad(false);
                 console.log("error", error)
             })
         }
     }
-
-
-
-
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
             <HeaderComp name={'Payment Details'} props={props} />
             <View style={{ flex: 0.73, padding: 15 }}>
                 <Text style={styles.title}>Default account</Text>
-                {!bank ?
+                {bank ?
                     <View style={styles.mainContainer}>
                         <View style={{ padding: 15 }}>
                             <View style={styles.flexContainer}>
@@ -89,19 +87,19 @@ export default function PaymentDetails(props) {
                             </View>
                             <Text style={styles.textStyle}>{bank.bank_name}</Text>
                             <Text style={styles.textStyle}>IFSC - {bank.ifsc}</Text>
-                            <TouchableOpacity style={styles.flexContainer} onPress={()=>props.navigation.navigate('')}>
+                            <TouchableOpacity style={styles.flexContainer} onPress={() => props.navigation.navigate('AllPayment', { id: bank.id })}>
                                 <Text style={styles.textStyle}>A/C No - {bank.account_number}</Text>
                                 <AntDesign name="right" size={20} color={color.darkGrey} />
                             </TouchableOpacity>
                         </View>
-                    </View> : <TouchableOpacity onPress={()=>props.navigation.navigate('AllPayment')} style={[[styles.flexContainer],[styles.addAccount]]}>
-                        <Text style={[styles.textStyle,{marginLeft:20}]}>Add a new account</Text>
-                        <AntDesign name="right" size={20} color={color.darkGrey} style={{marginRight:10}} />
+                    </View> : <TouchableOpacity onPress={() => props.navigation.navigate('AccountDetails')} style={[[styles.flexContainer], [styles.addAccount]]}>
+                        <Text style={[styles.textStyle, { marginLeft: 20 }]}>Add a new account</Text>
+                        <AntDesign name="right" size={20} color={color.darkGrey} style={{ marginRight: 10 }} />
 
                     </TouchableOpacity>}
             </View>
             <View style={styles.submit}>
-                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => onSubmit()}>
+                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => props.navigation.navigate('AllPayment')}>
                     <View style={styles.loaderView}>
                         <View style={{ flex: 0.55 }}>
                             <Text style={styles.loginText}>SUBMIT</Text>
@@ -122,7 +120,7 @@ export default function PaymentDetails(props) {
 }
 
 const styles = StyleSheet.create({
-    addAccount:{height:60,borderWidth:0.2, borderColor: 'border: Mixed solid #00000017',borderRadius:5,marginTop:20},
+    addAccount: { height: 60, borderWidth: 0.2, borderColor: 'border: Mixed solid #00000017', borderRadius: 5, marginTop: 20 },
     loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
     name: { fontWeight: '500', color: color.black, fontSize: 14, lineHeight: 25 },
     title: { fontFamily: Font.acari, fontWeight: '800', color: color.black, fontSize: 16 },

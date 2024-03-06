@@ -9,19 +9,21 @@ import {
     TextInput,
     ScrollView,
     Dimensions,
-    ActivityIndicator
+    ActivityIndicator,
+    RefreshControl
 } from 'react-native';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import { Dropdown } from 'react-native-element-dropdown';
 import HeaderComp from "../header/headerComp";
-import { ApiUrl, api, States, district, editProfile } from '../constant/constant';
+import { ApiUrl, api, editProfile } from '../constant/constant';
 import axios from 'axios';
 import ImagePicker from 'react-native-image-crop-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Snackbar } from 'react-native-paper';
-
+import { getStates, getDistrict } from "../config/getAllApi";
+import { useIsFocused } from "@react-navigation/native";
 
 
 
@@ -33,33 +35,28 @@ export default function EditProfile(props) {
     const [image, setImage] = useState('');
     const [visible, setVisible] = useState(false);
     const [message, setMessage] = useState('');
-    const windowWidth = Dimensions.get('window').width;
+    const [refreshing, setRefreshing] = React.useState(false);
 
+    const windowWidth = Dimensions.get('window').width;
+    const isFocused = useIsFocused();
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 800);
+    }, []);
     useEffect(() => {
         stateValue();
-    }, []);
+    }, [isFocused]);
 
-    // Function to load stored value
     const stateValue = async () => {
-        axios({
-            method: 'get',
-            url: ApiUrl + api + States,
-        }).then((response) => {
-            setStateVal(response.data.data);
-        }).catch((error) => {
-            console.log("error", error)
-        });
+        const state = await getStates();
+        setStateVal(state);
     }
 
     const DistrictValue = async (id) => {
-        axios({
-            method: 'get',
-            url: ApiUrl + api + district + `/${id ? id : 1}`,
-        }).then((response) => {
-            setDistVal(response.data.data);
-        }).catch((error) => {
-            console.log("error", error)
-        });
+        const district = await getDistrict(id);
+        setDistVal(district);
     }
 
     const openImagePicker = () => {
@@ -126,8 +123,8 @@ export default function EditProfile(props) {
             const formData = new FormData();
             formData.append('user_id', value);
             formData.append('name', state.Name);
-            formData.append('email', state.Email);
-            formData.append('phone', state.Phone);
+            // formData.append('email', state.Email);
+            // formData.append('phone', state.Phone);
             formData.append('state', state.state);
             formData.append('district', state.district);
             formData.append('city', state.city);
@@ -182,15 +179,16 @@ export default function EditProfile(props) {
             });
         } if (!state.Name) {
             setError({ nameError: 'Name is required.' });
-        } else if (!state.Email) {
-            setError({ emailError: 'Email is required.' });
-        }
+        } 
+        // else if (!state.Email) {
+        //     setError({ emailError: 'Email is required.' });
+        // }
         else if (!strongRegex.test(state.Email)) {
             setError({ emailError: 'Invalid Email' });
         }
-        else if (!state.Phone) {
-            setError({ phoneError: 'PhoneNumber is required.' });
-        }
+        // else if (!state.Phone) {
+        //     setError({ phoneError: 'PhoneNumber is required.' });
+        // }
         else if (!state.state) {
             setError({ stateError: 'State is required.' });
         }
@@ -218,7 +216,9 @@ export default function EditProfile(props) {
     return (
         <SafeAreaView style={styles.containerView}>
             <HeaderComp props={props} name={'Edit Profile'} />
-            <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false}>
+            <ScrollView refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            } ref={scrollRef} showsVerticalScrollIndicator={false}>
                 <View style={styles.container}>
 
                     <View style={styles.flexContainer}>
@@ -226,12 +226,14 @@ export default function EditProfile(props) {
                             <TouchableOpacity onPress={() => openImagePicker()}>
                                 {image.uri ?
                                     <Image source={{ uri: image.uri }} style={styles.imageContainer} /> :
-                                    <View style={{ alignSelf: 'center' }}>
-                                        <AntDesign name="camerao" size={90} />
+                                    <View style={styles.camera}>
+                                        <AntDesign name="camerao" size={90} style={{alignSelf:'center'}} />
                                     </View>}
                             </TouchableOpacity>
-                            <Text style={styles.userName}>Andrew Ainsley</Text>
-                            <Text style={styles.number}>+91 8745946943</Text>
+                            <View >
+                            <Text style={styles.userName}>Upload Photo</Text>
+                            </View>
+                            {/* <Text style={styles.number}>Phone Number</Text> */}
                         </View>
                     </View>
                     <View>
@@ -250,26 +252,26 @@ export default function EditProfile(props) {
                         <TextInput
                             spellCheck={false}
                             autoCorrect={false}
-                            value={state.Email}
+                            // value={state.Email}
                             style={[styles.input, { borderWidth: state.Email || error.emailError ? 1 : 0, borderColor: state.Email || error.emailError ? 'gray' : '', backgroundColor: state.Email || error.emailError ? color.white : '#F5F6FA' }]}
-                            placeholder="Email"
-                            placeholderTextColor={'#7F8192'}
-                            onChangeText={onTextChange("Email")}
+                            placeholder="can't update your Email"
+                            editable={false} selectTextOnFocus={false} placeholderTextColor={'#bab9b5'}
+                        // onChangeText={onTextChange("Email")}
                         />
-                        {error.emailError ? <Text style={styles.errorStyle}>{error.emailError}</Text> : null}
-                        <Text style={styles.name}>Phone Number</Text>
+                     {/* {error.emailError ? <Text style={styles.errorStyle}>{error.emailError}</Text> : null} */}
+                     <Text style={styles.name}>Phone Number</Text> 
 
                         <TextInput
                             style={[styles.input, { borderWidth: state.Phone || error.phoneError ? 1 : 0, borderColor: state.Phone || error.phoneError ? 'gray' : '', backgroundColor: state.Phone || error.phoneError ? color.white : '#F5F6FA' }]}
-                            value={state.Phone}
-                            placeholder="Phone Number"
-                            placeholderTextColor={'#7F8192'}
-                            onChangeText={onTextChange("Phone")}
+                            // value={state.Phone}
+                            editable={false} selectTextOnFocus={false} placeholder="can't update your Phone Number"
+                            placeholderTextColor={'#bab9b5'}
+                            // onChangeText={onTextChange("Phone")}
                             keyboardType="numeric"
                             maxLength={10}
 
                         />
-                        {error.phoneError ? <Text style={styles.errorStyle}>{error.phoneError}</Text> : null}
+                        {/* {error.phoneError ? <Text style={styles.errorStyle}>{error.phoneError}</Text> : null} */}
 
                         <Text style={styles.name}>State</Text>
                         <Dropdown
@@ -445,7 +447,7 @@ const styles = StyleSheet.create({
     logView: { height: 55, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
     flexContainer: { flexDirection: 'row', marginTop: 20, alignSelf: 'center' },
     imageContainer: { height: 120, width: 120, borderRadius: 60, alignSelf: 'center' },
-    userName: { fontWeight: '700', fontSize: 20, lineHeight: 24, color: color.black, alignSelf: 'center' },
+    userName: { fontWeight: '700', fontSize: 20, color: color.black, alignSelf: 'center' },
     number: { color: color.liteBlack, fontWeight: '500', fontSize: 14, lineHeight: 21, alignSelf: 'center' },
     name: { color: '#151940', fontWeight: '600', fontSize: 14, lineHeight: 15, marginTop: 15 },
     flex4: { flex: 0.48 },
@@ -481,7 +483,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     errorStyle: { color: 'red', fontSize: 13, fontWeight: '500', marginTop: 8 },
-    loaderView: { flexDirection: 'row', alignItems: 'center', height: 55 }
+    loaderView: { flexDirection: 'row', alignItems: 'center', height: 55 },
+    camera:{ alignSelf: 'center',height:90,width:120 }
 
 
 })

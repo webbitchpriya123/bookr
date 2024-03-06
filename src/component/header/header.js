@@ -12,7 +12,7 @@ const Header = (props) => {
             end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => props.props.navigation.navigate('Profile')}>
-                    <Image source={images.homeBook} style={{ height: 13, width: 130 }} />
+                    <Image source={images.homeBook} style={{ height: 40, width: 200}} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => props.props.navigation.navigate('Notification')}>
                     <Ionicons name='notifications-outline' color={color.white} size={25} />

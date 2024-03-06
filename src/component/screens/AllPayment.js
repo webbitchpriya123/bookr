@@ -13,7 +13,8 @@ import {
     FlatList,
     TextInput,
     ActivityIndicator,
-    Dimensions
+    Dimensions,
+    RefreshControl
 } from 'react-native';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
@@ -23,6 +24,7 @@ import HeaderComp from '../header/headerComp';
 import { ApiUrl, api, getAllBank, deleteBankAcc, upDateBank } from '../constant/constant';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useIsFocused } from "@react-navigation/native";
 
 
 
@@ -31,19 +33,18 @@ export default function AllPayment(props) {
     const windowHeight = Dimensions.get('window').height
     const [load, setLoad] = useState(false);
     const [bank, setBank] = useState([]);
-    const [checked, setChecked] = useState(0);
+    const [checked, setChecked] = useState('');
     const [visible, setVisible] = useState(false);
     const [message, setMessage] = useState('');
-
-
+    const [idVal, setIdVal] = useState(0);
+    const [check, setCheck] = useState(null);
+    const isFocused = useIsFocused();
+    const [refreshing, setRefreshing] = React.useState(false);
 
     useEffect(() => {
         setLoad(true);
         getApi();
-    }, []);
-
-
-
+    }, [isFocused]);
 
     const getApi = async () => {
         const value = await AsyncStorage.getItem('user_id');
@@ -58,9 +59,14 @@ export default function AllPayment(props) {
                 data: {
                     user_id: value,
                 }
-            }).then((response) => {
+            }).then(async (response) => {
                 console.log("response", response.data)
                 if (response.data.result === true) {
+                    if (check === null) {
+                        const index = await response.data.data.findIndex(item => item.id === props.route.params.id);
+                        setChecked(index)
+                    }
+                    setCheck(false)
                     setBank(response.data.data)
                     setLoad(false);
                 }
@@ -71,13 +77,12 @@ export default function AllPayment(props) {
     }
 
 
-    const onRemove = async (id,index) => {
+    const onRemove = async (id, index) => {
         setLoad(true);
         setChecked(index)
         const value = await AsyncStorage.getItem('user_id');
         const token = await AsyncStorage.getItem('token');
         if (value) {
-            console.log("valllll", id)
             axios({
                 method: 'post',
                 url: ApiUrl + api + deleteBankAcc,
@@ -89,13 +94,11 @@ export default function AllPayment(props) {
                     bank_id: id
                 }
             }).then((response) => {
-                console.log("response", response.data)
                 if (response.data.status === 'success') {
                     getApi();
                     setLoad(false);
                     setVisible(true);
                     setMessage(response.data.message)
-
                 }
             }).catch((error) => {
                 console.log("error", error)
@@ -103,7 +106,10 @@ export default function AllPayment(props) {
         }
     }
 
-    const setAsDefault = async (id,index) => {
+
+
+    const setAsDefault = async (id, index) => {
+        console.log("fasfasfasdfasdf", id, index)
         setLoad(true);
         setChecked(index)
         const value = await AsyncStorage.getItem('user_id');
@@ -120,12 +126,15 @@ export default function AllPayment(props) {
                     bank_id: id
                 }
             }).then((response) => {
-                console.log("response", response.data)
+                console.log("defaultresponse", response.data)
                 if (response.data.status === 'success') {
                     getApi();
                     setLoad(false);
                     setVisible(true);
                     setMessage(response.data.message)
+                    setTimeout(() => {
+                        props.navigation.goBack();
+                    }, 1000);
                 }
             }).catch((error) => {
                 console.log("error", error)
@@ -133,14 +142,22 @@ export default function AllPayment(props) {
         }
     }
 
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            getApi()
 
-
+            setRefreshing(false);
+        }, 800);
+    }, []);
+    // console.log('finns', props.route.params.id)
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
             <HeaderComp name={'Payment Details'} props={props} />
             <View style={{ flex: 0.73, padding: 15 }}>
-                <ScrollView>
+                <ScrollView refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
                     <Text style={styles.title}>Choose account Details</Text>
                     <FlatList
                         data={bank}
@@ -149,7 +166,10 @@ export default function AllPayment(props) {
                         // numColumns={3}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item, index }) =>
-                            <TouchableOpacity onPress={() => setChecked(index)} style={[styles.mainContainer, { backgroundColor: checked === index ? '#F1FFF1' : color.white, }]} key={index}>
+                            <TouchableOpacity onPress={() => {
+                                setChecked(index),
+                                    setIdVal(item.id)
+                            }} style={[styles.mainContainer, { backgroundColor: checked === index ? '#F1FFF1' : color.white, }]} key={index}>
                                 <View style={{ padding: 15 }}>
                                     <View style={styles.flexContainer}>
                                         <Text style={styles.name}>{item.account_holder_name}</Text>
@@ -157,7 +177,10 @@ export default function AllPayment(props) {
                                             value="second"
                                             color={color.yellow}
                                             status={checked === index ? 'checked' : 'unchecked'}
-                                            onPress={() => setChecked(index)}
+                                            onPress={() => {
+                                                setChecked(index),
+                                                    setIdVal(item.id)
+                                            }}
                                         />
                                     </View>
                                     <Text style={styles.textStyle}>{item.bank_name}</Text>
@@ -165,8 +188,9 @@ export default function AllPayment(props) {
                                     <Text style={styles.textStyle}>A/C No - {item.account_number}</Text>
 
                                     <View style={styles.views}>
-                                        <TouchableOpacity onPress={() => setAsDefault(item.id,index)} style={styles.defaultView}><Text style={styles.defaultText}>Set as default</Text></TouchableOpacity>
-                                        <TouchableOpacity onPress={() => onRemove(item.id,index)} style={[styles.defaultView,{ marginLeft: 10}]}><Text style={[styles.defaultText,{color: color.red }]}>Remove</Text></TouchableOpacity>
+                                        <TouchableOpacity onPress={() =>
+                                            setAsDefault(item.id, index)} style={styles.defaultView}><Text style={styles.defaultText}>Set as default</Text></TouchableOpacity>
+                                        <TouchableOpacity onPress={() => onRemove(item.id, index)} style={[styles.defaultView, { marginLeft: 10 }]}><Text style={[styles.defaultText, { color: color.red }]}>Remove</Text></TouchableOpacity>
 
                                     </View>
                                 </View>
@@ -182,7 +206,9 @@ export default function AllPayment(props) {
                 </ScrollView>
             </View>
             <View style={styles.submit}>
-                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => onSubmit()}>
+                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]}
+                    onPress={() => setAsDefault(idVal, checked)}
+                >
                     <View style={styles.loaderView}>
                         <View style={{ flex: 0.55 }}>
                             <Text style={styles.loginText}>SUBMIT</Text>
@@ -224,7 +250,7 @@ const styles = StyleSheet.create({
     logView: { height: 55, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
     loaderView: { flexDirection: 'row', alignItems: 'center', height: 55 },
     submit: { flex: 0.13, marginLeft: 15, marginRight: 15 },
-    views:{ flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+    views: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
     flexContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     mainContainer: { height: 180, marginTop: 20, borderWidth: 0.2, borderRadius: 5, borderColor: 'border: Mixed solid #00000017' },
     addAccount: { height: 60, borderWidth: 0.2, borderColor: 'border: Mixed solid #00000017', borderRadius: 5, marginTop: 20 },

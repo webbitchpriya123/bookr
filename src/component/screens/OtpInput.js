@@ -24,9 +24,11 @@ export default function Otp(props) {
     const windowWidth = Dimensions.get('window').width;
 
 
-    // useEffect(() => {
-    //     loadStoredValue();
-    // }, []);
+    useEffect(() => {
+        // console.log("jshafdsasajfasffasdfasdfasfasdfasdfasd" , code)
+        loadStoredValue();
+
+    }, []);
 
 
     // Function to load stored value

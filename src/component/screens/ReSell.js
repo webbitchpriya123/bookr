@@ -70,8 +70,8 @@ export default function ReSell(props) {
         imgName.push(name);
         setArray(imgName);
         ImagePicker.openPicker({
-            width: 100,
-            height: 120,
+            width: 300,
+            height: 450,
             cropping: true
         }).then(image => {
             let filename = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length)
@@ -136,7 +136,7 @@ export default function ReSell(props) {
                     setVisible(true);
                     setMessage(response.data.message)
                     setTimeout(() => {
-                        props.navigation.navigate('Home')
+                        props.navigation.navigate('BookHistory')
                     }, 1000);
                 } else {
                     setArray([]);
@@ -185,8 +185,9 @@ export default function ReSell(props) {
                         setIsbnErr(false)
                     }}
                     value={isbn}
-                    placeholder="ISBN (optional)"
+                    placeholder="ISBN"
                     placeholderTextColor={'#7F8192'}
+                    maxLength={12}
                 />
                 {isbnErr ?
                     <View>

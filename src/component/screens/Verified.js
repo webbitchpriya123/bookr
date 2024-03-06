@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import {
     SafeAreaView,
     ScrollView,
@@ -16,7 +16,17 @@ import LinearGradient from 'react-native-linear-gradient';
 
 
 
+
 export default function Verified(props) {
+
+    useEffect(()=>{
+
+        setTimeout(() => {
+            props.navigation.navigate('Home')
+        }, 500);
+
+    },[])
+    
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
@@ -27,7 +37,9 @@ export default function Verified(props) {
                 <View style={styles.phonenumber}>
                     <Text style={styles.verify}>Verified</Text>
                     <Text style={styles.verifiedPhone}>Your Password has been reset successfully.</Text>
-                    <TouchableOpacity style={styles.logView} onPress={() => props.navigation.navigate('Home')}>
+                    <TouchableOpacity style={styles.logView} onPress={() => 
+                        props.navigation.navigate('Home')
+                        }>
                         <Text style={styles.loginText}>DONE</Text>
                     </TouchableOpacity>
                 </View>
