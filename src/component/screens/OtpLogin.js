@@ -54,7 +54,7 @@ export default function OtpLogin(props) {
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.imageContainer}>
-                    <Image source={images.MainLogo} />
+                    <Image source={images.MainLogo} style={{height:120,width:100}}/>
                     <Text style={styles.welcome}>Welcome Back</Text>
                     <Text style={styles.login}>Login to your account </Text>
                 </View>

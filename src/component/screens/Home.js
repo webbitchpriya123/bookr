@@ -9,7 +9,8 @@ import YoutubePlayer from "react-native-youtube-iframe";
 import Header from '../header/header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { accountStatus, bookCounts } from "../config/getAllApi";
-
+import messaging from '@react-native-firebase/messaging';
+import { PushNotification } from '../config/pushNotification';
 
 
 
@@ -21,7 +22,31 @@ const Home = (props) => {
     const [booksts, setBookSts] = useState({});
     const [acSts, setAcSts] = useState({});
     const [arr, setArr] = useState([]);
-  
+
+
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+
+        const unsubscribeOnNotificationOpenedApp = messaging().onNotificationOpenedApp(remoteMessage => {
+
+            console.log("sfjhsdfjhsdfhskjfdhskgjsd",remoteMessage)
+            // Handle the notification when the app is opened by clicking the notification
+            // Extract the navigation data from remoteMessage.data and navigate accordingly
+            // Use your navigation logic here
+          });
+      
+        // Clean up the subscription when the component unmounts
+        return () => {
+            unsubscribeOnMessage();
+            unsubscribeOnNotificationOpenedApp();
+        }
+        ;
+    }, []); //
+
+
 
     useEffect(() => {
         loadStoredValue();
@@ -36,7 +61,7 @@ const Home = (props) => {
                 number: bookStatus.soldbook,
                 status: 'Sold books'
             });
-        }else{
+        } else {
             array.push({
                 number: 0,
                 status: 'Sold books'
@@ -47,7 +72,7 @@ const Home = (props) => {
                 number: bookStatus.approvedbook,
                 status: 'Approved'
             });
-        }else{
+        } else {
             array.push({
                 number: 0,
                 status: 'Approved'
@@ -58,7 +83,7 @@ const Home = (props) => {
                 number: bookStatus.declinedbook,
                 status: 'Declined'
             });
-        }else{
+        } else {
             array.push({
                 number: 0,
                 status: 'Declined'
@@ -120,12 +145,12 @@ const Home = (props) => {
                     <Text style={styles.title}>Dashboard</Text>
                     <FlatList
                         data={arr}
-                        contentContainerStyle={{ justifyContent: 'space-between', width: windowWidth - 40 }}
+                        contentContainerStyle={{ justifyContent: 'space-between', width: windowWidth - 30 }}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item, index }) =>
                             <TouchableOpacity>
-                                <TouchableOpacity style={{ height: windowWidth / 3.74, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth /3.74, borderRadius: 10, marginLeft: 8, marginRight: 8, justifyContent: 'center' }}>
+                                <TouchableOpacity style={{ height: windowWidth / 3.74, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth / 3.74, borderRadius: 10, marginLeft: 8, marginRight: 8, justifyContent: 'center' }}>
                                     <Text style={styles.number}>{item.number}</Text>
                                     <Text style={styles.status}>{item.status}</Text>
                                 </TouchableOpacity>
@@ -160,13 +185,13 @@ const Home = (props) => {
 
                     </TouchableOpacity>
                     {acSts.status === true ?
-                    <TouchableOpacity onPress={() => props.navigation.navigate('PaymentDetails')} style={[styles.sellContainer, { marginTop: 15, backgroundColor: '#FFCB00' }]}>
-                        <Text style={[styles.sellBooks, { color: color.black }]}>AccountDetails</Text>
-                        <View style={styles.arrowBox}>
-                            <AntDesign name="arrowright" color={color.darkBlue} size={25} style={{ alignSelf: 'center' }} />
-                        </View>
+                        <TouchableOpacity onPress={() => props.navigation.navigate('PaymentDetails')} style={[styles.sellContainer, { marginTop: 15, backgroundColor: '#FFCB00' }]}>
+                            <Text style={[styles.sellBooks, { color: color.black }]}>AccountDetails</Text>
+                            <View style={styles.arrowBox}>
+                                <AntDesign name="arrowright" color={color.darkBlue} size={25} style={{ alignSelf: 'center' }} />
+                            </View>
 
-                    </TouchableOpacity> :null}
+                        </TouchableOpacity> : null}
                     <View style={{ marginTop: 20 }}>
                         <YoutubePlayer
                             height={230}

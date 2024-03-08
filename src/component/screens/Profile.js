@@ -21,7 +21,8 @@ import { ApiUrl, api, userProfile } from '../constant/constant';
 import axios from 'axios';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useIsFocused } from "@react-navigation/native";
-
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 
 export default function Profile(props) {
@@ -31,6 +32,17 @@ export default function Profile(props) {
     const windowHeight = Dimensions.get('window').height
     const [refreshing, setRefreshing] = React.useState(false);
     const isFocused = useIsFocused();
+
+
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
+
 
     useEffect(() => {
         getProfile();
@@ -62,17 +74,28 @@ export default function Profile(props) {
                         setProfile(response.data.data);
                         setLoad(false);
                     } else {
+                        setLoad(false);
                         alert('failed')
                     }
                 }).catch((error) => {
+                    setLoad(false);
                     console.log("error", error)
                 });
             }
         }
         catch (error) {
+            setLoad(false)
             console.error('Error loading stored value:', error);
         }
     };
+
+    const logOut = async() =>{
+        //  await messaging().deleteToken();
+        AsyncStorage.removeItem('user_id');
+        AsyncStorage.removeItem('token');
+        props.navigation.navigate('Login');
+        setProfile('')
+    }
     return (
         <SafeAreaView style={styles.containerView}>
             <Header props={props} />
@@ -162,9 +185,8 @@ export default function Profile(props) {
                         />
                     </View>
                     <TouchableOpacity onPress={() => {
-                        AsyncStorage.removeItem('user_id');
-                        props.navigation.navigate('Login');
-                        setProfile('')
+                        logOut();
+                       
                     }} style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
                         <MaterialCommunityIcons name="logout" size={25} color={color.red} />
                         <Text style={styles.logout} >Logout</Text>

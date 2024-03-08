@@ -23,7 +23,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { bookDetail } from "../config/getAllApi";
 import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
-
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 export default function BookDetail(props) {
     const windowHeight = Dimensions.get('window').height
@@ -44,7 +45,14 @@ export default function BookDetail(props) {
         setBookData(allBook);
         setLoad(false);
     }
- 
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
 
 
     return (

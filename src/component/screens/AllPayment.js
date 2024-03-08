@@ -25,7 +25,8 @@ import { ApiUrl, api, getAllBank, deleteBankAcc, upDateBank } from '../constant/
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useIsFocused } from "@react-navigation/native";
-
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 
 export default function AllPayment(props) {
@@ -75,7 +76,14 @@ export default function AllPayment(props) {
             })
         }
     }
-
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
 
     const onRemove = async (id, index) => {
         setLoad(true);

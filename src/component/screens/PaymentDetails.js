@@ -24,7 +24,8 @@ import HeaderComp from '../header/headerComp';
 import { ApiUrl, api, selectBankAccount } from '../constant/constant';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
-
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 
 export default function PaymentDetails(props) {
@@ -40,7 +41,14 @@ export default function PaymentDetails(props) {
         getApi();
     }, [isFocused]);
 
-
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
 
 
     const getApi = async () => {

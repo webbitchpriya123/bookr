@@ -24,7 +24,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Snackbar } from 'react-native-paper';
 import { getStates, getDistrict } from "../config/getAllApi";
 import { useIsFocused } from "@react-navigation/native";
-
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 
 export default function EditProfile(props) {
@@ -53,7 +54,15 @@ export default function EditProfile(props) {
         const state = await getStates();
         setStateVal(state);
     }
-
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
+    
     const DistrictValue = async (id) => {
         const district = await getDistrict(id);
         setDistVal(district);
@@ -172,7 +181,7 @@ export default function EditProfile(props) {
 
     const onSubmit = () => {
         const strongRegex = new RegExp("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
-        if (!state.Name || !state.Email || !state.Phone) {
+        if (!state.Name ) {
             scrollRef.current?.scrollTo({
                 y: 0,
                 animated: true
@@ -183,9 +192,9 @@ export default function EditProfile(props) {
         // else if (!state.Email) {
         //     setError({ emailError: 'Email is required.' });
         // }
-        else if (!strongRegex.test(state.Email)) {
-            setError({ emailError: 'Invalid Email' });
-        }
+        // else if (!strongRegex.test(state.Email)) {
+        //     setError({ emailError: 'Invalid Email' });
+        // }
         // else if (!state.Phone) {
         //     setError({ phoneError: 'PhoneNumber is required.' });
         // }
@@ -209,8 +218,6 @@ export default function EditProfile(props) {
             onSubmitVal();
         }
     }
-
-
 
     console.log("state", image.uri, state.state)
     return (
@@ -253,7 +260,7 @@ export default function EditProfile(props) {
                             spellCheck={false}
                             autoCorrect={false}
                             // value={state.Email}
-                            style={[styles.input, { borderWidth: state.Email || error.emailError ? 1 : 0, borderColor: state.Email || error.emailError ? 'gray' : '', backgroundColor: state.Email || error.emailError ? color.white : '#F5F6FA' }]}
+                            style={[styles.input]}
                             placeholder="can't update your Email"
                             editable={false} selectTextOnFocus={false} placeholderTextColor={'#bab9b5'}
                         // onChangeText={onTextChange("Email")}

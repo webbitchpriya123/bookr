@@ -20,7 +20,8 @@ import { ApiUrl, product, api } from '../constant/constant';
 import axios from 'axios';
 import { Snackbar } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 
 export default function ReSell(props) {
@@ -54,7 +55,14 @@ export default function ReSell(props) {
     ]);
 
     const validation = images.every(item => item.name && item.path);
-
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
     const removeItem = (data, index) => {
         const nameVal = arrays.filter(arrayItem => arrayItem !== index);
         setArray(nameVal);
@@ -136,7 +144,7 @@ export default function ReSell(props) {
                     setVisible(true);
                     setMessage(response.data.message)
                     setTimeout(() => {
-                        props.navigation.navigate('BookHistory')
+                        props.navigation.goBack();
                     }, 1000);
                 } else {
                     setArray([]);
@@ -187,7 +195,7 @@ export default function ReSell(props) {
                     value={isbn}
                     placeholder="ISBN"
                     placeholderTextColor={'#7F8192'}
-                    maxLength={12}
+                    maxLength={11}
                 />
                 {isbnErr ?
                     <View>

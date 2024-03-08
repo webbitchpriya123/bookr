@@ -22,10 +22,15 @@ export default function Verified(props) {
     useEffect(()=>{
 
         setTimeout(() => {
-            props.navigation.navigate('Home')
+            if(props.route.params.type === 'ResetPassword'){
+                props.navigation.navigate('ResetPassword')
+            }else{
+                props.navigation.navigate('Home')
+  
+            }
         }, 500);
 
-    },[])
+    },[props.route.params.type])
     
     return (
         <SafeAreaView style={{ flex: 1 }}>

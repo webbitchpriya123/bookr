@@ -7,7 +7,8 @@ import { SafeAreaView, useSafeAreaFrame } from 'react-native-safe-area-context';
 import Header from '../header/header';
 import { getFaq } from "../config/getAllApi";
 import { useIsFocused } from "@react-navigation/native";
-
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 
 export default function FAQ(props) {
@@ -26,6 +27,15 @@ export default function FAQ(props) {
         setLoad(true)
     }, [isFocused]);
 
+
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
     const getFAQ = async () => {
         const state = await getFaq();
         setLoad(false);
@@ -36,26 +46,23 @@ export default function FAQ(props) {
         <SafeAreaView style={styles.safeArea}>
             <Header props={props} />
             <ScrollView>
-
-
             <View style={styles.container}>
                 <Text style={styles.title}>FAQ's</Text>
                 <FlatList
                     data={FAQ}
-                    contentContainerStyle={{ width: windowWidth - 30 }}
+                    contentContainerStyle={{  }}
                     vertical
                     // numColumns={3}
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item, index }) =>
-                        <List.Section >
-                            <View style={styles.listSection}
-                            >
+                        <List.Section style={{backgroundColor:'white'}} >
+                            <View style={styles.listSection}>
                                 <List.Accordion
                                     // expanded={expanded}
                                     // onPress={handlePress}
                                     title={item.question}
                                     titleStyle={{ color: color.darkBlack }}
-                                    style={{ backgroundColor: color.white, borderRadius: 10 }}
+                                    style={{ backgroundColor: color.white, borderRadius: 10,elevation:5}}
                                 >
                                     <Text style={styles.accordianList}>{item.answer}</Text>
                                 </List.Accordion>

@@ -7,7 +7,8 @@ import { getAllBook } from "../config/getAllApi";
 import { useIsFocused } from "@react-navigation/native";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Card } from 'react-native-paper';
-
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 
 
@@ -19,8 +20,14 @@ const BookHistory = (props) => {
     const [bookData, setBookData] = useState([]);
     const [load , setLoad] = useState(false);
 
-   
-
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
     useEffect(() => {
         bookHistory();
         setLoad(true)
@@ -46,22 +53,22 @@ const BookHistory = (props) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.conatiner}>
                     <Text style={styles.title}>My Book History</Text>
-                    <View>
+                    <View >
                         <FlatList
                             data={bookData}
                             numColumns={2}
                             vertical
-                            columnWrapperStyle={{ justifyContent: 'space-between' }}
+                            columnWrapperStyle={{ justifyContent: 'space-between' ,padding:5}}
                             showsVerticalScrollIndicator={false}
                             renderItem={({ item, index }) =>
                             <TouchableOpacity onPress={() =>
                                 props.navigation.navigate('BookDetails', { id: item.id })}>
-                                <Card   style={[styles.bookContainer, { width: windowWidth / 2 - 23}]} >
+                                <Card outlined contentStyle={{borderRadius:3,borderWidth:0.23,borderColor: 'border: Mixed solid #00000017'}} style={[styles.bookContainer, { width: windowWidth / 2 - 30}]} >
                                     <View style={styles.imageContainer}>
                                         <Image source={{ uri: item.cover_images[0] }} style={{ height: 139, width: 100, alignSelf: 'center' }} />
                                     </View>
 
-                                    <View style={{ marginLeft: 15, marginRight: 15, marginBottom: 15 }}>
+                                    <View style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
                                         {/* <Text style={styles.name}>{item.name}</Text> */}
                                         <Text style={styles.isbn} >ISBN : {item.isbn_no}</Text>
                                         {/* <Text style={styles.totalBook}>Total books - {item.books}</Text> */}
@@ -120,7 +127,7 @@ const styles = StyleSheet.create({
     conatiner: { padding: 15 },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 52 },
     title: { fontFamily: font.acari, fontWeight: '800', color: color.black, fontSize: 16, marginBottom: 10, marginTop: 3 },
-    bookContainer: { backgroundColor: '#F9F9F9',  borderRadius: 6, marginTop: 10, borderWidth: 0.2, borderColor: 'border: Mixed solid #00000017', backgroundColor: color.white },
+    bookContainer: { backgroundColor: '#F9F9F9',  borderRadius: 8,marginTop: 10, backgroundColor: color.white ,elevation:10},
     name: { color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '600' },
     isbn: { color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '400' },
     totalBook: { color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '400' },

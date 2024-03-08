@@ -8,7 +8,8 @@ import {
   Text,
   useColorScheme,
   View,
-  LogBox
+  LogBox,
+  ToastAndroid
 } from 'react-native';
 LogBox.ignoreLogs(["Warning: ..."]);
 LogBox.ignoreAllLogs();
@@ -47,20 +48,16 @@ import messaging from '@react-native-firebase/messaging';
 const Stack = createNativeStackNavigator();
 const App = () => {
 
-
-
   const [localValue, setLocal] = useState(null);
-  const isDarkMode = useColorScheme() === 'dark';
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+  // const isDarkMode = useColorScheme() === 'dark';
+ 
   useEffect(() => {
     loadStoredValue();
     requestUserPermission();
     getToken();
-
   }, []);
+
+
 
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
@@ -72,8 +69,8 @@ const App = () => {
     }
   }
 
-  const getToken = async () => {
 
+  const getToken = async () => {
     messaging()
       .getInitialNotification()
       .then(remoteMessage => {
@@ -83,13 +80,8 @@ const App = () => {
         }
       });
     const fcmtoken = await messaging().getToken();
+    AsyncStorage.setItem("fcm", JSON.stringify(fcmtoken))
     console.log("fcmmmm", fcmtoken)
-
-
-    // getDeviceToken.then( async (token) => {
-    //   console.log('promise token: ', token);
-    // }
-
   }
 
 
@@ -97,6 +89,8 @@ const App = () => {
   const loadStoredValue = async () => {
     try {
       const value = await AsyncStorage.getItem('user_id');
+      // const token = await AsyncStorage.getItem('token');
+      // console.log("tokne", token)
       if (value) {
         setLocal(value);
       } else {

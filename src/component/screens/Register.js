@@ -11,6 +11,7 @@ import * as color from '../../colors/colors';
 import * as images from '../config/constants';
 import axios from 'axios';
 import { ApiUrl, registerOtp, api } from '../constant/constant';
+import { getFcm } from '../config/localStorage';
 
 
 
@@ -42,17 +43,19 @@ export default function Register(props) {
 
 
     const onRegister = async () => {
-
+        // const fcm = JSON.parse(await getFcm())
+        const fcm = JSON.parse(await getFcm());
+        console.log("logssssss",JSON.parse(await getFcm()))
         await axios.post(ApiUrl + api + registerOtp, {
             name: Name,
             email: email,
             password: Password,
             password_confirmation: cnfmPassword,
-            phone: mobileNumber
+            phone: mobileNumber,
+            device_token:fcm
+
         }).then((response) => {
-
             console.log("respoonnsfs",response.data)
-
             setLoad(false);
             if (response.data.status === 'success') {
                 setVisible(true);
@@ -84,7 +87,9 @@ export default function Register(props) {
 
 
 
-    const Register = () => {
+    const Register = async () => {
+
+
         const strongRegex = new RegExp("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
         const phoneNumberRegex = /^\d{10}$/;
         if (Name === '') {
@@ -106,7 +111,6 @@ export default function Register(props) {
         } else if (Password.length != 8) {
             setPassErr('Minimum Password length is 8.')
         }
-
         else if (cnfmPassword === '') {
             setCnfmPassErr('Confirm Password is Required')
         }
@@ -116,7 +120,6 @@ export default function Register(props) {
         else {
             setLoad(true)
             onRegister();
-           
         }
 
     }
@@ -125,14 +128,14 @@ export default function Register(props) {
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.imageContainer}>
-                    <Image source={images.MainLogo} />
+                    <Image source={images.MainLogo} style={{height:120,width:100}} />
                     <Text style={styles.welcome}>Welcome Back</Text>
                     <Text style={styles.login}>Register to your account </Text>
                 </View>
                 <View style={{ flex: 0.03 }}>
                     <Divider style={styles.divider} />
                 </View>
-                <View style={{ flex: 0.64 }}>
+                <View style={{ flex: 0.74 }}>
                     <View style={styles.textInputView}>
                         <EvilIcons name="user" color="#241D60" size={35} />
                         <TextInput
@@ -238,11 +241,9 @@ export default function Register(props) {
                             <Text style={styles.errorCode}>{cnfmPassErr}</Text>
                         </View> : null}
 
-
-
                     <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => Register()}>
                         <View style={styles.loaderView}>
-                            <View style={{ flex: 0.55 }}>
+                            <View style={{ flex: 0.57}}>
                                 <Text style={styles.loginText}>REGISTER</Text>
                             </View>
                             {load ?
@@ -251,7 +252,6 @@ export default function Register(props) {
                                 </View> : null}
                         </View>
                     </TouchableOpacity>
-
 
 
                     <View style={{ marginTop: 15 }}>

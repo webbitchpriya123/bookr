@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApiUrl, api, States, district, banks, faq, notification, getBookHistory, productDetail, productStatus, bookCount } from '../constant/constant';
+import { ApiUrl, api, States, district, banks, faq, notification, getBookHistory, productDetail, productStatus, bookCount ,notificationCount ,notificationReadAt} from '../constant/constant';
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -140,6 +140,40 @@ export const bookCounts = async () => {
         };
         const { data } = await axios.post(ApiUrl + api + bookCount, requestBody, { headers });
         return data;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+}
+
+export const notifyCount = async () => {
+    try {
+        const value = await AsyncStorage.getItem('user_id');
+        const token = await AsyncStorage.getItem('token');
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const requestBody = {
+            user_id: value,
+        };
+        const { data } = await axios.post(ApiUrl + api + notificationCount, requestBody, { headers });
+        return data.data;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+}
+
+export const readAtCount = async () => {
+    try {
+        const value = await AsyncStorage.getItem('user_id');
+        const token = await AsyncStorage.getItem('token');
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const requestBody = {
+            user_id: value,
+        };
+        const { data } = await axios.post(ApiUrl + api + notificationReadAt, requestBody, { headers });
+        return data.result;
     } catch (error) {
         console.error("Error fetching data", error);
     }

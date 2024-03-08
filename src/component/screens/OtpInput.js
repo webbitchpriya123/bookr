@@ -11,6 +11,7 @@ import OTPInputView from '@twotalltotems/react-native-otp-input'
 import { ApiUrl, api, verifyCode } from '../constant/constant';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getFcm } from '../config/localStorage';
 
 
 
@@ -24,18 +25,21 @@ export default function Otp(props) {
     const windowWidth = Dimensions.get('window').width;
 
 
-    useEffect(() => {
-        // console.log("jshafdsasajfasffasdfasdfasfasdfasdfasd" , code)
-        loadStoredValue();
+    // useEffect(() => {
+    //     // console.log("jshafdsasajfasffasdfasdfasfasdfasdfasd" , code)
+    //     // loadStoredValue();
 
-    }, []);
+    // }, []);
 
 
     // Function to load stored value
     const loadStoredValue = async (code) => {
+        const fcm = JSON.parse(await getFcm());
         await axios.post(ApiUrl + api + verifyCode, {
             verification_code: `${JSON.stringify(props.route.params.code)}`,
-            user_id: props.route.params.user_id
+            user_id: props.route.params.user_id,
+            device_token:fcm,
+
         })
             .then((response) => {
                 if (response.data.status === 'success' && code == props.route.params.code) {
@@ -46,16 +50,19 @@ export default function Otp(props) {
                         AsyncStorage.setItem("token", JSON.stringify(response.data.data.token))
                     }
                     setTimeout(() => {
+                        setCode('')
                         // setCode(code);
-                        props.navigation.navigate(props.route.params.type, { mobile: props.route.params.email_or_phoneNumber })
+                        props.navigation.navigate('Verified', { mobile: props.route.params.email_or_phoneNumber,type:props.route.params.type })
                     }, 1000);
                 } else {
+                    setCode('')
                     setVisible(true);
                     setMessage('invalid otp code');
                     resendOTP();
                 }
             })
             .catch((error) => {
+                setCode('');
                 console.log("error", error)
                 setMessage('invalid Otp')
             });
@@ -99,7 +106,7 @@ export default function Otp(props) {
                     <AntDesign name='arrowleft' size={30} color={color.white} />
                 </TouchableOpacity>
                 <View style={styles.imageContainer}>
-                    <Image source={images.MainLogo} />
+                    <Image source={images.MainLogo} style={{height:120,width:100}} />
                     <Text style={styles.welcome}>Verify Code</Text>
                     <Text style={styles.login}>Check your SMS inbox ,we have sent you the coed at <Text style={[styles.login, { color: color.white, fontWeight: '700' }]}>+91
                         {props.route.params.email_or_phoneNumber}
@@ -114,8 +121,8 @@ export default function Otp(props) {
                         pinCount={4}
                         code={code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
                         onCodeChanged={code => setCode(code)}
-                        autoFocusOnLoad
-                        // autoFocusOnLoad={false}
+                        // autoFocusOnLoad
+                        autoFocusOnLoad={false}
                         codeInputFieldStyle={styles.underlineStyleBase}
                         codeInputHighlightStyle={styles.underlineStyleHighLighted}
                         onCodeFilled={(code => {

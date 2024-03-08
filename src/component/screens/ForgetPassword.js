@@ -9,7 +9,8 @@ import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
 import { ApiUrl, forgetPassword, api } from '../constant/constant';
 import axios from 'axios';
-
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 
 
@@ -22,7 +23,14 @@ export default function ForgetPassword(props) {
     const [mobErr, setMobErr] = useState('');
     const windowWidth = Dimensions.get('window').width;
 
-
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
     const send = () => {
         if (mobileNumber === '') {
             setMobErr('Email or Phone Number Required')
@@ -65,7 +73,7 @@ export default function ForgetPassword(props) {
                     <AntDesign name='arrowleft' size={30} color={color.white} />
                 </TouchableOpacity>
                 <View style={styles.imageContainer}>
-                    <Image source={book} />
+                    <Image source={book} style={{height:120,width:100}}/>
                     <Text style={styles.welcome}>Forget Password</Text>
                     <Text style={styles.login}>Please enter your <Text style={[styles.login, { color: color.white, fontWeight: '700' }]}>email address or phone number</Text>  to reset you Password </Text>
                 </View>

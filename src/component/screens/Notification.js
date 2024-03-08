@@ -9,15 +9,19 @@ import {
     FlatList,
     Dimensions,
     ActivityIndicator,
-    RefreshControl
+    RefreshControl,
+    ToastAndroid
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import LinearGradient from 'react-native-linear-gradient';
-import { getAllNotifications } from "../config/getAllApi";
+import { getAllNotifications, notifyCount, readAtCount } from "../config/getAllApi";
 import { useIsFocused } from "@react-navigation/native";
+import messaging from '@react-native-firebase/messaging';
+import { PushNotification } from '../config/pushNotification';
+
 
 
 export default function Notification(props) {
@@ -33,24 +37,58 @@ export default function Notification(props) {
         setLoad(true);
     }, [isFocused]);
 
+
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []);
+
     const allNotificcations = async () => {
         const notify = await getAllNotifications();
-        console.log('notiffyy', notify)
         setNotification(notify)
         setLoad(false);
     }
+
+    const validation = notification.every(item => item.read_at === null);
+
+
+
+    const goBack = async () => {
+        console.log("respons", validation)
+        if (!validation) {
+            const response = await readAtCount();
+            if (response === true) {
+                allNotificcations();
+            }
+        }
+        props.navigation.goBack();
+
+    }
+
+
+
+    console.log("cvfffffffffff", validation)
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
             setRefreshing(false);
         }, 800);
     }, []);
+
+
+
+
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.header}>
-                    <TouchableOpacity style={{ flex: 0.15 }} onPress={() => props.navigation.goBack()} >
+                    <TouchableOpacity style={{ flex: 0.15 }} onPress={() => goBack()} >
                         <AntDesign name='arrowleft' size={30} color={color.white} />
                     </TouchableOpacity>
                     <TouchableOpacity style={{ flex: 0.85 }}>
@@ -73,8 +111,11 @@ export default function Notification(props) {
                             <View style={styles.container}>
                                 <View style={styles.wholeView}>
                                     <View style={{ flex: 0.2 }}>
+                                        {/* {console.log('itmmmmm',item)} */}
                                         <View style={styles.iconView}>
                                             <Ionicons name="notifications" size={22} style={styles.iconStyle} color="#FFFFFF" />
+                                            {item.read_at === null ?
+                                                <View style={{ height: 10, width: 10, backgroundColor: 'red', position: 'absolute', left: 35, borderRadius: 10 }}></View> : null}
                                         </View>
                                     </View>
                                     <View style={{ flex: 0.8 }}>
@@ -144,7 +185,7 @@ export default function Notification(props) {
 
                 </View> */}
 
-                {!notification.length &&!load ?
+                {!notification.length && !load ?
                     <View style={{ marginTop: windowHeight / 3, alignSelf: 'center' }}>
                         <Text style={styles.title}>No Data Found</Text>
                     </View> : null}

@@ -22,3 +22,5 @@ export const getBookHistory = '/product-history';
 export const productDetail = '/product-detail';
 export const productStatus = '/product-status';
 export const bookCount = '/book-count';
+export const notificationCount = '/notification-count';
+export const notificationReadAt = '/notification-readat'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator, TouchableOpacity, Dimensions, ToastAndroid } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +11,9 @@ import * as images from '../config/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { ApiUrl, api, login } from '../constant/constant';
+import { getFcm } from '../config/localStorage';
+import messaging from '@react-native-firebase/messaging';
+import {PushNotification} from '../config/pushNotification';
 
 export default function Login(props) {
     const [mobileNumber, setMobileNumber] = useState('');
@@ -28,13 +31,25 @@ export default function Login(props) {
         setPassword('');
     }
 
-    const authLogin = () => {
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
+
+
+    const authLogin = async () => {
+        const fcm = JSON.parse(await getFcm());
         axios.post(ApiUrl + api + login, {
             phone_or_email: mobileNumber,
-            password: Password
+            password: Password,
+            device_token:fcm
         })
             .then((response) => {
-                setLoad(false)
+                setLoad(false);
                 if (response.data.data) {
                     AsyncStorage.setItem("user_id", JSON.stringify(response.data.data.user.id))
                     AsyncStorage.setItem("token", JSON.stringify(response.data.data.token))
@@ -59,7 +74,6 @@ export default function Login(props) {
                 setMessage(error.data.message)
             });
     }
-
 
     const Login = async () => {
         if (mobileNumber === '') {
@@ -90,7 +104,7 @@ export default function Login(props) {
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.imageContainer}>
-                    <Image source={images.MainLogo} />
+                    <Image source={images.MainLogo} style={{height:120,width:100}}/>
                     <Text style={styles.welcome}>Welcome Back</Text>
                     <Text style={styles.login}>Login to your account </Text>
                 </View>

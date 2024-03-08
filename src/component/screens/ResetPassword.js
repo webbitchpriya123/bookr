@@ -27,7 +27,14 @@ export default function ResetPassword(props) {
     const [message, setMessage] = useState('');
     const windowWidth = Dimensions.get('window').width;
 
-
+    useEffect(() => {
+        const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+            console.log('Foreground Notification:', remoteMessage);
+            PushNotification(remoteMessage)
+        });
+        // Clean up the subscription when the component unmounts
+        return () => unsubscribeOnMessage();
+    }, []); //
 
     const Continue = async () => {
         axios.post(ApiUrl + api + resetPassword, {
@@ -81,7 +88,7 @@ export default function ResetPassword(props) {
                     <AntDesign name='arrowleft' size={30} color={color.white} />
                 </TouchableOpacity>
                 <View style={styles.imageContainer}>
-                    <Image source={images.MainLogo} />
+                    <Image source={images.MainLogo} style={{height:120,width:100}}/>
                     <Text style={styles.welcome}>Reset Password</Text>
                     <Text style={styles.login}>At least 9 characters, with uppercase and lowercase letters.</Text>
                 </View>
