@@ -17,6 +17,7 @@ const HeaderComp = ({ props, name }) => {
                 <TouchableOpacity style={{ flex: 0.85 }}>
                     <Text style={styles.notify}>{name}</Text>
                 </TouchableOpacity>
+                
             </View>
         </LinearGradient>
     )

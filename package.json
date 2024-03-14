@@ -24,6 +24,7 @@
     "react": "18.0.0",
     "react-native": "0.69.10",
     "react-native-element-dropdown": "^2.10.1",
+    "react-native-fs": "^2.20.0",
     "react-native-image-crop-picker": "^0.40.2",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-paper": "^5.12.3",

@@ -9,7 +9,9 @@ import {
     FlatList,
     TextInput,
     Dimensions,
-    ActivityIndicator
+    ActivityIndicator,
+    Alert,
+    BackHandler
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
@@ -18,10 +20,13 @@ import ImagePicker from 'react-native-image-crop-picker';
 import HeaderComp from "../header/headerComp";
 import { ApiUrl, product, api } from '../constant/constant';
 import axios from 'axios';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Checkbox } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from '@react-native-firebase/messaging';
-import {PushNotification} from '../config/pushNotification';
+import { PushNotification } from '../config/pushNotification';
+import LinearGradient from 'react-native-linear-gradient';
+import { bookDetail, getAllBook, updateDraft } from "../config/getAllApi";
+import { useIsFocused } from "@react-navigation/native";
 
 
 export default function ReSell(props) {
@@ -32,6 +37,10 @@ export default function ReSell(props) {
     const [message, setMessage] = useState('');
     const [arrays, setArray] = useState([]);
     const [load, setLoad] = useState(false);
+    const [checked, setChecked] = React.useState(false);
+    const [checkErr, setCheckErr] = useState('');
+    const isFocused = useIsFocused();
+
 
     const windowWidth = Dimensions.get('window').width;
     let imgName = [...arrays];
@@ -54,15 +63,19 @@ export default function ReSell(props) {
         },
     ]);
 
+
+
     const validation = images.every(item => item.name && item.path);
     useEffect(() => {
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
             console.log('Foreground Notification:', remoteMessage);
-            PushNotification(remoteMessage)
+            PushNotification(remoteMessage);
         });
         // Clean up the subscription when the component unmounts
         return () => unsubscribeOnMessage();
     }, []); //
+
+
     const removeItem = (data, index) => {
         const nameVal = arrays.filter(arrayItem => arrayItem !== index);
         setArray(nameVal);
@@ -82,6 +95,7 @@ export default function ReSell(props) {
             height: 450,
             cropping: true
         }).then(image => {
+            // if (image.path) {
             let filename = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length)
             images.map((dataItem) => {
                 if (dataItem.name === name) {
@@ -91,6 +105,8 @@ export default function ReSell(props) {
                 }
                 setImages([...images])
             })
+            // }
+
         });
     };
 
@@ -98,92 +114,226 @@ export default function ReSell(props) {
         if (validation) {
             setImageErr(false)
         }
-    }, [validation]);
+    }, [validation, isFocused]);
 
-    const onRequest = async () => {
+    const bookData = async () => {
+        const allBook = await bookDetail(props.route.params.bookId);
+        if (allBook) {
+            setIsbn(allBook.isbn_no);
+            const newData = images.map((item) => {
+                const matchedImage = allBook.images.find(img => item.name === img.name);
+                if (matchedImage) {
+                    return {
+                        ...item,
+                        name: matchedImage.name,
+                        path: matchedImage.path
+                    };
+                }
+                return item;
+            });
+            setImages(newData);
+        }
+    }
+
+    useEffect(() => {
+        bookData();
+    }, [props.route.params.bookId])
+
+    const validate = () => {
+        setLoad(false);
+        setArray([]);
+        setIsbn('');
+        setChecked(false);
+        setVisible(true);
+    }
+
+    const onRequest = async (data) => {
         const token = await AsyncStorage.getItem('token');
         const value = await AsyncStorage.getItem('user_id');
-        const formData = new FormData();
-        // images.forEach((image, index) => {
-        //     if(image.path != undefined){
-        //     // Append images with a unique key (e.g., image1, image2, etc.)
-        //     formData.append(`images[]`, { uri: image.path, name: `image${index + 1}.jpg`, type: 'image/jpeg' });
-        //     }
-        // });
-        images.map((image) => {
-            let fileName = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length);
-            const imageObject = {
-                name: fileName,
-                type: 'image/jpeg',
-                uri: Platform.OS === 'android' ? image.path : image.path.replace('file://', ''),
-                photoName: image.name
-            };
-            formData.append('images[]', imageObject);
+        const book = await getAllBook();
+        const valid = book.filter(item => { return item.id === props.route.params.bookId });
+        if (valid.length) {
+            const newForm = new FormData();
+            images.map((image) => {
+                if (image.path) {
+                    let fileName = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length);
+                    const imageObject = {
+                        name: fileName,
+                        type: 'image/jpeg',
+                        uri: Platform.OS === 'android' ? image.path : image.path.replace('file://', ''),
+                        photoName: image.name
+                    };
+                    newForm.append('images[]', imageObject);
+                }
+            });
+            newForm.append('isbn_no', isbn);
+            newForm.append('page_name', arrays);
+            newForm.append('user_id', value);
+            newForm.append('product_id', props.route.params.bookId)
+            const response = await updateDraft(newForm);
+            if (response.status === true) {
+                validate();
+                images.forEach((item) => {
+                    item['path'] = '';
+                });
+                setMessage(response.message)
+                setTimeout(() => {
+                    props.navigation.goBack();
+                }, 1000);
+            } else {
+                validate();
+                setMessage('please upload all mandatory fields.')
+            }
+
+        } else {
+            const formData = new FormData();
+            const dataVal = data === 'draft' ? 1 : 0
+            images.map((image) => {
+                if (image.path) {
+                    let fileName = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length);
+                    const imageObject = {
+                        name: fileName,
+                        type: 'image/jpeg',
+                        uri: Platform.OS === 'android' ? image.path : image.path.replace('file://', ''),
+                        photoName: image.name
+                    };
+                    formData.append('images[]', imageObject);
+                }
+            });
+
             formData.append('isbn_no', isbn);
             formData.append('page_name', arrays);
             formData.append('user_id', value)
-        });
+            formData.append('draft', dataVal)
 
-        if (token) {
-            console.log('arrayy', arrays)
-            await axios.post(
-                ApiUrl + api + product,
-                formData,
-                {
-                    headers: {
-                        Authorization: "Bearer " + JSON.parse(token),
-                        "Content-Type": "multipart/form-data",
-                        Accept: 'application/json'
-                    },
-                }
-            ).then((response) => {
-                if (response.data.status === true) {
-                    setLoad(false);
-                    setArray([]);
+            if (token) {
+                await axios.post(
+                    ApiUrl + api + product,
+                    formData,
+                    {
+                        headers: {
+                            Authorization: "Bearer " + JSON.parse(token),
+                            "Content-Type": "multipart/form-data",
+                            Accept: 'application/json'
+                        },
+                    }
+                ).then((response) => {
+                    if (response.data.status === true) {
+                        validate();
+                        images.forEach((item) => {
+                            item['path'] = '';
+                        });
+                        setMessage(response.data.message)
+                        setTimeout(() => {
+                            props.navigation.goBack();
+                        }, 1000);
+                    } else {
+                        validate();
+                        setMessage('please upload all mandatory fields.')
+                    }
+                }).catch((error) => {
+                    // setArray([]);
                     // setImages([]);
                     setVisible(true);
-                    setMessage(response.data.message)
-                    setTimeout(() => {
-                        props.navigation.goBack();
-                    }, 1000);
-                } else {
-                    setArray([]);
-                    setImages([]);
-                    setVisible(true)
-                    setMessage('please upload all mandatory fields.')
-                }
-            }).catch((error) => {
-                setArray([]);
-                setImages([]);
-                setVisible(true)
-                console.log("error", error)
-            });
+                    setChecked(false);
+                    console.log("error", error)
+                });
+            }
         }
-        // console.log("imagesssssssss", formData, Platform.OS)
-        // props.navigation.navigate('PaymentDetails')
-
     }
-
-
-
 
     const onSubmit = () => {
         if (!isbn) {
             setIsbnErr('ISBN Number Required.');
-        } else if (!validation) {
+        }
+        else if (!validation) {
             setImageErr('Please upload all images.');
-        } else {
-            setLoad(true)
-            onRequest();
+        }
+        else if (!checked) {
+            setCheckErr('Please check the terms and condition')
+        }
+        else {
+            setLoad(true);
+            onRequest('submit');
         }
     }
 
+    const draft = () => {
+        props.navigation.navigate('Draft');
+        setIsbn('');
+        images.map((item) => {
+            item['path'] = ''
+        })
+    }
+    
+    const handleBackButton = async () => {
+        const book = await getAllBook();
+        const valid = book.filter(item => { return item.id === props.route.params.bookId });
+        if (isbn) {
+            Alert.alert(
+                'UsedBookr',
+                'Are you sure you want to save the draft?',
+                [
+                    {
+                        text: 'Cancel',
+                        onPress: () => props.navigation.goBack(),
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            if (valid.length) {
+                                props.navigation.goBack();
+                            } else {
+                                onRequest('draft');
+                            }
+
+                        }
+                    },
+                ],
+                {
+                    cancelable: false,
+                }
+            );
+            return true;
+        } else {
+            props.navigation.goBack();
+        }
+    };
+
+
+    useEffect(() => {
+        if (props.route.name === "ReSell") {
+            BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+            };
+        } else {
+            props.navigation.goBack();
+        }
+    }, [isbn, arrays]);
 
 
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
-            <HeaderComp name={'Add your book'} props={props} />
+            {/* <HeaderComp name={'Add your book'} props={props} /> */}
+
+            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
+                end={{ x: 1.0, y: 1.0 }} style={[styles.linearGradient, { flex: 0.14 }]}>
+                <View style={styles.header}>
+                    <TouchableOpacity style={{ flex: 0.15 }} onPress={handleBackButton}>
+                        <AntDesign name='arrowleft' size={30} color={color.white} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ flex: 0.65 }}>
+                        <Text style={styles.notify}>Add your book</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ flex: 0.2 }} onPress={() => draft()}>
+                        <Text style={styles.draft}>My Drafts</Text>
+                    </TouchableOpacity>
+                </View>
+            </LinearGradient>
+
             <View style={styles.container}>
                 <Text style={styles.title}>Enter your book details</Text>
                 <TextInput
@@ -195,7 +345,7 @@ export default function ReSell(props) {
                     value={isbn}
                     placeholder="ISBN"
                     placeholderTextColor={'#7F8192'}
-                    maxLength={11}
+                    maxLength={16}
                 />
                 {isbnErr ?
                     <View>
@@ -232,6 +382,25 @@ export default function ReSell(props) {
                     }
                     keyExtractor={item => item}
                 />
+            </View>
+
+            {checkErr ?
+                <View>
+                    <Text style={[styles.errorMsg, { marginTop: 10, marginLeft: 15 }]}>{checkErr}</Text>
+                </View> : null}
+            <View style={styles.check}>
+                <Checkbox
+                    status={checked ? 'checked' : 'unchecked'}
+                    color={color.green}
+                    onPress={() => {
+                        setChecked(!checked);
+                        setCheckErr(false);
+                    }}
+                />
+                <Text style={styles.agree}>I agree to the</Text>
+                <TouchableOpacity style={{ marginLeft: 5 }} onPress={() => props.navigation.navigate('Terms')}>
+                    <Text style={styles.condition}>terms and conditions</Text>
+                </TouchableOpacity>
 
             </View>
             <View style={styles.submitFlex}>
@@ -247,17 +416,11 @@ export default function ReSell(props) {
                     </View>
                 </TouchableOpacity>
             </View>
-
-            {/* <View style={styles.submitFlex}>
-                <TouchableOpacity style={styles.submitView} onPress={() => onSubmit()}>
-                    <Text style={styles.submitText}>SUBMIT</Text>
-                </TouchableOpacity>
-            </View> */}
             <Snackbar
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={900}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {
@@ -283,19 +446,21 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         color: '#7F8192'
     },
-    submitText: { color: color.darkBlack, fontSize: 14, fontFamily: Font.acari, fontWeight: '600', textAlign: 'center' },
     container: { padding: 15, flex: 0.72 },
     imageContainer: { height: 130, backgroundColor: '#ECEAFF', width: 100, justifyContent: 'center' },
     header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
     title: { fontFamily: Font.acari, fontWeight: '800', color: color.black, fontSize: 16, marginBottom: 18, marginTop: 3 },
-    submitView: { backgroundColor: color.yellow, marginTop: 20, height: 55, justifyContent: 'center', borderRadius: 10 },
     remove: { borderWidth: 1, backgroundColor: color.white, borderColor: 'red', position: 'absolute', borderRadius: 30, right: -5 },
     submitFlex: { flex: 0.13, paddingLeft: 15, paddingRight: 15 },
     imageUpload: { height: 120, width: 100, marginTop: 8 },
     errorMsg: { fontSize: 14, color: color.red, fontWeight: '500' },
     loginText: { alignSelf: 'flex-end', fontSize: 14, color: color.darkBlack, fontWeight: '600' },
     logView: { height: 55, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
-    loaderView: { flexDirection: 'row', alignItems: 'center', height: 55 }
+    loaderView: { flexDirection: 'row', alignItems: 'center', height: 55 },
+    check: { marginLeft: 15, marginRight: 15, flexDirection: 'row', alignItems: 'center' },
+    agree: { fontWeight: '500', color: color.terms, fontSize: 14 },
+    condition: { fontWeight: '500', color: color.black, fontSize: 14, textDecorationLine: 'underline' },
+    draft: { fontWeight: '500', fontSize: 14, color: '#FFCB00', fontFamily: Font.acari, textDecorationLine: 'underline' },
 
 })

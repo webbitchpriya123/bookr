@@ -20,31 +20,58 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import LinearGradient from 'react-native-linear-gradient';
-import { bookDetail } from "../config/getAllApi";
+import { bookDetail, downLoadInvoice, invoiceShow } from "../config/getAllApi";
 import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
-import {PushNotification} from '../config/pushNotification';
+import { PushNotification } from '../config/pushNotification';
+import RNFS from 'react-native-fs';
 
 export default function BookDetail(props) {
     const windowHeight = Dimensions.get('window').height
 
     const isFocused = useIsFocused();
     const [bookData, setBookData] = useState([]);
-    const [load , setLoad] = useState(false);
+    const [load, setLoad] = useState(false);
+    const [shows, setShow] = useState(false);
 
     useEffect(() => {
         bookHistory();
         setLoad(true);
     }, [isFocused]);
 
-    console.log("propsss", props.route.params.id)
+    // console.log("propsss", props.route.params.id)
 
     const bookHistory = async () => {
         const allBook = await bookDetail(props.route.params.id);
+        const show = await invoiceShow(props.route.params.id);
+        setShow(show);
         setBookData(allBook);
         setLoad(false);
     }
+
+    const downLoad = async () => {
+        const invoice = await downLoadInvoice(props.route.params.id);
+        try {
+            const pdf = new Blob([invoice], { type: 'application/pdf' })
+            const docDir = RNFS.DocumentDirectoryPath;
+
+            // Create a unique filename
+            const fileName = 'invoice.pdf';
+
+            const filePath = `${docDir}/${fileName}`;
+
+            // Write the PDF to the file
+            await RNFS.writeFile(filePath, pdf, 'base64');
+            console.log("invoicedownload", pdf)
+        } catch (error) {
+            console.log("invoiceError", error)
+
+        }
+
+    }
+
+
     useEffect(() => {
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
             console.log('Foreground Notification:', remoteMessage);
@@ -54,7 +81,7 @@ export default function BookDetail(props) {
         return () => unsubscribeOnMessage();
     }, []); //
 
-
+    console.log("bookData", bookData)
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
@@ -92,7 +119,7 @@ export default function BookDetail(props) {
                         <TextInput
                             style={styles.input}
                             editable={false}
-                            placeholder={bookData.approved_date ? moment(bookData.approved_date).format('DD/MM/YYYY')  : '-'}
+                            placeholder={bookData.approved_date ? moment(bookData.approved_date).format('DD/MM/YYYY') : '-'}
                             placeholderTextColor={'#7F8192'}
                         />
                         <Text style={styles.name}>Approved amount</Text>
@@ -102,6 +129,15 @@ export default function BookDetail(props) {
                             placeholder={bookData.amount ? bookData.amount : '-'}
                             placeholderTextColor={'#7F8192'}
                         />
+
+                        {shows && !load ?
+                            <View>
+                                <Text style={styles.name}>Invoice</Text>
+                                <TouchableOpacity style={styles.downLoad} onPress={() => downLoad()}>
+                                    <Text style={{ fontWeight: '500', fontSize: 14, color: color.green }}>Download your invoice</Text>
+                                    <AntDesign name="download" size={20} color={color.green} />
+                                </TouchableOpacity>
+                            </View> : null}
 
 
                         {/* <Text style={styles.name}>Book printed price</Text>
@@ -189,6 +225,7 @@ const styles = StyleSheet.create({
         marginTop: 12,
         backgroundColor: '#F5F6FA'
     },
+    downLoad: { height: 60, backgroundColor: color.white, flexDirection: 'row', alignItems: "center", elevation: 10, justifyContent: 'space-between', paddingLeft: 15, paddingRight: 15, marginTop: 10 },
     loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
     container: { padding: 15 },
     header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ActivityIndicator, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -100,7 +100,6 @@ export default function ForgetPassword(props) {
 
                     <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 0.9 }]} onPress={() => send()}>
                         <View style={styles.loadView}>
-
                             <View style={{ flex: 0.53 }}>
                                 <Text style={styles.loginText}>SEND</Text>
                             </View>
@@ -125,7 +124,7 @@ export default function ForgetPassword(props) {
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={1000}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {

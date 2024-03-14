@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Alert, Image, BackHandler, TouchableOpacity, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Divider, Snackbar } from 'react-native-paper';
@@ -8,7 +8,7 @@ import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
 import * as images from '../config/constants';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
-import { ApiUrl, api, verifyCode } from '../constant/constant';
+import { ApiUrl, api, verifyCode,register } from '../constant/constant';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFcm } from '../config/localStorage';
@@ -25,11 +25,63 @@ export default function Otp(props) {
     const windowWidth = Dimensions.get('window').width;
 
 
-    // useEffect(() => {
-    //     // console.log("jshafdsasajfasffasdfasdfasfasdfasdfasd" , code)
-    //     // loadStoredValue();
+    const handleBackButton = async() => {
+        if(props.route.params.name === 'Register'){
+        Alert.alert(
+            'Go Back',
+            'To become a registered user, you must first verify the OTP (One-Time Password) provided during the registration process.' ,
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {
+                    text: 'OK',
+                    onPress: async () => 
+                    axios.post(ApiUrl + api + register, {
+                        user_response: 0,
+                        user_id:props.route.params.user_id,
+                    })
+                        .then((response) => {
+        
+                            console.log("responseeee",response.data.status )
+                            if(response.data.status === 'success'){
+                                props.navigation.goBack()
+                            }
 
-    // }, []);
+                            // if(response.data)
+                            console.log("responseeee",response)
+                        })
+                        .catch((error) => {
+                            console.log("error",error)
+
+                        })
+                    
+                    // props.navigation.goBack()
+                    
+                    
+                    
+                },
+            ],
+            {
+                cancelable: false,
+            }
+        );
+        return true;
+        } else{
+            props.navigation.goBack();
+        }
+    };
+
+
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+        };
+    }, []);
+
 
 
     // Function to load stored value
@@ -38,21 +90,20 @@ export default function Otp(props) {
         await axios.post(ApiUrl + api + verifyCode, {
             verification_code: `${JSON.stringify(props.route.params.code)}`,
             user_id: props.route.params.user_id,
-            device_token:fcm,
-
+            device_token: fcm,
         })
             .then((response) => {
                 if (response.data.status === 'success' && code == props.route.params.code) {
                     setVisible(true);
                     setMessage('Verfied Successfully');
-                    if (props.route.params.type === 'Verified') {
+                    if (props.route.params.type === 'Verified' || props.route.params.type === 'Login') {
                         AsyncStorage.setItem("user_id", JSON.stringify(props.route.params.user_id))
                         AsyncStorage.setItem("token", JSON.stringify(response.data.data.token))
                     }
                     setTimeout(() => {
                         setCode('')
                         // setCode(code);
-                        props.navigation.navigate('Verified', { mobile: props.route.params.email_or_phoneNumber,type:props.route.params.type })
+                        props.navigation.navigate('Verified', { mobile: props.route.params.email_or_phoneNumber, type: props.route.params.type })
                     }, 1000);
                 } else {
                     setCode('')
@@ -72,15 +123,14 @@ export default function Otp(props) {
     useEffect(() => {
         const interval = setInterval(() => {
             if (seconds >= 0) {
-                console.log("logssss11");
                 setSeconds(seconds - 1);
             }
             if (seconds === 0) {
-                console.log("logssss22");
+                // console.log("logssss22");
                 if (minutes === 0) {
                     clearInterval(interval);
                 } else {
-                    console.log("duration")
+                    // console.log("duration")
                     setSeconds(59);
                     setMinutes(minutes - 1);
                 }
@@ -97,16 +147,20 @@ export default function Otp(props) {
         setSeconds(0);
     };
 
+    const goBack = () => {
+        handleBackButton();
+    }
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
-                <TouchableOpacity style={styles.arrow} onPress={() => props.navigation.goBack()} >
+                <TouchableOpacity style={styles.arrow} onPress={() => goBack()} >
                     <AntDesign name='arrowleft' size={30} color={color.white} />
                 </TouchableOpacity>
                 <View style={styles.imageContainer}>
-                    <Image source={images.MainLogo} style={{height:120,width:100}} />
+                    <Image source={images.MainLogo} style={{ height: 120, width: 100 }} />
                     <Text style={styles.welcome}>Verify Code</Text>
                     <Text style={styles.login}>Check your SMS inbox ,we have sent you the coed at <Text style={[styles.login, { color: color.white, fontWeight: '700' }]}>+91
                         {props.route.params.email_or_phoneNumber}
@@ -158,7 +212,7 @@ export default function Otp(props) {
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={900}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {

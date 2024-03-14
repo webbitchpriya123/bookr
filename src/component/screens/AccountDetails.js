@@ -82,7 +82,6 @@ export default function AccountDetails(props) {
     const getApi = async () => {
         const value = await AsyncStorage.getItem('user_id');
         const token = await AsyncStorage.getItem('token');
-        console.log("vallalala",value , token)
         const formData = new FormData();
         formData.append('user_id', value);
         formData.append('bank_name', data.value);
@@ -142,7 +141,6 @@ export default function AccountDetails(props) {
                 uri: Platform.OS === 'android' ? image.path : image.path.replace('file://', ''),
                 photoName: image.name
             };
-            console.log('imageee', image.uri)
             setImage(imageObject)
         });
     };
@@ -342,7 +340,7 @@ export default function AccountDetails(props) {
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={900}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {

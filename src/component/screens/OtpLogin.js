@@ -127,7 +127,7 @@ export default function OtpLogin(props) {
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={900}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {

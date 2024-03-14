@@ -54,7 +54,6 @@ export default function PaymentDetails(props) {
     const getApi = async () => {
         const value = await AsyncStorage.getItem('user_id');
         const token = await AsyncStorage.getItem('token');
-        console.log("tokemee", token)
         if (value) {
             axios({
                 method: 'post',
@@ -66,13 +65,12 @@ export default function PaymentDetails(props) {
                     user_id: value,
                 }
             }).then((response) => {
-                console.log("response", response.data)
                 if (response.data.result === true) {
                     setBank(response.data.data)
                     setLoad(false);
                 } else {
-                    setBank(false)
-                    setLoad(false)
+                    setBank(false);
+                    setLoad(false);
                 }
             }).catch((error) => {
                 setLoad(false);
@@ -100,17 +98,17 @@ export default function PaymentDetails(props) {
                                 <AntDesign name="right" size={20} color={color.darkGrey} />
                             </TouchableOpacity>
                         </View>
-                    </View> : <TouchableOpacity onPress={() => props.navigation.navigate('AccountDetails')} style={[[styles.flexContainer], [styles.addAccount]]}>
-                        <Text style={[styles.textStyle, { marginLeft: 20 }]}>Add a new account</Text>
-                        <AntDesign name="right" size={20} color={color.darkGrey} style={{ marginRight: 10 }} />
+                    </View> : <TouchableOpacity onPress={() => props.navigation.navigate('AccountDetails')} style={{marginTop:20}} >
+                        <Text style={[styles.textStyle]}>No default account.</Text>
+                        {/* <AntDesign name="right" size={20} color={color.darkGrey} style={{ marginRight: 10 }} /> */}
 
                     </TouchableOpacity>}
             </View>
             <View style={styles.submit}>
-                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => props.navigation.navigate('AllPayment')}>
+                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => props.navigation.navigate('AllPayment',{id:bank.id})}>
                     <View style={styles.loaderView}>
                         <View style={{ flex: 0.55 }}>
-                            <Text style={styles.loginText}>SUBMIT</Text>
+                            <Text style={styles.loginText}>CREATE NEW</Text>
                         </View>
                         {load ?
                             <View style={{ flex: 0.45 }}>

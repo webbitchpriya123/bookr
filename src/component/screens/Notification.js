@@ -41,7 +41,7 @@ export default function Notification(props) {
     useEffect(() => {
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
             console.log('Foreground Notification:', remoteMessage);
-            PushNotification(remoteMessage)
+            PushNotification(remoteMessage);
         });
         // Clean up the subscription when the component unmounts
         return () => unsubscribeOnMessage();
@@ -53,7 +53,7 @@ export default function Notification(props) {
         setLoad(false);
     }
 
-    const validation = notification.every(item => item.read_at === null);
+    const validation = notification ?notification.every(item => item.read_at === null):null
 
 
 
@@ -71,7 +71,6 @@ export default function Notification(props) {
 
 
 
-    console.log("cvfffffffffff", validation)
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
@@ -111,16 +110,16 @@ export default function Notification(props) {
                             <View style={styles.container}>
                                 <View style={styles.wholeView}>
                                     <View style={{ flex: 0.2 }}>
-                                        {/* {console.log('itmmmmm',item)} */}
                                         <View style={styles.iconView}>
                                             <Ionicons name="notifications" size={22} style={styles.iconStyle} color="#FFFFFF" />
                                             {item.read_at === null ?
-                                                <View style={{ height: 10, width: 10, backgroundColor: 'red', position: 'absolute', left: 35, borderRadius: 10 }}></View> : null}
+                                                <View style={styles.alert}></View> : null}
                                         </View>
                                     </View>
+                                    {console.log("type",item)}
                                     <View style={{ flex: 0.8 }}>
-                                        <Text style={styles.Text1}>{item.type.replace(/_/g, ' ')}</Text>
-                                        <Text style={styles.text2}>{item.message}</Text>
+                                        <Text style={styles.Text1}>{ item.notification_id.type ?item.notification_id.type.replace(/_/g, ' ') :null}</Text>
+                                        <Text style={styles.text2}>{item.notification_id.message}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -130,60 +129,7 @@ export default function Notification(props) {
                 </View>
 
 
-                {/* 
-                <View style={{ padding: 15 }}>
-                    <Text style={styles.headerText}>Yesterday</Text>
-                    <View style={styles.container}>
-                        <View style={styles.wholeView}>
-                            <View style={{ flex: 0.2 }}>
-                                <View style={styles.iconView}>
-                                    <Ionicons name="notifications" size={22} style={styles.iconStyle} color="#FFFFFF" />
-                                </View>
-                            </View>
-                            <View style={{ flex: 0.75 }}>
-                                <Text style={styles.Text1}>New Service Available!</Text>
-                                <Text style={styles.text2}>Lorem ipsum  dolor sit amet,</Text>
-                            </View>
-                        </View>
-
-                    </View>
-
-
-                </View>
-
-                <View style={{ padding: 15 }}>
-                    <Text style={styles.headerText}>December 22, 2023</Text>
-                    <View style={styles.container}>
-                        <View style={styles.wholeView}>
-                            <View style={{ flex: 0.2 }}>
-                                <View style={styles.iconView}>
-                                    <Ionicons name="notifications" size={22} style={styles.iconStyle} color="#FFFFFF" />
-                                </View>
-                            </View>
-                            <View style={{ flex: 0.75 }}>
-                                <Text style={styles.Text1}>New Service Available!</Text>
-                                <Text style={styles.text2}>Lorem ipsum  dolor sit amet,</Text>
-                            </View>
-                        </View>
-
-                    </View>
-                    <View style={styles.container}>
-                        <View style={styles.wholeView}>
-                            <View style={{ flex: 0.2 }}>
-                                <View style={styles.iconView}>
-                                    <Ionicons name="notifications" size={22} style={styles.iconStyle} color="#FFFFFF" />
-                                </View>
-                            </View>
-                            <View style={{ flex: 0.75 }}>
-                                <Text style={styles.Text1}>Credit Card Connected!</Text>
-                                <Text style={styles.text2}>Lorem ipsum  dolor sit amet,</Text>
-                            </View>
-                        </View>
-
-                    </View>
-            
-
-                </View> */}
+              
 
                 {!notification.length && !load ?
                     <View style={{ marginTop: windowHeight / 3, alignSelf: 'center' }}>
@@ -219,8 +165,9 @@ const styles = StyleSheet.create({
     iconView: {
         backgroundColor: color.darkBlue, height: 45, width: 45, borderRadius: 30
     },
-    wholeView: { flexDirection: 'row', alignItems: 'center', padding: 10 },
-    container: { height: 110, backgroundColor: '#F5F6FA', marginTop: 5, borderRadius: 10 },
-    notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari }
+    wholeView: { flexDirection: 'row', alignItems: 'center', padding: 10 ,paddingTop:10,marginBottom:10},
+    container: {  backgroundColor: '#F5F6FA', marginTop: 15, borderRadius: 10 },
+    notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
+    alert:{ height: 10, width: 10, backgroundColor: 'red', position: 'absolute', left: 35, borderRadius: 10 }
 
 })

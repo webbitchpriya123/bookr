@@ -23,12 +23,12 @@ export default function Verified(props) {
 
         setTimeout(() => {
             if(props.route.params.type === 'ResetPassword'){
-                props.navigation.navigate('ResetPassword')
+                props.navigation.navigate('ResetPassword',{mobile:props.route.params.mobile})
             }else{
                 props.navigation.navigate('Home')
   
             }
-        }, 500);
+        }, 300);
 
     },[props.route.params.type])
     

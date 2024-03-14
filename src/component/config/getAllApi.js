@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApiUrl, api, States, district, banks, faq, notification, getBookHistory, productDetail, productStatus, bookCount ,notificationCount ,notificationReadAt} from '../constant/constant';
+import { ApiUrl, api, States, bookUpdate, youtubeLink, bannerImg, district, invoiveDownload, banks, faq, notification, userProfile, getBookHistory, productDetail, productStatus, bookCount, notificationCount, notificationReadAt, invoiceOption } from '../constant/constant';
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -9,6 +9,30 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const getBank = async () => {
     try {
         const response = await axios.get(ApiUrl + api + banks);
+        return response.data.data;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+};
+
+
+//youtube link
+
+export const getYoutube = async () => {
+    try {
+        const response = await axios.get(ApiUrl + api + youtubeLink);
+        return response.data.data;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+};
+
+
+
+//banner
+export const getBanner = async () => {
+    try {
+        const response = await axios.get(ApiUrl + api + bannerImg);
         return response.data.data;
     } catch (error) {
         console.error("Error fetching data", error);
@@ -75,6 +99,8 @@ export const getAllBook = async () => {
     try {
         const value = await AsyncStorage.getItem('user_id');
         const token = await AsyncStorage.getItem('token');
+
+        console.log("tokennnee", token)
         const headers = {
             Authorization: "Bearer " + JSON.parse(token),
         };
@@ -145,6 +171,8 @@ export const bookCounts = async () => {
     }
 }
 
+
+//notification count
 export const notifyCount = async () => {
     try {
         const value = await AsyncStorage.getItem('user_id');
@@ -162,6 +190,8 @@ export const notifyCount = async () => {
     }
 }
 
+
+//read at notification
 export const readAtCount = async () => {
     try {
         const value = await AsyncStorage.getItem('user_id');
@@ -174,6 +204,75 @@ export const readAtCount = async () => {
         };
         const { data } = await axios.post(ApiUrl + api + notificationReadAt, requestBody, { headers });
         return data.result;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+}
+
+
+//get user profile
+export const getProfile = async () => {
+    try {
+        const value = await AsyncStorage.getItem('user_id');
+        const token = await AsyncStorage.getItem('token');
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const requestBody = {
+            user_id: value,
+        };
+        const { data } = await axios.post(ApiUrl + api + userProfile, requestBody, { headers });
+        console.log("datattataaaaaaaaaaa", data)
+        return data.data;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+}
+//download invoice
+export const downLoadInvoice = async (id) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const requestBody = {
+            product_id: id,
+        };
+        const { data } = await axios.post(ApiUrl + api + invoiveDownload, requestBody, { headers });
+        // console.log("dowloadInvoice",data)
+        return data;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+}
+//show invoice
+export const invoiceShow = async (id) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const requestBody = {
+            product_id: id,
+        };
+        const { data } = await axios.post(ApiUrl + api + invoiceOption, requestBody, { headers });
+        return data.result;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+}
+
+
+//update draft books
+
+export const updateDraft = async (formData) => {
+    const token = await AsyncStorage.getItem('token');
+    try {
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const { data } = await axios.post(ApiUrl + api + bookUpdate, formData, { headers });
+        return data;
     } catch (error) {
         console.error("Error fetching data", error);
     }

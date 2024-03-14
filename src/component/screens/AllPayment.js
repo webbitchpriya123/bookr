@@ -14,7 +14,8 @@ import {
     TextInput,
     ActivityIndicator,
     Dimensions,
-    RefreshControl
+    RefreshControl,
+    Alert
 } from 'react-native';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
@@ -26,7 +27,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
-import {PushNotification} from '../config/pushNotification';
+import { PushNotification } from '../config/pushNotification';
 
 
 export default function AllPayment(props) {
@@ -86,68 +87,95 @@ export default function AllPayment(props) {
     }, []); //
 
     const onRemove = async (id, index) => {
-        setLoad(true);
-        setChecked(index)
-        const value = await AsyncStorage.getItem('user_id');
-        const token = await AsyncStorage.getItem('token');
-        if (value) {
-            axios({
-                method: 'post',
-                url: ApiUrl + api + deleteBankAcc,
-                headers: {
-                    Authorization: "Bearer " + JSON.parse(token),
-                },
-                data: {
-                    user_id: value,
-                    bank_id: id
+
+        Alert.alert("UsedBookr!", "Are you sure you want to Remove Account?", [
+            {
+                text: "Cancel",
+                onPress: () => null,
+                style: "cancel"
+            },
+            {
+                text: "YES", onPress: async () => {
+                    setLoad(true);
+                    setChecked(index)
+                    const value = await AsyncStorage.getItem('user_id');
+                    const token = await AsyncStorage.getItem('token');
+                    if (value) {
+                        axios({
+                            method: 'post',
+                            url: ApiUrl + api + deleteBankAcc,
+                            headers: {
+                                Authorization: "Bearer " + JSON.parse(token),
+                            },
+                            data: {
+                                user_id: value,
+                                bank_id: id
+                            }
+                        }).then((response) => {
+                            if (response.data.status === 'success') {
+                                getApi();
+                                setLoad(false);
+                                setVisible(true);
+                                setMessage(response.data.message)
+                            }
+                        }).catch((error) => {
+                            console.log("error", error)
+                        })
+                    }
                 }
-            }).then((response) => {
-                if (response.data.status === 'success') {
-                    getApi();
-                    setLoad(false);
-                    setVisible(true);
-                    setMessage(response.data.message)
-                }
-            }).catch((error) => {
-                console.log("error", error)
-            })
-        }
+            }
+        ]);
+
+
     }
 
 
 
+    console.log("checkkk",checked)
+
     const setAsDefault = async (id, index) => {
-        console.log("fasfasfasdfasdf", id, index)
-        setLoad(true);
-        setChecked(index)
-        const value = await AsyncStorage.getItem('user_id');
-        const token = await AsyncStorage.getItem('token');
-        if (value) {
-            axios({
-                method: 'post',
-                url: ApiUrl + api + upDateBank,
-                headers: {
-                    Authorization: "Bearer " + JSON.parse(token),
-                },
-                data: {
-                    user_id: value,
-                    bank_id: id
+        console.log("default",id)
+        Alert.alert("UsedBookr!", "Are you sure you want to set your default account?", [
+            {
+                text: "Cancel",
+                onPress: () => null,
+                style: "cancel"
+            },
+            {
+                text: "YES", onPress: async () => {
+                    setLoad(true);
+                    setChecked(index)
+                    const value = await AsyncStorage.getItem('user_id');
+                    const token = await AsyncStorage.getItem('token');
+                    if (value) {
+                        axios({
+                            method: 'post',
+                            url: ApiUrl + api + upDateBank,
+                            headers: {
+                                Authorization: "Bearer " + JSON.parse(token),
+                            },
+                            data: {
+                                user_id: value,
+                                bank_id: id
+                            }
+                        }).then((response) => {
+                            console.log("defaultresponse", response.data)
+                            if (response.data.status === 'success') {
+                                getApi();
+                                setLoad(false);
+                                setVisible(true);
+                                setMessage(response.data.message)
+                                setTimeout(() => {
+                                    props.navigation.goBack();
+                                }, 1000);
+                            }
+                        }).catch((error) => {
+                            console.log("error", error)
+                        })
+                    }
                 }
-            }).then((response) => {
-                console.log("defaultresponse", response.data)
-                if (response.data.status === 'success') {
-                    getApi();
-                    setLoad(false);
-                    setVisible(true);
-                    setMessage(response.data.message)
-                    setTimeout(() => {
-                        props.navigation.goBack();
-                    }, 1000);
-                }
-            }).catch((error) => {
-                console.log("error", error)
-            })
-        }
+            }
+        ]);
     }
 
     const onRefresh = React.useCallback(() => {
@@ -236,7 +264,7 @@ export default function AllPayment(props) {
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={1100}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {

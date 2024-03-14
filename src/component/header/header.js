@@ -16,8 +16,6 @@ const Header = (props) => {
     const [notification, setNotification] = useState('');
 
     useEffect(() => {
-        setNotification(false);
-        allNotificcations();
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
             console.log('Foreground Notification:', remoteMessage);
             allNotificcations();
@@ -27,9 +25,14 @@ const Header = (props) => {
         return () => unsubscribeOnMessage();
     }, [isFocused]);
 
+    // useEffect(() => {
+    //     setNotification(false);
+    // }, [isFocused]);
+
+
+
     const allNotificcations = async () => {
         const notify = await notifyCount();
-        console.log("notiffyfyffff", notify)
         if (notify > 0) {
             setNotification(notify)
         }
@@ -41,7 +44,7 @@ const Header = (props) => {
         setNotification(false);
     }
 
-
+    console.log("notification",notification)
 
 
     return (
@@ -57,7 +60,6 @@ const Header = (props) => {
                     </TouchableOpacity>
                     {notification ?
                         <TouchableOpacity style={styles.notify}>
-
                         </TouchableOpacity> : null}
                 </TouchableOpacity>
 

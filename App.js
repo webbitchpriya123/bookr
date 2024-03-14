@@ -43,6 +43,9 @@ import Register from './src/component/screens/Register.js';
 import PaymentDetails from './src/component/screens/PaymentDetails.js';
 import AllPayment from './src/component/screens/AllPayment.js';
 import messaging from '@react-native-firebase/messaging';
+import Terms from './src/component/screens/Terms.js';
+import Draft from './src/component/screens/Draft.js';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -50,7 +53,7 @@ const App = () => {
 
   const [localValue, setLocal] = useState(null);
   // const isDarkMode = useColorScheme() === 'dark';
- 
+
   useEffect(() => {
     loadStoredValue();
     requestUserPermission();
@@ -126,7 +129,7 @@ const App = () => {
           name="Login"
           component={Login}
         />
-        <Stack.Screen name="Home" component={MyTab} />
+        <Stack.Screen name="Home" options={{ animation: 'slide_from_right' }} component={MyTab} />
         <Stack.Screen name="Otp" component={Otp} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="OtpLogin" component={OtpLogin} />
@@ -143,6 +146,8 @@ const App = () => {
         <Stack.Screen name="FAQ" component={FAQ} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="AllPayment" component={AllPayment} />
+        <Stack.Screen name="Terms" component={Terms} />
+        <Stack.Screen name="Draft" component={Draft} />
       </Stack.Navigator>
     </NavigationContainer>
   );

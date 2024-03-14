@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator, TouchableOpacity, Dimensions, ToastAndroid } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, Image, BackHandler, Alert, TextInput, ActivityIndicator, TouchableOpacity, Dimensions, ToastAndroid } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Divider, Snackbar } from 'react-native-paper';
@@ -13,7 +13,7 @@ import axios from 'axios';
 import { ApiUrl, api, login } from '../constant/constant';
 import { getFcm } from '../config/localStorage';
 import messaging from '@react-native-firebase/messaging';
-import {PushNotification} from '../config/pushNotification';
+import { PushNotification } from '../config/pushNotification';
 
 export default function Login(props) {
     const [mobileNumber, setMobileNumber] = useState('');
@@ -41,12 +41,26 @@ export default function Login(props) {
     }, []); //
 
 
+    const handleBackButtonClick = useCallback(() => {
+        if(props.route.name === 'Login'){
+        BackHandler.exitApp();
+        return true;
+        }
+    }, [props.navigation]);
+
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+        return () => {
+            backHandler.remove();
+        };
+    }, [handleBackButtonClick]);
+
     const authLogin = async () => {
         const fcm = JSON.parse(await getFcm());
         axios.post(ApiUrl + api + login, {
             phone_or_email: mobileNumber,
             password: Password,
-            device_token:fcm
+            device_token: fcm
         })
             .then((response) => {
                 setLoad(false);
@@ -59,7 +73,7 @@ export default function Login(props) {
                     setVisible(true);
                     setTimeout(() => {
                         props.navigation.navigate('Home')
-                    }, 1000);
+                    }, 1200);
 
                 } else {
                     updateState();
@@ -71,7 +85,7 @@ export default function Login(props) {
                 updateState();
                 setLoad(false);
                 setVisible(true);
-                setMessage(error.data.message)
+                setMessage('Invalid phone number or password')
             });
     }
 
@@ -97,14 +111,13 @@ export default function Login(props) {
 
     }
 
-    console.log("globall", global.user_id)
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.imageContainer}>
-                    <Image source={images.MainLogo} style={{height:120,width:100}}/>
+                    <Image source={images.MainLogo} style={{ height: 120, width: 100 }} />
                     <Text style={styles.welcome}>Welcome Back</Text>
                     <Text style={styles.login}>Login to your account </Text>
                 </View>
@@ -200,7 +213,7 @@ export default function Login(props) {
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={900}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator ,Dimensions} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,7 +10,9 @@ import * as font from '../../fonts/fonts';
 import * as images from '../config/constants';
 import { ApiUrl, api, resetPassword } from '../constant/constant';
 import axios from 'axios';
-
+import { useIsFocused } from "@react-navigation/native";
+import messaging from '@react-native-firebase/messaging';
+import { PushNotification } from '../config/pushNotification';
 
 
 
@@ -174,7 +176,7 @@ export default function ResetPassword(props) {
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={1000}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {

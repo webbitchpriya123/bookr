@@ -1,59 +1,60 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, RefreshControl, Linking, FlatList, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
-import * as images from '../config/constants';
+import { View, StyleSheet, Text, SafeAreaView, RefreshControl, Image, Linking, FlatList, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
 import YoutubePlayer from "react-native-youtube-iframe";
 import Header from '../header/header';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { accountStatus, bookCounts } from "../config/getAllApi";
+import { accountStatus, bookCounts, getYoutube } from "../config/getAllApi";
 import messaging from '@react-native-firebase/messaging';
 import { PushNotification } from '../config/pushNotification';
+import { useIsFocused } from "@react-navigation/native";
+import BannerView from '../header/bannerView';
 
 
 
 
 
 const Home = (props) => {
+    const isFocused = useIsFocused();
 
-    const [local, setLocal] = useState('');
-    const [booksts, setBookSts] = useState({});
+    // const [booksts, setBookSts] = useState({});
     const [acSts, setAcSts] = useState({});
     const [arr, setArr] = useState([]);
-
+    const [link, setLink] = useState();
 
     useEffect(() => {
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
             console.log('Foreground Notification:', remoteMessage);
-            PushNotification(remoteMessage)
+            PushNotification(remoteMessage);
+            loadStoredValue();
         });
 
         const unsubscribeOnNotificationOpenedApp = messaging().onNotificationOpenedApp(remoteMessage => {
+            console.log("messafeee", remoteMessage)
+        });
 
-            console.log("sfjhsdfjhsdfhskjfdhskgjsd",remoteMessage)
-            // Handle the notification when the app is opened by clicking the notification
-            // Extract the navigation data from remoteMessage.data and navigate accordingly
-            // Use your navigation logic here
-          });
-      
-        // Clean up the subscription when the component unmounts
         return () => {
             unsubscribeOnMessage();
             unsubscribeOnNotificationOpenedApp();
         }
-        ;
+            ;
     }, []); //
-
-
 
     useEffect(() => {
         loadStoredValue();
-    }, []);
+    }, [isFocused]);
 
-    // Function to load stored value
     const loadStoredValue = async () => {
+        var arr = [];
+        const account = await accountStatus();
+        const uTube = await getYoutube();
+        uTube.map((item) => {
+            arr.push(item.link);
+        })
+        setLink(arr);
+        setAcSts(account);
         const bookStatus = await bookCounts();
         const array = [];
         if (bookStatus.soldbook) {
@@ -90,19 +91,9 @@ const Home = (props) => {
             });
         }
         setArr(array);
-        const account = await accountStatus();
-        setBookSts(bookStatus);
-        setAcSts(account);
-        try {
-            const value = await AsyncStorage.getItem('user_id');
-            if (value !== null) {
-                setLocal(value);
-            }
-
-        } catch (error) {
-            console.error('Error loading stored value:', error);
-        }
+        // setBookSts(bookStatus);
     };
+
 
     const windowWidth = Dimensions.get('window').width;
     const [playing, setPlaying] = useState(false);
@@ -119,22 +110,25 @@ const Home = (props) => {
     const sendWhatsAppMessage = () => {
         const phoneNumber = '+91 8754685595'; // Replace with the recipient's phone number
         const message = 'Hello, this is a test message!'; // Replace with your desired message
-
         Linking.openURL(`whatsapp://send?text=${encodeURIComponent(message)}&phone=${encodeURIComponent(phoneNumber)}`)
             .then(() => console.log('WhatsApp opened'))
             .catch((err) => console.error('An error occurred: ', err));
     };
-    console.log("logss", windowWidth / 3.5, local)
+
+    console.log("logss", windowWidth / 3.5)
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
+        loadStoredValue();
         setTimeout(() => {
             setRefreshing(false);
         }, 800);
     }, []);
 
 
-    console.log('accountSts', arr, booksts, acSts)
+
+
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Header props={props} />
@@ -159,8 +153,36 @@ const Home = (props) => {
                         }
                         keyExtractor={item => item.id}
                     />
+                    <BannerView />
+                    {/* <View>
+                        <ScrollView
+                            pagingEnabled
+                            horizontal
+                            onScroll={scrolls}
+                            showsHorizontalScrollIndicator={false}
+                            style={{ marginTop: 15, marginLeft: 5 }}
+                        >
+                            {banner.map((item, index) => (
+                                <Image
+                                    key={index}
+                                    source={{ uri: item.image }}
+                                    style={{ width: windowWidth - 35, height: 160, borderRadius: 8 }}
+                                />
+                            )
+                            )}
 
-                    <View style={{ marginTop: 20 }}>
+                        </ScrollView>
+                        <View style={styles.pagination}>
+                            {banner.map((item, k) => (
+                                <Text key={k} style={k == active ? styles.activeDot : styles.dot}>
+                                    •
+                                </Text>
+                            ))}
+
+                        </View>
+                    </View> */}
+
+                    {/* <View style={{ marginTop: 20 }}>
                         <ImageBackground imageStyle={{ borderRadius: 10 }} source={images.banner} style={{ width: windowWidth - 40, height: 150, alignSelf: 'center' }} >
                             <View style={{ alignSelf: 'flex-end', width: windowWidth / 2.3, margin: 10, paddingTop: 8 }}>
                                 <Text style={styles.perchant}>30% EXTRA</Text>
@@ -171,20 +193,20 @@ const Home = (props) => {
                             </View>
 
                         </ImageBackground>
-                    </View>
+                    </View> */}
                     <View style={{ marginTop: 20 }} >
                         <Text style={styles.title}>Sell your Books</Text>
 
                     </View>
 
-                    <TouchableOpacity onPress={() => props.navigation.navigate('ReSell')} style={styles.sellContainer}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('ReSell', { bookId: "" })} style={styles.sellContainer}>
                         <Text style={styles.sellBooks}>Sell your book</Text>
                         <View style={styles.arrowBox}>
                             <AntDesign name="arrowright" color={color.darkBlue} size={25} style={{ alignSelf: 'center' }} />
                         </View>
 
                     </TouchableOpacity>
-                    {acSts.status === true ?
+                    {acSts?.status === true ?
                         <TouchableOpacity onPress={() => props.navigation.navigate('PaymentDetails')} style={[styles.sellContainer, { marginTop: 15, backgroundColor: '#FFCB00' }]}>
                             <Text style={[styles.sellBooks, { color: color.black }]}>AccountDetails</Text>
                             <View style={styles.arrowBox}>
@@ -199,13 +221,12 @@ const Home = (props) => {
                             volume={100}
                             videoId={"PR34ztnnTjI"}
                             onChangeState={onStateChange}
-                            playList={['S9RaNCmgd28', 'KNLZ9H-WCnA']}
+                            playList={link}
                         />
                     </View>
                     <View  >
                         <Text style={styles.chatText}>Chat with us</Text>
                     </View>
-
                     <TouchableOpacity style={{ marginTop: 10 }} onPress={() => sendWhatsAppMessage()}>
                         <View style={styles.accountContainer}>
                             <View style={styles.flex2}>

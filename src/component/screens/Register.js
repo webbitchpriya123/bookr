@@ -63,7 +63,7 @@ export default function Register(props) {
                 setMessage('Register sucessfully');
                 updateState();
                 setTimeout(() => {
-                    props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.user.verification_code, user_id: response.data.data.user.id, type: 'Login',name:'Register' })
+                    props.navigation.navigate('Otp', { email_or_phoneNumber: mobileNumber, code: response.data.data.verification_code, user_id: response.data.data.user.id, type: 'Login',name:'Register' })
                 }, 1000);
             } else {
                 setLoad(false)
@@ -88,8 +88,6 @@ export default function Register(props) {
 
 
     const Register = async () => {
-
-
         const strongRegex = new RegExp("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
         const phoneNumberRegex = /^\d{10}$/;
         if (Name === '') {
@@ -132,10 +130,10 @@ export default function Register(props) {
                     <Text style={styles.welcome}>Welcome Back</Text>
                     <Text style={styles.login}>Register to your account </Text>
                 </View>
-                <View style={{ flex: 0.03 }}>
+                <View style={{ flex: 0.03}}>
                     <Divider style={styles.divider} />
                 </View>
-                <View style={{ flex: 0.74 }}>
+                <View style={{ flex: 0.6}}>
                     <View style={styles.textInputView}>
                         <EvilIcons name="user" color="#241D60" size={35} />
                         <TextInput
@@ -277,7 +275,7 @@ export default function Register(props) {
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={900}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {
@@ -299,9 +297,8 @@ const styles = StyleSheet.create({
     },
     bottom: { flex: 0.1, justifyContent: 'flex-end', paddingBottom: 10 },
     loginText: { alignSelf: 'flex-end', fontSize: 14, color: color.darkBlack, fontWeight: '600' },
-    logView: { height: 50, backgroundColor: '#FFCB00', marginTop: 35, borderRadius: 8 },
+    logView: { height: 50, backgroundColor: '#FFCB00', marginTop: 30, borderRadius: 8 },
     loaderView: { flexDirection: 'row', alignItems: 'center', height: 50 },
-
     forget: { marginTop: 15, color: '#FFFFFF', fontSize: 13, textDecorationLine: 'underline' },
     divider: { height: 1.2, backgroundColor: color.dividerColor, marginTop: 10 },
     login: { fontSize: 14, color: '#FFFFFFE5', fontWeight: '500', lineHeight: 30 },
@@ -319,7 +316,7 @@ const styles = StyleSheet.create({
     OrText: { textAlign: 'center', fontWeight: '500', color: color.white, fontSize: 14, lineHeight: 17 },
     loginView: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, marginBottom: 5 },
     welcome: { fontSize: 25, color: '#FFFFFFE5', fontWeight: '600', lineHeight: 30, marginTop: 10 },
-    imageContainer: { flex: 0.24, justifyContent: 'flex-end', alignItems: 'center' },
-    textInputView: { flexDirection: 'row', width: "99%", alignSelf: "center", alignItems: "center", backgroundColor: "white", height: 55, borderRadius: 8, marginTop: 15 },
+    imageContainer: { flex: 0.27, justifyContent: 'flex-end', alignItems: 'center' },
+    textInputView: { flexDirection: 'row', width: "99%", alignSelf: "center", alignItems: "center", backgroundColor: "white", height: 55, borderRadius: 8, marginTop: 12 },
 
 })

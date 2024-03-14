@@ -22,10 +22,10 @@ import ImagePicker from 'react-native-image-crop-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Snackbar } from 'react-native-paper';
-import { getStates, getDistrict } from "../config/getAllApi";
+import { getStates, getDistrict, getProfile } from "../config/getAllApi";
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
-import {PushNotification} from '../config/pushNotification';
+import { PushNotification } from '../config/pushNotification';
 
 
 export default function EditProfile(props) {
@@ -37,7 +37,31 @@ export default function EditProfile(props) {
     const [visible, setVisible] = useState(false);
     const [message, setMessage] = useState('');
     const [refreshing, setRefreshing] = React.useState(false);
+    const [state, setState] = useState({
+        Name: '',
+        Email: '',
+        Phone: '',
+        Address: '',
+        pinCode: '',
+        state: '',
+        district: '',
+        city: '',
+        image: '',
+        stateName: "",
+        districtName: ""
 
+    });
+    const [error, setError] = useState({
+        nameError: false,
+        emailError: false,
+        phoneError: false,
+        AddressError: false,
+        pinError: false,
+        stateError: false,
+        districtError: false,
+        cityError: false
+    })
+    const [isFocus, setIsFocus] = useState(false);
     const windowWidth = Dimensions.get('window').width;
     const isFocused = useIsFocused();
     const onRefresh = React.useCallback(() => {
@@ -53,6 +77,25 @@ export default function EditProfile(props) {
     const stateValue = async () => {
         const state = await getStates();
         setStateVal(state);
+        const data = await getProfile();
+        if (data) {
+            setState({
+                Name: data.name,
+                Email: data.email,
+                Phone: data.phone,
+                Address: data.address,
+                pinCode: data.pin_code,
+                state: data.state_id,
+                district: data.district_id,
+                city: data.city,
+                image: data.image,
+                stateName: data.state,
+                districtName: data.district
+
+            })
+        }
+        // setProfile(data)
+
     }
     useEffect(() => {
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
@@ -62,7 +105,7 @@ export default function EditProfile(props) {
         // Clean up the subscription when the component unmounts
         return () => unsubscribeOnMessage();
     }, []); //
-    
+
     const DistrictValue = async (id) => {
         const district = await getDistrict(id);
         setDistVal(district);
@@ -70,7 +113,7 @@ export default function EditProfile(props) {
 
     const openImagePicker = () => {
         ImagePicker.openPicker({
-            width: 100,
+            width: 120,
             height: 120,
             cropping: true
         }).then(image => {
@@ -87,29 +130,8 @@ export default function EditProfile(props) {
         });
     };
 
-    const [state, setState] = useState({
-        Name: '',
-        Email: '',
-        Phone: '',
-        Address: '',
-        pinCode: '',
-        state: '',
-        district: '',
-        city: ''
-    });
 
-    const [error, setError] = useState({
-        nameError: false,
-        emailError: false,
-        phoneError: false,
-        AddressError: false,
-        pinError: false,
-        stateError: false,
-        districtError: false,
-        cityError: false
-    })
-    const [isFocus, setIsFocus] = useState(false);
-
+    console.log("stateeee", state)
     const onTextChange = (name) => (value) => {
         setState({
             ...state,
@@ -117,13 +139,7 @@ export default function EditProfile(props) {
         });
         setError({ error: false })
     };
-    const onSelectChange = (name) => (value) => {
-        setState({
-            ...state,
-            [name]: value.name,
-        });
-        setError({ error: false })
-    }
+
     const onSubmitVal = async () => {
 
         try {
@@ -132,16 +148,16 @@ export default function EditProfile(props) {
             const formData = new FormData();
             formData.append('user_id', value);
             formData.append('name', state.Name);
-            // formData.append('email', state.Email);
-            // formData.append('phone', state.Phone);
+            formData.append('email', state.Email);
+            formData.append('phone', state.Phone);
             formData.append('state', state.state);
             formData.append('district', state.district);
             formData.append('city', state.city);
             formData.append('address', state.Address);
             formData.append('pin_code', state.pinCode);
             formData.append('image', image);
+
             if (value) {
-                console.log("state", token, value, state, formData)
                 await axios.post(
                     ApiUrl + api + editProfile,
                     formData,
@@ -161,7 +177,7 @@ export default function EditProfile(props) {
                         setTimeout(() => {
                             props.navigation.navigate('Profile')
                         }, 1000);
-                        setState('');
+                        // setState('');
 
 
                     } else {
@@ -180,46 +196,13 @@ export default function EditProfile(props) {
     }
 
     const onSubmit = () => {
-        const strongRegex = new RegExp("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
-        if (!state.Name ) {
-            scrollRef.current?.scrollTo({
-                y: 0,
-                animated: true
-            });
-        } if (!state.Name) {
-            setError({ nameError: 'Name is required.' });
-        } 
-        // else if (!state.Email) {
-        //     setError({ emailError: 'Email is required.' });
-        // }
-        // else if (!strongRegex.test(state.Email)) {
-        //     setError({ emailError: 'Invalid Email' });
-        // }
-        // else if (!state.Phone) {
-        //     setError({ phoneError: 'PhoneNumber is required.' });
-        // }
-        else if (!state.state) {
-            setError({ stateError: 'State is required.' });
-        }
-        else if (!state.district) {
-            setError({ districtError: 'district is required.' });
-        }
-        else if (!state.city) {
-            setError({ cityError: 'city is required.' });
-        }
-        else if (!state.Address) {
-            setError({ AddressError: 'Address is required.' });
-        }
-        else if (!state.pinCode) {
-            setError({ pinError: 'pinCode is required.' });
-        }
-        else {
-            setLoad(true);
-            onSubmitVal();
-        }
+
+        setLoad(true);
+        onSubmitVal();
     }
 
-    console.log("state", image.uri, state.state)
+
+    console.log("statteeeeeee", state)
     return (
         <SafeAreaView style={styles.containerView}>
             <HeaderComp props={props} name={'Edit Profile'} />
@@ -231,14 +214,14 @@ export default function EditProfile(props) {
                     <View style={styles.flexContainer}>
                         <View>
                             <TouchableOpacity onPress={() => openImagePicker()}>
-                                {image.uri ?
-                                    <Image source={{ uri: image.uri }} style={styles.imageContainer} /> :
+                                {image.uri || state.image ?
+                                    <Image source={{ uri: image.uri ? image.uri : state.image }} style={styles.imageContainer} /> :
                                     <View style={styles.camera}>
-                                        <AntDesign name="camerao" size={90} style={{alignSelf:'center'}} />
+                                        <AntDesign name="camerao" size={90} style={{ alignSelf: 'center' }} />
                                     </View>}
                             </TouchableOpacity>
                             <View >
-                            <Text style={styles.userName}>Upload Photo</Text>
+                                <Text style={styles.userName}>Upload Photo</Text>
                             </View>
                             {/* <Text style={styles.number}>Phone Number</Text> */}
                         </View>
@@ -259,18 +242,18 @@ export default function EditProfile(props) {
                         <TextInput
                             spellCheck={false}
                             autoCorrect={false}
-                            // value={state.Email}
+                            value={state.Email}
                             style={[styles.input]}
                             placeholder="can't update your Email"
                             editable={false} selectTextOnFocus={false} placeholderTextColor={'#bab9b5'}
                         // onChangeText={onTextChange("Email")}
                         />
-                     {/* {error.emailError ? <Text style={styles.errorStyle}>{error.emailError}</Text> : null} */}
-                     <Text style={styles.name}>Phone Number</Text> 
+                        {/* {error.emailError ? <Text style={styles.errorStyle}>{error.emailError}</Text> : null} */}
+                        <Text style={styles.name}>Phone Number</Text>
 
                         <TextInput
-                            style={[styles.input, { borderWidth: state.Phone || error.phoneError ? 1 : 0, borderColor: state.Phone || error.phoneError ? 'gray' : '', backgroundColor: state.Phone || error.phoneError ? color.white : '#F5F6FA' }]}
-                            // value={state.Phone}
+                            style={[styles.input]}
+                            value={state.Phone}
                             editable={false} selectTextOnFocus={false} placeholder="can't update your Phone Number"
                             placeholderTextColor={'#bab9b5'}
                             // onChangeText={onTextChange("Phone")}
@@ -292,7 +275,7 @@ export default function EditProfile(props) {
                             maxHeight={300}
                             labelField="name"
                             valueField="id"
-                            placeholder={!isFocus ? 'State' : '...'}
+                            placeholder={!isFocus ? state.stateName : '...'}
                             searchPlaceholder="Search..."
                             value={state.state}
                             itemTextStyle={{ color: color.darkBlack }}
@@ -304,7 +287,7 @@ export default function EditProfile(props) {
                             // }}
 
                             onChange={item => {
-                                onSelectChange("state")
+                                // onSelectChange("state")
                                 setState(prevState => ({
                                     ...prevState,
                                     state: item.id
@@ -331,7 +314,7 @@ export default function EditProfile(props) {
                                     maxHeight={300}
                                     labelField="name"
                                     valueField="id"
-                                    placeholder={!isFocus ? 'District' : '...'}
+                                    placeholder={!isFocus ? state.districtName : '...'}
                                     searchPlaceholder="Search..."
                                     value={state.district}
                                     itemTextStyle={{ color: color.darkBlack }}
@@ -347,7 +330,7 @@ export default function EditProfile(props) {
                                             district: item.id
                                         }))
 
-                                        onSelectChange("district")
+                                        // onSelectChange("district")
                                     }
                                     }
 
@@ -392,13 +375,8 @@ export default function EditProfile(props) {
                             onChangeText={onTextChange("pinCode")}
                             maxLength={6}
                             keyboardType="numeric"
-
-
-
                         />
                         {error.pinError ? <Text style={styles.errorStyle}>{error.pinError}</Text> : null}
-
-
                         <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => onSubmit()}>
                             <View style={styles.loaderView}>
                                 <View style={{ flex: 0.55 }}>
@@ -422,7 +400,7 @@ export default function EditProfile(props) {
                 style={{ width: windowWidth - 20 }}
                 visible={visible}
                 onDismiss={() => setVisible(false)}
-                duration={900}
+                duration={1500}
                 action={{
                     label: 'UNDO',
                     onPress: () => {
@@ -491,7 +469,7 @@ const styles = StyleSheet.create({
     },
     errorStyle: { color: 'red', fontSize: 13, fontWeight: '500', marginTop: 8 },
     loaderView: { flexDirection: 'row', alignItems: 'center', height: 55 },
-    camera:{ alignSelf: 'center',height:90,width:120 }
+    camera: { alignSelf: 'center', height: 90, width: 120 }
 
 
 })

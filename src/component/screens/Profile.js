@@ -10,19 +10,20 @@ import {
     ScrollView,
     Dimensions,
     ActivityIndicator,
-    RefreshControl
+    RefreshControl,
+    Alert,
+    BackHandler
 } from 'react-native';
 import Header from "../header/header";
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApiUrl, api, userProfile } from '../constant/constant';
-import axios from 'axios';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
-import {PushNotification} from '../config/pushNotification';
+import { PushNotification } from '../config/pushNotification';
+import { getProfile } from "../config/getAllApi";
 
 
 export default function Profile(props) {
@@ -34,6 +35,10 @@ export default function Profile(props) {
     const isFocused = useIsFocused();
 
 
+
+
+
+   
     useEffect(() => {
         const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
             console.log('Foreground Notification:', remoteMessage);
@@ -45,9 +50,10 @@ export default function Profile(props) {
 
 
     useEffect(() => {
-        getProfile();
+        userProfile();
         setLoad(true);
     }, [isFocused]);
+
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
@@ -55,151 +61,141 @@ export default function Profile(props) {
         }, 800);
     }, []);
     // Function to load stored value
-    const getProfile = async () => {
-        try {
-            const value = await AsyncStorage.getItem('user_id');
-            const token = await AsyncStorage.getItem('token');
-            if (value) {
-                axios({
-                    method: 'post',
-                    url: ApiUrl + api + userProfile,
-                    headers: {
-                        Authorization: "Bearer " + JSON.parse(token),
-                    },
-                    data: {
-                        user_id: value,
-                    }
-                }).then((response) => {
-                    if (response.data.result === true) {
-                        setProfile(response.data.data);
-                        setLoad(false);
-                    } else {
-                        setLoad(false);
-                        alert('failed')
-                    }
-                }).catch((error) => {
-                    setLoad(false);
-                    console.log("error", error)
-                });
-            }
-        }
-        catch (error) {
-            setLoad(false)
-            console.error('Error loading stored value:', error);
+    const userProfile = async () => {
+        const data = await getProfile();
+        if(data){
+            setProfile(data);
+            setLoad(false);
+        }else{
+            setLoad(false);
+            // alert('Failed');
         }
     };
 
-    const logOut = async() =>{
-        //  await messaging().deleteToken();
-        AsyncStorage.removeItem('user_id');
-        AsyncStorage.removeItem('token');
-        props.navigation.navigate('Login');
-        setProfile('')
+    const logOut = async () => {
+        Alert.alert("UsedBookr!", "Are you sure you want to Log out?", [
+            {
+                text: "Cancel",
+                onPress: () => null,
+                style: "cancel"
+            },
+            {
+                text: "YES", onPress: () => {
+                    AsyncStorage.removeItem('user_id');
+                    AsyncStorage.removeItem('token');
+                    props.navigation.navigate('Login');
+                    setProfile('')
+                }
+            }
+        ]);
     }
-    return (
-        <SafeAreaView style={styles.containerView}>
-            <Header props={props} />
-            <ScrollView showsVerticalScrollIndicator={false} refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }>
-                <View style={styles.container}>
-                    <View style={styles.flexContainer}>
-                        <View style={styles.flex7}>
-                            <View style={styles.flexEnd}>
-                                {profile.image ?
-                                    <Image source={{ uri: profile.image }} style={styles.imageContainer} /> :
-                                    <View style={{ height:100,width:100,backgroundColor:'grey',borderRadius:50 }}>
-                                        <AntDesign name="camera" color={'#F5F6FA'} size={70} style={{alignSelf:'center',marginTop:10}}/>
-                                    </View>
-                                }
-                                <Text style={styles.userName}>{profile.name}</Text>
-                                <Text style={styles.number}>{profile.phone}</Text>
-                            </View>
+
+
+
+return (
+    <SafeAreaView style={styles.containerView}>
+        <Header props={props} />
+        <ScrollView showsVerticalScrollIndicator={false} refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+            <View style={styles.container}>
+                <View style={styles.flexContainer}>
+                    <View style={styles.flex7}>
+                        <View style={styles.flexEnd}>
+                            {profile.image ?
+                                <Image source={{ uri: profile.image }} style={styles.imageContainer} /> :
+                                <View style={{ height: 100, width: 100, backgroundColor: 'grey', borderRadius: 50 }}>
+                                    <AntDesign name="camera" color={'#F5F6FA'} size={70} style={{ alignSelf: 'center', marginTop: 10 }} />
+                                </View>
+                            }
+                            <Text style={styles.userName}>{profile.name}</Text>
+                            <Text style={styles.number}>{profile.phone}</Text>
                         </View>
-                        <TouchableOpacity style={styles.flex3} onPress={() => props.navigation.navigate('EditProfile')}>
-                            <Text style={styles.editProfile}>Edit Profile</Text>
-                        </TouchableOpacity>
                     </View>
-                    <View>
-                        <Text style={styles.name}>Name</Text>
-                        <TextInput
-                            editable={false}
-                            style={styles.input}
-                            placeholder={profile.name ? profile.name : 'Name'}
-                            placeholderTextColor={'#7F8192'}
-                        />
-                        <Text style={styles.name}>Email</Text>
-                        <TextInput
-                            style={styles.input}
-                            editable={false}
-                            placeholder={profile.email ? profile.email : 'Email'}
-                            placeholderTextColor={'#7F8192'}
-                        />
-                        <Text style={styles.name}>Phone Number</Text>
-                        <TextInput
-                            style={styles.input}
-                            editable={false}
-                            placeholder={profile.phone ? profile.phone : 'Phone Number'}
-                            placeholderTextColor={'#7F8192'}
-                        />
-                        <Text style={styles.name}>State</Text>
-                        <TextInput
-                            editable={false}
-                            style={styles.input}
-                            placeholder={profile.state ? profile.state : 'State'}
-                            placeholderTextColor={'#7F8192'}
-                        />
-                        <View style={styles.flexEven}>
-                            <View style={styles.flex4}>
-                                <Text style={styles.name}>District</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    editable={false}
-                                    placeholder={profile.district ? profile.district : 'District'}
-                                    placeholderTextColor={'#7F8192'}
-                                />
-                            </View>
-                            <View style={styles.flex4}>
-                                <Text style={styles.name}>City</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    editable={false}
-                                    placeholder={profile.city ? profile.city : 'City'}
-                                    placeholderTextColor={'#7F8192'}
-                                />
-                            </View>
-                        </View>
-                        <Text style={styles.name}>Address</Text>
-                        <TextInput
-                            style={styles.input}
-                            editable={false}
-                            placeholder={profile.address ? profile.address : 'Address'}
-                            placeholderTextColor={'#7F8192'}
-                        />
-                        <Text style={styles.name}>Pin code</Text>
-                        <TextInput
-                            editable={false}
-                            style={styles.input}
-                            placeholder={profile.pin_code ? profile.pin_code : 'Pin Code'}
-                            placeholderTextColor={'#7F8192'}
-                        />
-                    </View>
-                    <TouchableOpacity onPress={() => {
-                        logOut();
-                       
-                    }} style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
-                        <MaterialCommunityIcons name="logout" size={25} color={color.red} />
-                        <Text style={styles.logout} >Logout</Text>
+                    <TouchableOpacity style={styles.flex3} onPress={() => props.navigation.navigate('EditProfile')}>
+                        <Text style={styles.editProfile}>Edit Profile</Text>
                     </TouchableOpacity>
                 </View>
-            </ScrollView>
+                <View>
+                    <Text style={styles.name}>Name</Text>
+                    <TextInput
+                        editable={false}
+                        style={styles.input}
+                        placeholder={profile.name ? profile.name : 'Name'}
+                        placeholderTextColor={'#7F8192'}
+                    />
+                    <Text style={styles.name}>Email</Text>
+                    <TextInput
+                        style={styles.input}
+                        editable={false}
+                        placeholder={profile.email ? profile.email : 'Email'}
+                        placeholderTextColor={'#7F8192'}
+                    />
+                    <Text style={styles.name}>Phone Number</Text>
+                    <TextInput
+                        style={styles.input}
+                        editable={false}
+                        placeholder={profile.phone ? profile.phone : 'Phone Number'}
+                        placeholderTextColor={'#7F8192'}
+                    />
+                    <Text style={styles.name}>State</Text>
+                    <TextInput
+                        editable={false}
+                        style={styles.input}
+                        placeholder={profile.state ? profile.state : 'State'}
+                        placeholderTextColor={'#7F8192'}
+                    />
+                    <View style={styles.flexEven}>
+                        <View style={styles.flex4}>
+                            <Text style={styles.name}>District</Text>
+                            <TextInput
+                                style={styles.input}
+                                editable={false}
+                                placeholder={profile.district ? profile.district : 'District'}
+                                placeholderTextColor={'#7F8192'}
+                            />
+                        </View>
+                        <View style={styles.flex4}>
+                            <Text style={styles.name}>City</Text>
+                            <TextInput
+                                style={styles.input}
+                                editable={false}
+                                placeholder={profile.city ? profile.city : 'City'}
+                                placeholderTextColor={'#7F8192'}
+                            />
+                        </View>
+                    </View>
+                    <Text style={styles.name}>Address</Text>
+                    <TextInput
+                        style={styles.input}
+                        editable={false}
+                        placeholder={profile.address ? profile.address : 'Address'}
+                        placeholderTextColor={'#7F8192'}
+                    />
+                    <Text style={styles.name}>Pin code</Text>
+                    <TextInput
+                        editable={false}
+                        style={styles.input}
+                        placeholder={profile.pin_code ? profile.pin_code : 'Pin Code'}
+                        placeholderTextColor={'#7F8192'}
+                    />
+                </View>
+                <TouchableOpacity onPress={() => {
+                    logOut();
 
-            {load ?
-                <View style={[styles.loader, { top: windowHeight / 2 }]}>
-                    <ActivityIndicator size={'large'} color={color.green} />
-                </View> : null}
-        </SafeAreaView>
-    )
+                }} style={[styles.flexContainer, { alignItems: 'center', marginBottom: 15 }]}>
+                    <MaterialCommunityIcons name="logout" size={25} color={color.red} />
+                    <Text style={styles.logout} >Logout</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
+
+        {load ?
+            <View style={[styles.loader, { top: windowHeight / 2 }]}>
+                <ActivityIndicator size={'large'} color={color.green} />
+            </View> : null}
+    </SafeAreaView>
+)
 }
 
 const styles = StyleSheet.create({
