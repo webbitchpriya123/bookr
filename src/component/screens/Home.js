@@ -144,12 +144,11 @@ const Home = (props) => {
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item, index }) =>
                             <TouchableOpacity>
-                                <TouchableOpacity style={{ height: windowWidth / 3.74, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth / 3.74, borderRadius: 10, marginLeft: 8, marginRight: 8, justifyContent: 'center' }}>
+                                <TouchableOpacity onPress={()=>props.navigation.navigate('BookHistory')} style={{ height: windowWidth / 3.74, backgroundColor: index === 0 ? '#574AC9' : index === 1 ? '#7E6FFF' : '#585190', width: windowWidth / 3.74, borderRadius: 10, marginLeft: 8, marginRight: 8, justifyContent: 'center' }}>
                                     <Text style={styles.number}>{item.number}</Text>
                                     <Text style={styles.status}>{item.status}</Text>
                                 </TouchableOpacity>
                             </TouchableOpacity>
-
                         }
                         keyExtractor={item => item.id}
                     />

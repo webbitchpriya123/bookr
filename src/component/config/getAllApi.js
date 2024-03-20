@@ -232,8 +232,11 @@ export const getProfile = async () => {
 export const downLoadInvoice = async (id) => {
     try {
         const token = await AsyncStorage.getItem('token');
+
+        console.log("invoieee",token)
         const headers = {
             Authorization: "Bearer " + JSON.parse(token),
+            // 'Content-Type':'application/json'
         };
         const requestBody = {
             product_id: id,
@@ -266,6 +269,8 @@ export const invoiceShow = async (id) => {
 //update draft books
 
 export const updateDraft = async (formData) => {
+    console.log("apifromdtaa",formData)
+
     const token = await AsyncStorage.getItem('token');
     try {
         const headers = {

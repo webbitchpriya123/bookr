@@ -89,8 +89,8 @@ export default function EditProfile(props) {
                 district: data.district_id,
                 city: data.city,
                 image: data.image,
-                stateName: data.state,
-                districtName: data.district
+                stateName: data.state ? data.state:'Select State',
+                districtName: data.district ? data.district  : 'Select District'
 
             })
         }
@@ -113,8 +113,8 @@ export default function EditProfile(props) {
 
     const openImagePicker = () => {
         ImagePicker.openPicker({
-            width: 120,
-            height: 120,
+            width: 400,
+            height: 400,
             cropping: true
         }).then(image => {
             let fileName = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length);
@@ -131,7 +131,7 @@ export default function EditProfile(props) {
     };
 
 
-    console.log("stateeee", state)
+    // console.log("stateeee", state)
     const onTextChange = (name) => (value) => {
         setState({
             ...state,
@@ -175,7 +175,7 @@ export default function EditProfile(props) {
                         setVisible(true)
                         setMessage(response.data.message)
                         setTimeout(() => {
-                            props.navigation.navigate('Profile')
+                            props.navigation.goBack();
                         }, 1000);
                         // setState('');
 
@@ -202,7 +202,7 @@ export default function EditProfile(props) {
     }
 
 
-    console.log("statteeeeeee", state)
+    // console.log("statteeeeeee", state)
     return (
         <SafeAreaView style={styles.containerView}>
             <HeaderComp props={props} name={'Edit Profile'} />
@@ -230,7 +230,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Name</Text>
                         <TextInput
                             value={state.Name}
-                            style={[styles.input, { borderWidth: state.Name || error.nameError ? 1 : 0, borderColor: state.Name || error.nameError ? 'gray' : '', backgroundColor: state.Name || error.nameError ? color.white : '#F5F6FA' }]}
+                            style={[styles.input,{borderWidth:  1, borderColor:  'gray' , backgroundColor:color.white   }]}
                             placeholder="Name"
                             placeholderTextColor={'#7F8192'}
                             onChangeText={onTextChange("Name")}
@@ -243,7 +243,7 @@ export default function EditProfile(props) {
                             spellCheck={false}
                             autoCorrect={false}
                             value={state.Email}
-                            style={[styles.input]}
+                            style={[styles.input,{borderWidth:  1, borderColor:  'gray' , backgroundColor:'#F5F6FA'   }]}
                             placeholder="can't update your Email"
                             editable={false} selectTextOnFocus={false} placeholderTextColor={'#bab9b5'}
                         // onChangeText={onTextChange("Email")}
@@ -252,7 +252,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Phone Number</Text>
 
                         <TextInput
-                            style={[styles.input]}
+                            style={[styles.input,{borderWidth:  1, borderColor:  'gray' , backgroundColor:'#F5F6FA'   }]}
                             value={state.Phone}
                             editable={false} selectTextOnFocus={false} placeholder="can't update your Phone Number"
                             placeholderTextColor={'#bab9b5'}
@@ -265,7 +265,7 @@ export default function EditProfile(props) {
 
                         <Text style={styles.name}>State</Text>
                         <Dropdown
-                            style={[styles.dropdown, { borderWidth: state.state || state.stateError ? 1 : 0, borderColor: state.state || state.stateError ? 'gray' : '', backgroundColor: state.state || error.stateError ? color.white : '#F5F6FA' }]}
+                            style={[styles.dropdown, { borderWidth:  1, borderColor:  'gray' , backgroundColor:color.white   }]}
                             placeholderStyle={styles.placeholderStyle}
                             selectedTextStyle={styles.selectedTextStyle}
                             inputSearchStyle={styles.inputSearchStyle}
@@ -303,8 +303,8 @@ export default function EditProfile(props) {
                             <View style={styles.flex4}>
                                 <Text style={styles.name}>District</Text>
                                 <Dropdown
-                                    style={[styles.dropdown, { borderWidth: state.district || error.districtError ? 1 : 0, borderColor: state.district || error.districtError ? 'gray' : '', backgroundColor: state.district || error.districtError ? color.white : '#F5F6FA' }]}
-                                    placeholderStyle={styles.placeholderStyle}
+                            style={[styles.dropdown, { borderWidth:  1, borderColor:  'gray' , backgroundColor:color.white   }]}
+                            placeholderStyle={styles.placeholderStyle}
                                     selectedTextStyle={styles.selectedTextStyle}
                                     inputSearchStyle={styles.inputSearchStyle}
                                     iconStyle={styles.iconStyle}
@@ -342,8 +342,8 @@ export default function EditProfile(props) {
                             <View style={styles.flex4}>
                                 <Text style={styles.name}>City</Text>
                                 <TextInput
-                                    style={[styles.input, { borderWidth: state.Address || error.AddressError ? 1 : 0, borderColor: state.Address || error.AddressError ? 'gray' : '', backgroundColor: state.Address || error.AddressError ? color.white : '#F5F6FA' }]}
-                                    value={state.city}
+                            style={[styles.input,{borderWidth:  1, borderColor:  'gray' , backgroundColor:color.white   }]}
+                            value={state.city}
                                     placeholder="City"
                                     placeholderTextColor={'#7F8192'}
                                     onChangeText={onTextChange("city")}
@@ -357,7 +357,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Address</Text>
 
                         <TextInput
-                            style={[styles.input, { borderWidth: state.Address || error.AddressError ? 1 : 0, borderColor: state.Address || error.AddressError ? 'gray' : '', backgroundColor: state.Address || error.AddressError ? color.white : '#F5F6FA' }]}
+                            style={[styles.input,{borderWidth:  1, borderColor:  'gray' , backgroundColor:color.white  }]}
                             value={state.Address}
                             placeholder="Address"
                             placeholderTextColor={'#7F8192'}
@@ -369,7 +369,7 @@ export default function EditProfile(props) {
                         <Text style={styles.name}>Pin code</Text>
                         <TextInput
                             value={state.pinCode}
-                            style={[styles.input, { borderWidth: state.pinCode || error.pinError ? 1 : 0, borderColor: state.pinCode || error.pinError ? 'gray' : '', backgroundColor: state.pinCode || error.pinError ? color.white : '#F5F6FA' }]}
+                            style={[styles.input,{borderWidth:  1, borderColor:  'gray' , backgroundColor:color.white }]}
                             placeholder="Pin code"
                             placeholderTextColor={'#7F8192'}
                             onChangeText={onTextChange("pinCode")}

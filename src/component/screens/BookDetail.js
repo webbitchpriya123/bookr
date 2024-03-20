@@ -14,7 +14,9 @@ import {
     FlatList,
     TextInput,
     ActivityIndicator,
-    Dimensions
+    Dimensions,
+    Alert,
+    PermissionsAndroid
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
@@ -25,7 +27,11 @@ import moment from "moment";
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
 import { PushNotification } from '../config/pushNotification';
-import RNFS from 'react-native-fs';
+import HeaderComp from "../header/headerComp";
+// import RNFS from 'react-native-fs';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from 'axios';
+// import RNFetchBlob from 'rn-fetch-blob'; // Import rn-fetch-blob for file handling
 
 export default function BookDetail(props) {
     const windowHeight = Dimensions.get('window').height
@@ -38,6 +44,7 @@ export default function BookDetail(props) {
     useEffect(() => {
         bookHistory();
         setLoad(true);
+        requestStoragePermission();
     }, [isFocused]);
 
     // console.log("propsss", props.route.params.id)
@@ -50,25 +57,65 @@ export default function BookDetail(props) {
         setLoad(false);
     }
 
-    const downLoad = async () => {
-        const invoice = await downLoadInvoice(props.route.params.id);
+    async function requestStoragePermission() {
         try {
-            const pdf = new Blob([invoice], { type: 'application/pdf' })
-            const docDir = RNFS.DocumentDirectoryPath;
-
-            // Create a unique filename
-            const fileName = 'invoice.pdf';
-
-            const filePath = `${docDir}/${fileName}`;
-
-            // Write the PDF to the file
-            await RNFS.writeFile(filePath, pdf, 'base64');
-            console.log("invoicedownload", pdf)
-        } catch (error) {
-            console.log("invoiceError", error)
-
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                {
+                    title: 'Storage Permission',
+                    message: 'This app needs access to your storage to download files.',
+                    buttonPositive: 'OK',
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log('Storage permission granted');
+            } else {
+                console.log('Storage permission denied');
+            }
+        } catch (err) {
+            console.warn(err);
         }
+    }
 
+
+    const downLoad = async () => {
+        // const invoice = await downLoadInvoice(props.route.params.id);
+        try {
+            const token = await AsyncStorage.getItem('token');
+            const convert = JSON.parse(token);
+            console.log("tokennn", JSON.parse(token))
+            const requestBody = {
+                product_id: 161,
+            };
+            const response = await axios.post('https://webbitech.co.in/usedbookr/api/download-invoice', requestBody, {
+                headers: {
+                    Authorization: `Bearer ${convert}`,
+                },
+                responseType: 'blob',// Important: responseType should be 'blob' for file downloads
+            },
+
+            );
+
+            const contentType = response.headers['content-type'];
+            const isBinary = contentType.startsWith('application/pdf'); // Check 
+            // const data = JSON.stringify(response.data)
+            console.log("lohhsdfsdf",isBinary ,contentType)
+            const path = `${RNFS.DocumentDirectoryPath}/example.pdf`;
+            // const blobId = response.data._data.blobId;
+
+            // Create a blob object using the extracted blobId
+            // const fileBlob = await Blob.build(blobId, { type: 'application/pdf' });
+            console.log("33333", path, JSON.stringify(response.data));
+            // await RNFetchBlob.fs.writeFile(path, response.data, 'base64'); // Use 'ascii' encoding for binary data
+
+            // console.log("logsss", path);
+            // Write the file to the device's filesystem
+            // await RNFS.writeFile(path, fileBlob, 'base64');
+            Alert.alert('Success', 'File downloaded successfully');
+        } catch (error) {
+            console.error('Error downloading file:', error);
+            Alert.alert('Error', 'Failed to download file');
+        }
     }
 
 
@@ -84,6 +131,7 @@ export default function BookDetail(props) {
     console.log("bookData", bookData)
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
+            {/* <HeaderComp name={'Book Details'} props={props} /> */}
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.header}>
@@ -95,15 +143,17 @@ export default function BookDetail(props) {
                     </TouchableOpacity>
                 </View>
             </LinearGradient>
+
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.container}>
+            <View style={styles.container}>
+
                     <Text style={styles.title}>Your book details</Text>
                     <View>
                         <Text style={styles.name}>ISBN</Text>
                         <TextInput
                             editable={false}
                             style={styles.input}
-                            placeholder={bookData.isbn_no}
+                            placeholder={ bookData && bookData.isbn_no}
                             placeholderTextColor={'#7F8192'}
                         />
                         <Text style={styles.name}>Upload Date</Text>
@@ -111,7 +161,7 @@ export default function BookDetail(props) {
                         <TextInput
                             style={styles.input}
                             editable={false}
-                            placeholder={moment(bookData.created_at).format('DD/MM/YYYY')}
+                            placeholder={ bookData && moment(bookData.created_at).format('DD/MM/YYYY')}
                             placeholderTextColor={'#7F8192'}
                         />
                         <Text style={styles.name}>Approved Date</Text>
@@ -119,14 +169,14 @@ export default function BookDetail(props) {
                         <TextInput
                             style={styles.input}
                             editable={false}
-                            placeholder={bookData.approved_date ? moment(bookData.approved_date).format('DD/MM/YYYY') : '-'}
+                            placeholder={ bookData && bookData.approved_date ? moment(bookData.approved_date).format('DD/MM/YYYY') : '-'}
                             placeholderTextColor={'#7F8192'}
                         />
                         <Text style={styles.name}>Approved amount</Text>
                         <TextInput
                             editable={false}
                             style={styles.input}
-                            placeholder={bookData.amount ? bookData.amount : '-'}
+                            placeholder={ bookData && bookData.amount ? bookData.amount : '-'}
                             placeholderTextColor={'#7F8192'}
                         />
 
@@ -187,7 +237,7 @@ export default function BookDetail(props) {
                     <Text style={[styles.title, { marginTop: 15, marginBottom: 10 }]}>Add your book images</Text>
 
                     <FlatList
-                        data={bookData.images}
+                        data={ bookData && bookData.images}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item, index }) =>
@@ -198,10 +248,11 @@ export default function BookDetail(props) {
                         }
                         keyExtractor={item => item}
                     />
+                            </View>
 
-                </View>
 
             </ScrollView>
+
             {load ?
                 <View style={[styles.loader, { top: windowHeight / 2 }]}>
                     <ActivityIndicator size={'large'} color={color.green} />
@@ -213,7 +264,7 @@ export default function BookDetail(props) {
 
 const styles = StyleSheet.create({
     linearGradient: {
-        height: 110,
+        height: 90,
         paddingLeft: 20,
         paddingRight: 20,
     },
@@ -227,8 +278,8 @@ const styles = StyleSheet.create({
     },
     downLoad: { height: 60, backgroundColor: color.white, flexDirection: 'row', alignItems: "center", elevation: 10, justifyContent: 'space-between', paddingLeft: 15, paddingRight: 15, marginTop: 10 },
     loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
-    container: { padding: 15 },
-    header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },
+    container: { padding: 15 ,flex:0.86},
+    header: { flexDirection: 'row', alignItems: 'center', marginTop: 45 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
     title: { fontFamily: Font.acari, fontWeight: '800', color: color.black, fontSize: 16 },
     name: { color: '#151940', fontWeight: '600', fontSize: 14, lineHeight: 15, marginTop: 15 },

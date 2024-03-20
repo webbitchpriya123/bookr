@@ -41,26 +41,66 @@ import { createNativeStackNavigator, TransitionPresets } from '@react-navigation
 import OtpLogin from './src/component/screens/OtpLogin.js';
 import Register from './src/component/screens/Register.js';
 import PaymentDetails from './src/component/screens/PaymentDetails.js';
-import AllPayment from './src/component/screens/AllPayment.js';
+import AllPayment from './src/component/screens/AllPayments.js';
 import messaging from '@react-native-firebase/messaging';
 import Terms from './src/component/screens/Terms.js';
 import Draft from './src/component/screens/Draft.js';
+import notifee from '@notifee/react-native';
 
 
 
 const Stack = createNativeStackNavigator();
 const App = () => {
-
   const [localValue, setLocal] = useState(null);
   // const isDarkMode = useColorScheme() === 'dark';
 
   useEffect(() => {
     loadStoredValue();
     requestUserPermission();
+    requestNotificationPermission();
     getToken();
   }, []);
 
 
+  const requestNotificationPermission = async () => {
+    const settings = await notifee.requestPermission();
+
+    if (settings.granted) {
+        console.log('Notification permission granted');
+    } else {
+        console.log('Notification permission denied');
+    }
+};
+
+  // async function requestNotificationPermission() {
+  //   try {
+  //     PushNotification.configure({
+  //       onRegister: function(token) {
+  //         // token contains the device token required for push notifications
+  //         console.log('TOKEN:', token);
+  //       },
+  //       permissions: {
+  //         alert: true,
+  //         badge: true,
+  //         sound: true,
+  //       },
+  //       popInitialNotification: true,
+  //       requestPermissions: Platform.OS === 'android', // Request permissions on Android
+  //     });
+  
+  //     if (Platform.OS === 'android') {
+  //       const granted = await PushNotification.requestPermissions();
+  //       if (granted === true) {
+  //         console.log('Notification permission granted');
+  //       } else {
+  //         console.log('Notification permission denied');
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error requesting notification permission:', error);
+  //   }
+  // }
+  
 
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
@@ -123,7 +163,7 @@ const App = () => {
           gestureEnabled: true,
           cardStyleInterpolator: forFade,
         }}
-        initialRouteName={localValue ? "Home" : "Login"}
+        initialRouteName={localValue ? "BookHistory" : "Login"}
       >
         <Stack.Screen
           name="Login"
@@ -140,7 +180,7 @@ const App = () => {
         <Stack.Screen name="ReSell" component={ReSell} />
         <Stack.Screen name="AccountDetails" component={AccountDetails} />
         <Stack.Screen name="PaymentDetails" component={PaymentDetails} />
-        <Stack.Screen name="BookHistory" component={BookHistory} />
+        <Stack.Screen name="BookHistory" component={BookHistory} options={{ animation: 'slide_from_bottom' }}/>
         <Stack.Screen name="BookDetails" component={BookDetail} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="FAQ" component={FAQ} />

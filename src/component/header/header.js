@@ -72,12 +72,12 @@ export default Header;
 
 const styles = StyleSheet.create({
     linearGradient: {
-        height: 110,
+        height: 95,
         paddingLeft: 20,
         paddingRight: 20,
     },
     notify: { height: 10, width: 10, backgroundColor: '#FFD731', position: 'absolute', bottom: 20, left: 14, borderRadius: 30 },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 52 },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 35 },
 
 
 })

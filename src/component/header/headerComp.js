@@ -27,11 +27,11 @@ export default HeaderComp;
 
 const styles = StyleSheet.create({
     linearGradient: {
-        height: 110,
+        height: 95,
         paddingLeft: 20,
         paddingRight: 20,
     },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
 
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 52 },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop:40 },
 });

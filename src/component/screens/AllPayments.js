@@ -131,10 +131,10 @@ export default function AllPayment(props) {
 
 
 
-    console.log("checkkk",checked)
+    console.log("checkkk", checked)
 
     const setAsDefault = async (id, index) => {
-        console.log("default",id)
+        console.log("default", id, index)
         Alert.alert("UsedBookr!", "Are you sure you want to set your default account?", [
             {
                 text: "Cancel",
@@ -156,7 +156,7 @@ export default function AllPayment(props) {
                             },
                             data: {
                                 user_id: value,
-                                bank_id: id
+                                bank_id: id ? id : props.route.params.id
                             }
                         }).then((response) => {
                             console.log("defaultresponse", response.data)
@@ -166,7 +166,7 @@ export default function AllPayment(props) {
                                 setVisible(true);
                                 setMessage(response.data.message)
                                 setTimeout(() => {
-                                    props.navigation.goBack();
+                                    props.navigation.navigate('PaymentDetails');
                                 }, 1000);
                             }
                         }).catch((error) => {
@@ -186,7 +186,7 @@ export default function AllPayment(props) {
             setRefreshing(false);
         }, 800);
     }, []);
-    // console.log('finns', props.route.params.id)
+    console.log('finns', props.route.params.id)
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
@@ -224,9 +224,8 @@ export default function AllPayment(props) {
                                     <Text style={styles.textStyle}>A/C No - {item.account_number}</Text>
 
                                     <View style={styles.views}>
-                                        <TouchableOpacity onPress={() =>
-                                            setAsDefault(item.id, index)} style={styles.defaultView}><Text style={styles.defaultText}>Set as default</Text></TouchableOpacity>
-                                        <TouchableOpacity onPress={() => onRemove(item.id, index)} style={[styles.defaultView, { marginLeft: 10 }]}><Text style={[styles.defaultText, { color: color.red }]}>Remove</Text></TouchableOpacity>
+                                        <TouchableOpacity onPress={() => onRemove(item.id, index)} style={styles.defaultView}><Text style={[styles.defaultText, { color: color.red }]}>Remove</Text>
+                                        </TouchableOpacity>
 
                                     </View>
                                 </View>

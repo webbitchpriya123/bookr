@@ -9,6 +9,7 @@ import { Card } from 'react-native-paper';
 import messaging from '@react-native-firebase/messaging';
 import { PushNotification } from '../config/pushNotification';
 import LinearGradient from 'react-native-linear-gradient';
+import HeaderComp from "../header/headerComp";
 
 
 
@@ -82,7 +83,7 @@ const Draft = (props) => {
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
             {/* <HeaderComp name={'Drafts'} props={props} /> */}
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
-                end={{ x: 1.0, y: 1.0 }} style={[styles.linearGradient, { flex: 0.14 }]}>
+                end={{ x: 1.0, y: 1.0 }} style={[styles.linearGradient]}>
                 <View style={styles.header}>
                     <TouchableOpacity style={{ flex: 0.15 }} onPress={() => props.navigation.goBack()}>
                         <AntDesign name='arrowleft' size={30} color={color.white} />
@@ -94,7 +95,6 @@ const Draft = (props) => {
                 </View>
             </LinearGradient>
             <View style={styles.conatiner}>
-
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <Text style={styles.title}>My Drafts</Text>
                     <View >
@@ -146,15 +146,15 @@ export default Draft;
 
 const styles = StyleSheet.create({
     linearGradient: {
-        height: 110,
+        height: 90,
         paddingLeft: 20,
         paddingRight: 20,
     },
     plus: { marginRight: 15, height: 70, width: 70, backgroundColor: color.yellow, marginBottom: 10, alignSelf: 'flex-end', justifyContent: 'center', borderRadius: 50 },
     loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
-    conatiner: { padding: 15, flex: 0.86 },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 52 },
-    title: { fontFamily: font.acari, fontWeight: '800', color: color.black, fontSize: 16, marginBottom: 10, marginTop: 3 },
+    conatiner: { padding: 15 },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 45 },
+    title: { fontFamily: font.acari, fontWeight: '800', color: color.black, fontSize: 16,  marginTop: 3 },
     bookContainer: { backgroundColor: '#F9F9F9', borderRadius: 8, marginTop: 10, backgroundColor: color.white, elevation: 10 },
     name: { color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '600' },
     isbn: { color: '#343434', lineHeight: 21, fontSize: 14, fontWeight: '400' },

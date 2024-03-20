@@ -21,6 +21,7 @@ import { getAllNotifications, notifyCount, readAtCount } from "../config/getAllA
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
 import { PushNotification } from '../config/pushNotification';
+import HeaderComp from "../header/headerComp";
 
 
 
@@ -53,7 +54,7 @@ export default function Notification(props) {
         setLoad(false);
     }
 
-    const validation = notification ?notification.every(item => item.read_at === null):null
+    const validation = notification ? notification.every(item => item.read_at === null) : null
 
 
 
@@ -84,7 +85,9 @@ export default function Notification(props) {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-            <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
+                        <HeaderComp name={'Notifications'} props={props} />
+
+            {/* <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.header}>
                     <TouchableOpacity style={{ flex: 0.15 }} onPress={() => goBack()} >
@@ -94,7 +97,7 @@ export default function Notification(props) {
                         <Text style={styles.notify}>Notification</Text>
                     </TouchableOpacity>
                 </View>
-            </LinearGradient>
+            </LinearGradient> */}
             <ScrollView refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             } showsVerticalScrollIndicator={false}>
@@ -116,9 +119,9 @@ export default function Notification(props) {
                                                 <View style={styles.alert}></View> : null}
                                         </View>
                                     </View>
-                                    {console.log("type",item)}
+                                    {console.log("type", item)}
                                     <View style={{ flex: 0.8 }}>
-                                        <Text style={styles.Text1}>{ item.notification_id.type ?item.notification_id.type.replace(/_/g, ' ') :null}</Text>
+                                        <Text style={styles.Text1}>{item.notification_id.type ? item.notification_id.type.replace(/_/g, ' ') : null}</Text>
                                         <Text style={styles.text2}>{item.notification_id.message}</Text>
                                     </View>
                                 </View>
@@ -129,9 +132,9 @@ export default function Notification(props) {
                 </View>
 
 
-              
+                {/* con */}
 
-                {!notification.length && !load ?
+                {!notification && !load ?
                     <View style={{ marginTop: windowHeight / 3, alignSelf: 'center' }}>
                         <Text style={styles.title}>No Data Found</Text>
                     </View> : null}
@@ -165,9 +168,9 @@ const styles = StyleSheet.create({
     iconView: {
         backgroundColor: color.darkBlue, height: 45, width: 45, borderRadius: 30
     },
-    wholeView: { flexDirection: 'row', alignItems: 'center', padding: 10 ,paddingTop:10,marginBottom:10},
-    container: {  backgroundColor: '#F5F6FA', marginTop: 15, borderRadius: 10 },
+    wholeView: { flexDirection: 'row', alignItems: 'center', padding: 10, paddingTop: 10, marginBottom: 10 },
+    container: { backgroundColor: '#F5F6FA', marginTop: 15, borderRadius: 10 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
-    alert:{ height: 10, width: 10, backgroundColor: 'red', position: 'absolute', left: 35, borderRadius: 10 }
+    alert: { height: 10, width: 10, backgroundColor: 'red', position: 'absolute', left: 35, borderRadius: 10 }
 
 })

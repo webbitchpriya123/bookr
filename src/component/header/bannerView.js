@@ -1,5 +1,5 @@
 import React ,{useState,useEffect} from "react";
-import { View, StyleSheet, Text, SafeAreaView, RefreshControl, Image, Linking, FlatList, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, Image, Dimensions, ScrollView } from 'react-native';
 import {getBanner } from '../config/getAllApi';
 import { useIsFocused } from "@react-navigation/native";
 
@@ -52,11 +52,8 @@ const bannerView = () => {
                         •
                     </Text>
                 ))}
-
             </View>
         </View>
-
-
     )
 
 }

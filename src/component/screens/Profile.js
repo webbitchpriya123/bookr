@@ -104,12 +104,18 @@ return (
                         <View style={styles.flexEnd}>
                             {profile.image ?
                                 <Image source={{ uri: profile.image }} style={styles.imageContainer} /> :
-                                <View style={{ height: 100, width: 100, backgroundColor: 'grey', borderRadius: 50 }}>
+                                <View style={{ height: 100, width: 100, backgroundColor: 'grey', borderRadius: 50,alignSelf:'center' }}>
                                     <AntDesign name="camera" color={'#F5F6FA'} size={70} style={{ alignSelf: 'center', marginTop: 10 }} />
                                 </View>
                             }
+                            <View>
                             <Text style={styles.userName}>{profile.name}</Text>
+
+                            </View>
+                            <View>
                             <Text style={styles.number}>{profile.phone}</Text>
+
+                            </View>
                         </View>
                     </View>
                     <TouchableOpacity style={styles.flex3} onPress={() => props.navigation.navigate('EditProfile')}>
@@ -219,7 +225,7 @@ const styles = StyleSheet.create({
     flexContainer: { flexDirection: 'row', marginTop: 30 },
     editProfile: { color: color.red, textAlign: 'right', lineHeight: 21, fontSize: 14, fontWeight: '500', textDecorationLine: 'underline' },
     imageContainer: { height: 120, width: 120, borderRadius: 60, alignSelf: 'center' },
-    userName: { fontWeight: '700', fontSize: 20, lineHeight: 24, color: color.black, alignSelf: 'center', marginTop: 8 },
+    userName: { fontWeight: '700', fontSize: 20, lineHeight: 24, color: color.black,textAlign:'center', marginTop: 8 },
     number: { color: color.liteBlack, fontWeight: '500', fontSize: 14, lineHeight: 21, alignSelf: 'center' },
     flexEnd: { alignSelf: 'flex-end' },
     name: { color: '#151940', fontWeight: '600', fontSize: 14, lineHeight: 15, marginTop: 15 },

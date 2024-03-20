@@ -25,7 +25,7 @@ import { ApiUrl, api, selectBankAccount } from '../constant/constant';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
-import {PushNotification} from '../config/pushNotification';
+import { PushNotification } from '../config/pushNotification';
 
 
 export default function PaymentDetails(props) {
@@ -98,14 +98,20 @@ export default function PaymentDetails(props) {
                                 <AntDesign name="right" size={20} color={color.darkGrey} />
                             </TouchableOpacity>
                         </View>
-                    </View> : <TouchableOpacity onPress={() => props.navigation.navigate('AccountDetails')} style={{marginTop:20}} >
+                    </View> : <TouchableOpacity onPress={() => props.navigation.navigate('AccountDetails')} style={{ marginTop: 20 }} >
                         <Text style={[styles.textStyle]}>No default account.</Text>
                         {/* <AntDesign name="right" size={20} color={color.darkGrey} style={{ marginRight: 10 }} /> */}
 
                     </TouchableOpacity>}
             </View>
             <View style={styles.submit}>
-                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => props.navigation.navigate('AllPayment',{id:bank.id})}>
+                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => {
+                    if (bank) {
+                        props.navigation.navigate('AllPayment', { id: bank.id })
+                    } else {
+                        props.navigation.navigate('AccountDetails')
+                    }
+                }}>
                     <View style={styles.loaderView}>
                         <View style={{ flex: 0.55 }}>
                             <Text style={styles.loginText}>CREATE NEW</Text>
