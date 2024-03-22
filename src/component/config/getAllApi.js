@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApiUrl, api, States, bookUpdate, youtubeLink, bannerImg, district, invoiveDownload, banks, faq, notification, userProfile, getBookHistory, productDetail, productStatus, bookCount, notificationCount, notificationReadAt, invoiceOption } from '../constant/constant';
+import { ApiUrl, api, States,disclaimer, deleteBankAcc,upDateBank, getAllBank, bookUpdate, youtubeLink, bannerImg, district, invoiveDownload, banks, faq, notification, userProfile, getBookHistory, productDetail, productStatus, bookCount, notificationCount, notificationReadAt, invoiceOption, selectBankAccount } from '../constant/constant';
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -9,6 +9,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const getBank = async () => {
     try {
         const response = await axios.get(ApiUrl + api + banks);
+        return response.data.data;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+};
+
+
+//disclaimer
+
+export const getNote = async () => {
+    try {
+        const response = await axios.get(ApiUrl + api + disclaimer);
         return response.data.data;
     } catch (error) {
         console.error("Error fetching data", error);
@@ -233,7 +245,7 @@ export const downLoadInvoice = async (id) => {
     try {
         const token = await AsyncStorage.getItem('token');
 
-        console.log("invoieee",token)
+        console.log("invoieee", token)
         const headers = {
             Authorization: "Bearer " + JSON.parse(token),
             // 'Content-Type':'application/json'
@@ -269,8 +281,7 @@ export const invoiceShow = async (id) => {
 //update draft books
 
 export const updateDraft = async (formData) => {
-    console.log("apifromdtaa",formData)
-
+    console.log("apifromdtaa", formData)
     const token = await AsyncStorage.getItem('token');
     try {
         const headers = {
@@ -282,3 +293,77 @@ export const updateDraft = async (formData) => {
         console.error("Error fetching data", error);
     }
 }
+//select bank account
+
+
+export const selectBank = async () => {
+    try {
+        const value = await AsyncStorage.getItem('user_id');
+        const token = await AsyncStorage.getItem('token');
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const requestBody = {
+            user_id: value,
+        };
+        const { data } = await axios.post(ApiUrl + api + selectBankAccount, requestBody, { headers });
+        return data;
+    } catch (error) {
+        console.error("Error fetching data", error);
+    }
+}
+
+export const getAllBanks = async () => {
+    try {
+        const value = await AsyncStorage.getItem('user_id');
+        const token = await AsyncStorage.getItem('token');
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const requestBody = {
+            user_id: value,
+        };
+        const { data } = await axios.post(ApiUrl + api + getAllBank, requestBody, { headers });
+        return data;
+    } catch (error) {
+        console.error("Error fetching get all bank", error);
+    }
+}
+//update bank account
+
+export const updateBankAcc = async (id) => {
+    try {
+        const value = await AsyncStorage.getItem('user_id');
+        const token = await AsyncStorage.getItem('token');
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const requestBody = {
+            user_id: value,
+            bank_id: id
+        };
+        const { data } = await axios.post(ApiUrl + api + upDateBank, requestBody, { headers });
+        return data;
+    } catch (error) {
+        console.error("Error fetching get all bank", error);
+    }
+}
+
+export const removeAcc = async (id) => {
+    try {
+        const value = await AsyncStorage.getItem('user_id');
+        const token = await AsyncStorage.getItem('token');
+        const headers = {
+            Authorization: "Bearer " + JSON.parse(token),
+        };
+        const requestBody = {
+            user_id: value,
+            bank_id: id
+        };
+        const { data } = await axios.post(ApiUrl + api + deleteBankAcc, requestBody, { headers });
+        return data;
+    } catch (error) {
+        console.error("Error fetching get all bank", error);
+    }
+}
+

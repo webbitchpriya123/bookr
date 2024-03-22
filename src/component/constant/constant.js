@@ -30,3 +30,4 @@ export const invoiceOption = '/invoice-option-show';
 export const invoiveDownload = '/download-invoice';
 export const youtubeLink = '/youtube-link';
 export const bookUpdate = '/book-update';
+export const disclaimer = '/disclaimer';

@@ -85,9 +85,9 @@ export default function Notification(props) {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-                        <HeaderComp name={'Notifications'} props={props} />
+            <HeaderComp name={'Notifications'} props={props} />
 
-            {/* <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
+        {/* <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.header}>
                     <TouchableOpacity style={{ flex: 0.15 }} onPress={() => goBack()} >
@@ -97,12 +97,13 @@ export default function Notification(props) {
                         <Text style={styles.notify}>Notification</Text>
                     </TouchableOpacity>
                 </View>
-            </LinearGradient> */}
-            <ScrollView refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            } showsVerticalScrollIndicator={false}>
+            </LinearGradient>  */}
+            <View style={{ padding: 15}}>
 
-                <View style={{ padding: 15 }}>
+                <ScrollView refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                } showsVerticalScrollIndicator={false}>
+
                     <Text style={styles.headerText}>Today</Text>
                     <FlatList
                         data={notification}
@@ -129,17 +130,19 @@ export default function Notification(props) {
                         }
                         keyExtractor={item => item}
                     />
-                </View>
 
 
-                {/* con */}
+                    {/* con */}
 
+
+
+                </ScrollView>
                 {!notification && !load ?
                     <View style={{ marginTop: windowHeight / 3, alignSelf: 'center' }}>
                         <Text style={styles.title}>No Data Found</Text>
                     </View> : null}
+            </View>
 
-            </ScrollView>
 
             {load ?
                 <View style={[styles.loader, { top: windowHeight / 2 }]}>
@@ -153,14 +156,14 @@ export default function Notification(props) {
 const styles = StyleSheet.create({
 
     linearGradient: {
-        height: 110,
+        height: 90,
         paddingLeft: 20,
         paddingRight: 20,
     },
     title: { fontWeight: '700', fontSize: 16, fontFamily: Font.acari, color: color.black, paddingBottom: 10 },
 
     loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
-    header: { flexDirection: 'row', alignItems: 'center', marginTop: 61 },
+    header: { flexDirection: 'row', alignItems: 'center', marginTop: 41 },
     headerText: { color: '#212121', fontWeight: '700', fontSize: 16, flex: 0.83 },
     Text1: { fontWeight: '600', fontSize: 14, color: '#212121', lineHeight: 30 },
     text2: { fontWeight: '500', fontSize: 14, color: '#505050', lineHeight: 20 },

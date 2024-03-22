@@ -9,7 +9,7 @@ const HeaderComp = ({ props, name }) => {
     // console.log("headercomp", name, props)
     return (
         <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
-            end={{ x: 1.0, y: 1.0 }} style={[styles.linearGradient, { flex: name === 'Edit Profile' ? 0 : 0.14 }]}>
+            end={{ x: 1.0, y: 1.0 }} style={[styles.linearGradient]}>
             <View style={styles.header}>
                 <TouchableOpacity style={{ flex: 0.15 }} onPress={() => props.navigation.goBack()}>
                     <AntDesign name='arrowleft' size={30} color={color.white} />
@@ -27,7 +27,7 @@ export default HeaderComp;
 
 const styles = StyleSheet.create({
     linearGradient: {
-        height: 95,
+        height: 90,
         paddingLeft: 20,
         paddingRight: 20,
     },

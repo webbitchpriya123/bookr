@@ -11,6 +11,7 @@ import messaging from '@react-native-firebase/messaging';
 import { PushNotification } from '../config/pushNotification';
 import { useIsFocused } from "@react-navigation/native";
 import BannerView from '../header/bannerView';
+// import HeaderComp from "../header/headerComp";
 
 
 

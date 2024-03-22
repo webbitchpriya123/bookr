@@ -8,7 +8,7 @@ import Header from '../header/header';
 import { getFaq } from "../config/getAllApi";
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
-import {PushNotification} from '../config/pushNotification';
+import { PushNotification } from '../config/pushNotification';
 
 
 export default function FAQ(props) {
@@ -21,7 +21,7 @@ export default function FAQ(props) {
     const handlePress = () => setExpanded(!expanded);
 
     const isFocused = useIsFocused();
-  
+
     useEffect(() => {
         getFAQ();
         setLoad(true)
@@ -46,50 +46,42 @@ export default function FAQ(props) {
         <SafeAreaView style={styles.safeArea}>
             <Header props={props} />
             <ScrollView>
-            <View style={styles.container}>
-                <Text style={styles.title}>FAQ's</Text>
-                <FlatList
-                    data={FAQ}
-                    contentContainerStyle={{  }}
-                    vertical
-                    // numColumns={3}
-                    showsVerticalScrollIndicator={false}
-                    renderItem={({ item, index }) =>
-                        <List.Section style={{backgroundColor:'white'}} >
-                            <View style={styles.listSection}>
-                                <List.Accordion
-                                    // expanded={expanded}
-                                    // onPress={handlePress}
-                                    title={item.question}
-                                    titleStyle={{ color: color.darkBlack }}
-                                    style={{ backgroundColor: color.white, borderRadius: 10,elevation:5}}
-                                >
-                                    <Text style={styles.accordianList}>{item.answer}</Text>
-                                </List.Accordion>
-                            </View>
-                        </List.Section>
-                    }
-                    keyExtractor={item => item}
-                />
-
-
-
-            </View>
-
-            {!FAQ.length &&!load?
-                    <View style={{marginTop:windowHeight / 3,alignSelf:'center'}}>
+                <View style={styles.container}>
+                    <Text style={styles.title}>FAQ's</Text>
+                    <FlatList
+                        data={FAQ}
+                        contentContainerStyle={{}}
+                        vertical
+                        // numColumns={3}
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item, index }) =>
+                            <List.Section style={{ backgroundColor: 'white' }} >
+                                <View style={styles.listSection}>
+                                    <List.Accordion
+                                        // expanded={expanded}
+                                        // onPress={handlePress}
+                                        title={item.question}
+                                        titleStyle={{ color: color.darkBlack }}
+                                        style={{ backgroundColor: color.white, borderRadius: 10, elevation: 5 }}
+                                    >
+                                        <Text style={styles.accordianList}>{item.answer}</Text>
+                                    </List.Accordion>
+                                </View>
+                            </List.Section>
+                        }
+                        keyExtractor={item => item}
+                    />
+                </View>
+                {!FAQ.length && !load ?
+                    <View style={{ marginTop: windowHeight / 3, alignSelf: 'center' }}>
                         <Text style={styles.title}>No Data Found</Text>
-                    </View>:null}
+                    </View> : null}
             </ScrollView>
-
-
             {load ?
                 <View style={[styles.loader, { top: windowHeight / 2 }]}>
                     <ActivityIndicator size={'large'} color={color.green} />
                 </View> : null}
-
         </SafeAreaView>
-
 
     );
 }

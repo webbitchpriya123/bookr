@@ -163,7 +163,7 @@ const App = () => {
           gestureEnabled: true,
           cardStyleInterpolator: forFade,
         }}
-        initialRouteName={localValue ? "BookHistory" : "Login"}
+        initialRouteName={localValue ? "Home" : "Login"}
       >
         <Stack.Screen
           name="Login"

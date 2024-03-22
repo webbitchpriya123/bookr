@@ -181,8 +181,6 @@ export default function AllPayment(props) {
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
-            getApi()
-
             setRefreshing(false);
         }, 800);
     }, []);

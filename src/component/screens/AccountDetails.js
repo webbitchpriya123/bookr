@@ -178,7 +178,7 @@ export default function AccountDetails(props) {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: color.white }}>
             <HeaderComp name={'Add account details'} props={props} />
-            <View style={{ flex: 0.73 }}>
+            <View style={{ flex: 0.85 }}>
                 <View style={styles.radio}>
                     <RadioButton
                         value="first"
@@ -304,14 +304,14 @@ export default function AccountDetails(props) {
                     <Text style={[styles.title, { fontWeight: checked === 'third' ? '700' : '600' }]}>Upload QR Code</Text>
                 </View>
 
-                {checked === 'third' ?
+                {/* {checked === 'third' ?
                     <View style={styles.viewConatiner}>
                         <TouchableOpacity style={styles.uploadView} onPress={() => openImagePicker()}>
                             <Text style={styles.uploadText}>UPLOAD</Text>
                         </TouchableOpacity>
                         {image.uri ?
                             <Image source={{ uri: image.uri }} style={{ marginTop: 20, height: 120, width: 120 }} /> : null}
-                    </View> : null}
+                    </View> : null} */}
 
             </View>
 

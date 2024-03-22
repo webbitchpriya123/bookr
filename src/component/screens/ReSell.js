@@ -12,11 +12,15 @@ import {
     ActivityIndicator,
     Alert,
     BackHandler,
-    ScrollView
+    ScrollView,
+    Modal,
+
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
+import * as Images from '../config/constants';
+
 import ImagePicker from 'react-native-image-crop-picker';
 import { ApiUrl, product, api } from '../constant/constant';
 import axios from 'axios';
@@ -25,7 +29,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from '@react-native-firebase/messaging';
 import { PushNotification } from '../config/pushNotification';
 import LinearGradient from 'react-native-linear-gradient';
-import { bookDetail, getAllBook, updateDraft } from "../config/getAllApi";
+import { bookDetail, getAllBook, updateDraft, getNote } from "../config/getAllApi";
 import { useIsFocused } from "@react-navigation/native";
 
 
@@ -42,6 +46,8 @@ export default function ReSell(props) {
     const isFocused = useIsFocused();
     const [imageName, setImgName] = useState('');
     const [camera, setCamera] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
+    const [notes, setNotes] = useState('');
 
 
     const windowWidth = Dimensions.get('window').width;
@@ -93,6 +99,18 @@ export default function ReSell(props) {
         })
     }
 
+    const imageUpload = (image) => {
+        let filename = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length)
+        images.map((dataItem) => {
+            if (dataItem.name === imageName) {
+                dataItem['path'] = image.path;
+                dataItem['fileName'] = filename;
+                dataItem['name'] = dataItem.name
+            }
+            setImages([...images])
+        })
+    }
+
     const openCamera = () => {
         setCamera(false);
         imgName.push(imageName);
@@ -102,15 +120,8 @@ export default function ReSell(props) {
             height: 450,
             cropping: true
         }).then(image => {
-            let filename = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length)
-            images.map((dataItem) => {
-                if (dataItem.name === imageName) {
-                    dataItem['path'] = image.path;
-                    dataItem['fileName'] = filename;
-                    dataItem['name'] = dataItem.name
-                }
-                setImages([...images])
-            })
+            imageUpload(image);
+
         });
     }
 
@@ -123,17 +134,7 @@ export default function ReSell(props) {
             height: 450,
             cropping: true
         }).then(image => {
-            // if (image.path) {
-            let filename = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length)
-            images.map((dataItem) => {
-                if (dataItem.name === imageName) {
-                    dataItem['path'] = image.path;
-                    dataItem['fileName'] = filename;
-                    dataItem['name'] = dataItem.name
-                }
-                setImages([...images])
-            })
-
+            imageUpload(image);
         });
     };
 
@@ -165,7 +166,6 @@ export default function ReSell(props) {
     }
 
 
-    // console.log("imagedata", images)
     useEffect(() => {
         bookData();
     }, [isFocused, props.route.params.bookId])
@@ -179,43 +179,51 @@ export default function ReSell(props) {
         setVisible(true);
     }
     const onRequest = async (data) => {
+
         const token = await AsyncStorage.getItem('token');
         const value = await AsyncStorage.getItem('user_id');
         const dataVal = data === 'draft' ? 1 : 0
         const book = await getAllBook();
-        const valid = book.filter(item => { return item.id === props.route.params.bookId });
-        if (valid.length) {
-            // console.log("draftupdate", images, arrays, isbn, props.route.params.bookId)
+        const valid = await book.filter(item => item.id == props.route.params.bookId );
+        if (valid && valid.length > 0) {
+            console.log("draftupdate", images, arrays, isbn, props.route.params.bookId, dataVal ,valid)
             const newForm = new FormData();
             images.map((image) => {
                 if (image.path) {
-                    let fileName = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length);
+                    let fileName =  image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length);
                     const imageObject = {
                         name: fileName,
                         type: 'image/jpeg',
                         uri: Platform.OS === 'android' ? image.path : image.path.replace('file://', ''),
                         photoName: image.name
                     };
+                    console.log("imageObect",imageObject)
                     newForm.append('images[]', imageObject);
                 }
             });
+            console.log("imGEUPDATE", images, arrays, isbn, props.route.params.bookId)
             newForm.append('isbn_no', isbn);
             newForm.append('page_name', arrays);
             newForm.append('user_id', value);
             newForm.append('product_id', props.route.params.bookId)
+
             const response = await updateDraft(newForm);
+            console.log("updateresponse", response)
             if (response && response.status === true) {
                 validate();
                 images.forEach((item) => {
                     item['path'] = '';
                 });
                 setMessage(response.message)
+                setModalVisible(true);
                 setTimeout(() => {
                     props.navigation.goBack();
+                    setModalVisible(false)
                 }, 1000);
             } else {
+                setModalVisible(false);
                 validate();
-                setMessage('please upload all mandatory fields.')
+                setMessage('please upload all mandatory fields')
             }
 
         } else {
@@ -232,7 +240,6 @@ export default function ReSell(props) {
                     formData.append('images[]', imageObject);
                 }
             });
-
             formData.append('isbn_no', isbn);
             formData.append('page_name', arrays);
             formData.append('user_id', value)
@@ -254,11 +261,14 @@ export default function ReSell(props) {
                         images.forEach((item) => {
                             item['path'] = '';
                         });
-                        setMessage(response.data.message)
+                        // setModalVisible(true);
+                        setMessage('successfully Add to Draft')
                         setTimeout(() => {
                             props.navigation.goBack();
+                            // setModalVisible(false)
                         }, 1000);
                     } else {
+                        // setModalVisible(false)
                         validate();
                         setMessage('please upload all mandatory fields.')
                     }
@@ -277,7 +287,7 @@ export default function ReSell(props) {
 
     const onSubmit = () => {
         if (!isbn) {
-            setIsbnErr('ISBN Number Required.');
+            setIsbnErr('Please fill ISBN field.');
         }
         else if (!validation) {
             setImageErr('Please upload all images.');
@@ -295,13 +305,14 @@ export default function ReSell(props) {
         props.navigation.navigate('Draft');
         setIsbn('');
         images.map((item) => {
+
             item['path'] = ''
         })
     }
 
     const handleBackButton = async () => {
         const book = await getAllBook();
-        const valid = book.filter(item => { return item.id === props.route.params.bookId });
+        const valid = await book.filter(item => { return item.id === props.route.params.bookId });
         if (isbn) {
             Alert.alert(
                 'UsedBookr',
@@ -315,7 +326,7 @@ export default function ReSell(props) {
                     {
                         text: 'OK',
                         onPress: () => {
-                            if (valid.length) {
+                            if (valid && valid.length > 0) {
                                 props.navigation.goBack();
                             } else {
                                 onRequest('draft');
@@ -334,8 +345,14 @@ export default function ReSell(props) {
         }
     };
 
+    const Notes = async () => {
+        const note = await getNote();
+        setNotes(note);
+    }
+
 
     useEffect(() => {
+        Notes();
         if (props.route.name === "ReSell") {
             BackHandler.addEventListener('hardwareBackPress', handleBackButton);
             return () => {
@@ -367,9 +384,9 @@ export default function ReSell(props) {
                 </View>
             </LinearGradient>
 
+            <ScrollView>
 
-            <View style={styles.container}>
-                <ScrollView>
+                <View style={styles.container}>
 
                     <Text style={styles.title}>Enter your book details</Text>
                     <TextInput
@@ -424,42 +441,72 @@ export default function ReSell(props) {
                         }
                         keyExtractor={item => item}
                     />
-                </ScrollView>
+                    {notes ?
+                        <View style={styles.noteStyle}>
+                            <View style={{ padding: 15 }}>
+                                <Text style={[styles.title, { marginBottom: 8, marginTop: 0 }]}>Note</Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <AntDesign name="exclamationcircleo" size={20} color={color.terms} />
+                                    <Text style={[styles.terms, { marginLeft: 8 }]}>{notes && notes.content}</Text>
+                                </View>
+                            </View>
 
-            </View>
+                        </View> : null}
 
-            {checkErr ?
-                <View>
-                    <Text style={[styles.errorMsg, { marginTop: 10, marginLeft: 15 }]}>{checkErr}</Text>
-                </View> : null}
-            <View style={styles.check}>
-                <Checkbox
-                    status={checked ? 'checked' : 'unchecked'}
-                    color={color.green}
-                    onPress={() => {
-                        setChecked(!checked);
-                        setCheckErr(false);
-                    }}
-                />
-                <Text style={styles.agree}>I agree to the</Text>
-                <TouchableOpacity style={{ marginLeft: 5 }} onPress={() => props.navigation.navigate('Terms')}>
-                    <Text style={styles.condition}>terms and conditions</Text>
-                </TouchableOpacity>
+                    {checkErr ?
+                        <View>
+                            <Text style={[styles.errorMsg, { marginTop: 10, marginLeft: 15 }]}>{checkErr}</Text>
+                        </View> : null}
+                    <View style={styles.check}>
+                        <Checkbox
+                            status={checked ? 'checked' : 'unchecked'}
+                            color={color.green}
+                            onPress={() => {
+                                setChecked(!checked);
+                                setCheckErr(false);
+                            }}
+                        />
+                        <Text style={styles.agree}>I agree to the</Text>
+                        <TouchableOpacity style={{ marginLeft: 5 }} onPress={() => props.navigation.navigate('Terms')}>
+                            <Text style={styles.condition}>terms and conditions</Text>
+                        </TouchableOpacity>
 
-            </View>
-            <View style={styles.submitFlex}>
-                <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => onSubmit()}>
-                    <View style={styles.loaderView}>
-                        <View style={{ flex: 0.55 }}>
-                            <Text style={styles.loginText}>SUBMIT</Text>
-                        </View>
-                        {load ?
-                            <View style={{ flex: 0.45 }}>
-                                <ActivityIndicator size="large" color="#FFFFFF" />
-                            </View> : null}
                     </View>
-                </TouchableOpacity>
-            </View>
+                    <View style={styles.submitFlex}>
+                        <TouchableOpacity disabled={load} style={[styles.logView, { opacity: load ? 0.2 : 1.0 }]} onPress={() => onSubmit()}>
+                            <View style={styles.loaderView}>
+                                <View style={{ flex: 0.55 }}>
+                                    <Text style={styles.loginText}>SUBMIT</Text>
+                                </View>
+                                {load ?
+                                    <View style={{ flex: 0.45 }}>
+                                        <ActivityIndicator size="large" color="#FFFFFF" />
+                                    </View> : null}
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                </View>
+
+            </ScrollView>
+
+
+
+
+
+            {camera ?
+                <View style={styles.imgView}>
+                    <TouchableOpacity style={[styles.header, { marginTop: 0 }]} onPress={() => openCamera()}>
+                        <AntDesign name="camerao" size={25} color={color.terms} />
+                        <Text style={{ fontWeight: '500', fontSize: 16, color: color.black, marginLeft: 10 }}>Take from camera</Text>
+
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: "center", marginTop: 7 }} onPress={() => openImagePicker()}>
+                        <AntDesign name="picture" size={25} color={color.terms} />
+                        <Text style={{ fontWeight: '500', fontSize: 16, color: color.black, marginLeft: 10 }}>Take from gallery</Text>
+
+                    </TouchableOpacity>
+                </View> : null}
 
 
             <Snackbar
@@ -475,30 +522,34 @@ export default function ReSell(props) {
                 }}>
                 {message}
             </Snackbar>
-            {camera ?
 
-                <View style={{ height: 90, backgroundColor: 'white', elevation: 10, padding: 15 }}>
-                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: "center" }} onPress={() => openCamera()}>
-                        <AntDesign name="camerao" size={25} color={color.terms} />
-                        <Text style={{ fontWeight: '500', fontSize: 16, color: color.black, marginLeft: 10 }}>Take from camera</Text>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                    setModalVisible(!modalVisible);
+                }}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Image source={Images.letter} style={styles.thankImg} />
+                        <Text style={styles.modalText}>Thank You</Text>
+                        <Text style={styles.text}>Your Submission has been received.We will be in touch and contact you soon!</Text>
+                    </View>
+                </View>
+            </Modal>
 
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: "center", marginTop: 7 }} onPress={() => openImagePicker()}>
-                        <AntDesign name="picture" size={25} color={color.terms} />
-                        <Text style={{ fontWeight: '500', fontSize: 16, color: color.black, marginLeft: 10 }}>Take from gallery</Text>
-
-                    </TouchableOpacity>
-                </View> : null}
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     linearGradient: {
-        height: 95,
+        height: 90,
         paddingLeft: 20,
         paddingRight: 20,
-        flex: 0.15
+        // flex: 0.13
     },
     input: {
         height: 60,
@@ -506,21 +557,78 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         color: '#7F8192'
     },
-    container: { padding: 15, flex: 0.72 },
+    imgView: { height: 90, backgroundColor: 'white', elevation: 10, padding: 15 },
+    container: { padding: 15, },
     imageContainer: { height: 130, backgroundColor: '#ECEAFF', width: 100, justifyContent: 'center' },
-    header: { flexDirection: 'row', alignItems: 'center', marginTop: 50 },
+    header: { flexDirection: 'row', alignItems: 'center', marginTop: 35 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
     title: { fontFamily: Font.acari, fontWeight: '800', color: color.black, fontSize: 16, marginBottom: 18, marginTop: 3 },
     remove: { borderWidth: 1, backgroundColor: color.white, borderColor: 'red', position: 'absolute', borderRadius: 30, right: -5 },
-    submitFlex: { flex: 0.13, paddingLeft: 15, paddingRight: 15 },
+    submitFlex: { flex: 0.13, paddingLeft: 5, paddingRight: 5 },
     imageUpload: { height: 120, width: 100, marginTop: 8 },
     errorMsg: { fontSize: 14, color: color.red, fontWeight: '500' },
     loginText: { alignSelf: 'flex-end', fontSize: 14, color: color.darkBlack, fontWeight: '600' },
     logView: { height: 55, backgroundColor: '#FFCB00', marginTop: 15, borderRadius: 8 },
     loaderView: { flexDirection: 'row', alignItems: 'center', height: 55 },
-    check: { marginLeft: 15, marginRight: 15, flexDirection: 'row', alignItems: 'center' },
+    check: { flexDirection: 'row', alignItems: 'center' },
     agree: { fontWeight: '500', color: color.terms, fontSize: 14 },
+    terms: { fontWeight: '500', color: color.terms, fontSize: 15 },
     condition: { fontWeight: '500', color: color.black, fontSize: 14, textDecorationLine: 'underline' },
     draft: { fontWeight: '500', fontSize: 14, color: '#FFCB00', fontFamily: Font.acari, textDecorationLine: 'underline' },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // marginTop: 22,
+        backgroundColor: "rgba(0,0,0,0.6)"
+    },
+    modalView: {
+        margin: 40,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 30,
+        // alignItems: 'center',
+        elevation: 5,
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+    buttonOpen: {
+        backgroundColor: '#F194FF',
+    },
+    buttonClose: {
+        backgroundColor: '#2196F3',
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+        fontSize: 18,
+        color: color.black,
+        fontWeight: '700'
+    },
+    text: {
+        fontSize: 15,
+        color: color.terms,
+        fontWeight: '400',
+        textAlign: 'center',
+        lineHeight: 20
+    },
+    noteStyle: {
+        height: 90,
+        backgroundColor: '#FAEE84',
+        marginLeft: 5,
+        marginRight: 5,
+        marginTop: 15,
+        borderRadius: 8,
+        marginBottom: 10
+    },
+    thankImg: { alignSelf: 'center', height: 90, width: 90, marginBottom: 10 }
 
 })

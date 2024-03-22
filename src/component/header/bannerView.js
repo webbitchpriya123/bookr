@@ -1,6 +1,6 @@
-import React ,{useState,useEffect} from "react";
-import { View, StyleSheet, Text, Image, Dimensions, ScrollView } from 'react-native';
-import {getBanner } from '../config/getAllApi';
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Text, Image, Dimensions, ScrollView, TouchableOpacity,Linking } from 'react-native';
+import { getBanner } from '../config/getAllApi';
 import { useIsFocused } from "@react-navigation/native";
 
 
@@ -15,7 +15,7 @@ const bannerView = () => {
     }, [isFocused]);
 
     const loadStoredValue = async () => {
-      const img = await getBanner();
+        const img = await getBanner();
         setBanner(img);
     };
 
@@ -27,7 +27,6 @@ const bannerView = () => {
     }
 
     return (
-
         <View>
             <ScrollView
                 pagingEnabled
@@ -37,11 +36,14 @@ const bannerView = () => {
                 style={{ marginTop: 15, marginLeft: 5 }}
             >
                 {banner.map((item, index) => (
-                    <Image
-                        key={index}
-                        source={{ uri: item.image }}
-                        style={{ width: windowWidth - 35, height: 160, borderRadius: 8 }}
-                    />
+                    <TouchableOpacity  onPress={() => Linking.openURL(item.banner_link)}>
+                        <Image
+                            key={index}
+                            source={{ uri: item.image }}
+                            style={{ width: windowWidth - 35, height: 160, borderRadius: 8 }}
+                        />
+                    </TouchableOpacity>
+
                 )
                 )}
 
