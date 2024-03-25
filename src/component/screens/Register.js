@@ -200,7 +200,7 @@ export default function Register(props) {
                             }}
                             value={Password}
                             placeholder="Password"
-                            maxLength={8}
+                            // maxLength={8}
                             secureTextEntry={eye ? false : true}
                             placeholderTextColor="#47436A"
                         />
@@ -224,7 +224,7 @@ export default function Register(props) {
                                 setCnfmPassErr(false)
                             }}
                             value={cnfmPassword}
-                            maxLength={8}
+                            // maxLength={8}
                             placeholder="Confirm password"
                             secureTextEntry={cnfmEye ? false : true}
                             placeholderTextColor="#47436A"

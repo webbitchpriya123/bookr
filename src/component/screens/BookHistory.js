@@ -43,10 +43,6 @@ const BookHistory = (props) => {
     }
 
     const renderItem = ({ item }) => {
-
-        // const coverImagesLengthArray = item.cover_images.map(item => (item.cover_images ? item.cover_images.length : 0));
-
-        // console.log("itennnnnn",coverImagesLengthArray)
         return (
             <TouchableOpacity
                 onPress={() => props.navigation.navigate('BookDetails', { id: item.id })}

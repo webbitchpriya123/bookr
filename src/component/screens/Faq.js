@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, FlatList, TouchableOpacity, Dimensions, ActivityIndicator, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, FlatList, Dimensions,SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import * as color from '../../colors/colors';
 import * as font from '../../fonts/fonts';
 import { List } from 'react-native-paper';
-import { SafeAreaView, useSafeAreaFrame } from 'react-native-safe-area-context';
 import Header from '../header/header';
 import { getFaq } from "../config/getAllApi";
 import { useIsFocused } from "@react-navigation/native";

@@ -12,7 +12,6 @@ import {
     ActivityIndicator,
     RefreshControl,
     Alert,
-    BackHandler
 } from 'react-native';
 import Header from "../header/header";
 import * as color from '../../colors/colors';

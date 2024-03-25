@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, RefreshControl, Image, Linking, FlatList, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView, RefreshControl,Linking, FlatList, TouchableOpacity, Dimensions, ScrollView, ImageBackground } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as color from '../../colors/colors';
@@ -19,7 +19,6 @@ import BannerView from '../header/bannerView';
 
 const Home = (props) => {
     const isFocused = useIsFocused();
-
     // const [booksts, setBookSts] = useState({});
     const [acSts, setAcSts] = useState({});
     const [arr, setArr] = useState([]);
@@ -33,7 +32,7 @@ const Home = (props) => {
         });
 
         const unsubscribeOnNotificationOpenedApp = messaging().onNotificationOpenedApp(remoteMessage => {
-            console.log("messafeee", remoteMessage)
+            console.log("message", remoteMessage)
         });
 
         return () => {
@@ -154,46 +153,6 @@ const Home = (props) => {
                         keyExtractor={item => item.id}
                     />
                     <BannerView />
-                    {/* <View>
-                        <ScrollView
-                            pagingEnabled
-                            horizontal
-                            onScroll={scrolls}
-                            showsHorizontalScrollIndicator={false}
-                            style={{ marginTop: 15, marginLeft: 5 }}
-                        >
-                            {banner.map((item, index) => (
-                                <Image
-                                    key={index}
-                                    source={{ uri: item.image }}
-                                    style={{ width: windowWidth - 35, height: 160, borderRadius: 8 }}
-                                />
-                            )
-                            )}
-
-                        </ScrollView>
-                        <View style={styles.pagination}>
-                            {banner.map((item, k) => (
-                                <Text key={k} style={k == active ? styles.activeDot : styles.dot}>
-                                    •
-                                </Text>
-                            ))}
-
-                        </View>
-                    </View> */}
-
-                    {/* <View style={{ marginTop: 20 }}>
-                        <ImageBackground imageStyle={{ borderRadius: 10 }} source={images.banner} style={{ width: windowWidth - 40, height: 150, alignSelf: 'center' }} >
-                            <View style={{ alignSelf: 'flex-end', width: windowWidth / 2.3, margin: 10, paddingTop: 8 }}>
-                                <Text style={styles.perchant}>30% EXTRA</Text>
-                                <Text style={styles.education}>FOR ALL EDUCATION BOOKS</Text>
-                                <TouchableOpacity>
-                                    <Text style={styles.sell}>Sell Now</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                        </ImageBackground>
-                    </View> */}
                     <View style={{ marginTop: 20 }} >
                         <Text style={styles.title}>Sell your Books</Text>
 

@@ -5,7 +5,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import Home from './Home';
 import Profile from './Profile';
-import ReSell from './ReSell';
 import BookHistory from './BookHistory';
 import * as color from '../../colors/colors';
 import FAQ from './Faq';

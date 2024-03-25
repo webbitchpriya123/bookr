@@ -13,14 +13,7 @@ import {
 } from 'react-native';
 LogBox.ignoreLogs(["Warning: ..."]);
 LogBox.ignoreAllLogs();
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Login from './src/component/screens/Login';
 import Otp from './src/component/screens/OtpInput.js';
@@ -37,7 +30,7 @@ import Profile from './src/component/screens/Profile.js';
 import FAQ from './src/component/screens/Faq.js';
 import EditProfile from './src/component/screens/EditProfile.js';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator, TransitionPresets } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import OtpLogin from './src/component/screens/OtpLogin.js';
 import Register from './src/component/screens/Register.js';
 import PaymentDetails from './src/component/screens/PaymentDetails.js';
@@ -45,7 +38,6 @@ import AllPayment from './src/component/screens/AllPayments.js';
 import messaging from '@react-native-firebase/messaging';
 import Terms from './src/component/screens/Terms.js';
 import Draft from './src/component/screens/Draft.js';
-import notifee from '@notifee/react-native';
 
 
 
@@ -63,43 +55,16 @@ const App = () => {
 
 
   const requestNotificationPermission = async () => {
-    const settings = await notifee.requestPermission();
-
+    const settings = await notifee.requestPermission({
+      sound: true,
+      criticalAlert: true, // for iOS only
+    });
     if (settings.granted) {
         console.log('Notification permission granted');
     } else {
         console.log('Notification permission denied');
     }
 };
-
-  // async function requestNotificationPermission() {
-  //   try {
-  //     PushNotification.configure({
-  //       onRegister: function(token) {
-  //         // token contains the device token required for push notifications
-  //         console.log('TOKEN:', token);
-  //       },
-  //       permissions: {
-  //         alert: true,
-  //         badge: true,
-  //         sound: true,
-  //       },
-  //       popInitialNotification: true,
-  //       requestPermissions: Platform.OS === 'android', // Request permissions on Android
-  //     });
-  
-  //     if (Platform.OS === 'android') {
-  //       const granted = await PushNotification.requestPermissions();
-  //       if (granted === true) {
-  //         console.log('Notification permission granted');
-  //       } else {
-  //         console.log('Notification permission denied');
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error('Error requesting notification permission:', error);
-  //   }
-  // }
   
 
   async function requestUserPermission() {

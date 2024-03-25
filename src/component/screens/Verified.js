@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import {
     SafeAreaView,
-    ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
     Image,
@@ -19,19 +17,18 @@ import LinearGradient from 'react-native-linear-gradient';
 
 export default function Verified(props) {
 
-    useEffect(()=>{
-
+    useEffect(() => {
         setTimeout(() => {
-            if(props.route.params.type === 'ResetPassword'){
-                props.navigation.navigate('ResetPassword',{mobile:props.route.params.mobile})
-            }else{
+            if (props.route.params.type === 'ResetPassword') {
+                props.navigation.navigate('ResetPassword', { mobile: props.route.params.mobile })
+            } else {
                 props.navigation.navigate('Home')
-  
+
             }
         }, 300);
 
-    },[props.route.params.type])
-    
+    }, [props.route.params.type])
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
@@ -42,9 +39,9 @@ export default function Verified(props) {
                 <View style={styles.phonenumber}>
                     <Text style={styles.verify}>Verified</Text>
                     <Text style={styles.verifiedPhone}>Your Password has been reset successfully.</Text>
-                    <TouchableOpacity style={styles.logView} onPress={() => 
+                    <TouchableOpacity style={styles.logView} onPress={() =>
                         props.navigation.navigate('Home')
-                        }>
+                    }>
                         <Text style={styles.loginText}>DONE</Text>
                     </TouchableOpacity>
                 </View>

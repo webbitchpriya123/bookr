@@ -10,13 +10,10 @@ import {
     Dimensions,
     ActivityIndicator,
     RefreshControl,
-    ToastAndroid
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
-import LinearGradient from 'react-native-linear-gradient';
 import { getAllNotifications, notifyCount, readAtCount } from "../config/getAllApi";
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';

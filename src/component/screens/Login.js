@@ -154,7 +154,7 @@ export default function Login(props) {
                                 setPassErr(false)
                             }}
                             value={Password}
-                            maxLength={8}
+                            // maxLength={8}
                             placeholder="Password"
                             secureTextEntry={eye ? false : true}
                             placeholderTextColor="#47436A"

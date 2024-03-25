@@ -20,16 +20,11 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
-import * as Images from '../config/constants';
-import axios from 'axios';
 import HeaderComp from '../header/headerComp';
-import { ApiUrl, api, selectBankAccount } from '../constant/constant';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
 import { PushNotification } from '../config/pushNotification';
-import { RadioButton, Snackbar } from 'react-native-paper';
-
+import { RadioButton } from 'react-native-paper';
 import { selectBank, getAllBanks, updateBankAcc, removeAcc } from "../config/getAllApi";
 
 
@@ -96,7 +91,6 @@ export default function PaymentDetails(props) {
 
 
     const setAsDefault = (id, index) => {
-        console.log("default", id, index)
         Alert.alert("UsedBookr!", "Are you sure you want to set your default account?", [
             {
                 text: "Cancel",

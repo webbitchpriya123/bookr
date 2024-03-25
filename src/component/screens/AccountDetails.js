@@ -70,7 +70,6 @@ export default function AccountDetails(props) {
         setBank(bank);
     }
 
-
     const onTextChange = (name) => (value) => {
         setData({
             ...data,
@@ -114,7 +113,7 @@ export default function AccountDetails(props) {
                     setVisible(true)
                     setMessage(response.data.message)
                     setTimeout(() => {
-                        props.navigation.navigate('AllPayment',{id :''});
+                        props.navigation.goBack();
                     }, 1000);
                     setData('')
 
@@ -128,23 +127,7 @@ export default function AccountDetails(props) {
         }
     }
 
-    const openImagePicker = () => {
-        ImagePicker.openPicker({
-            width: 100,
-            height: 120,
-            cropping: true
-        }).then(image => {
-            let fileName = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.length);
-            const imageObject = {
-                name: fileName,
-                type: 'image/jpeg',
-                uri: Platform.OS === 'android' ? image.path : image.path.replace('file://', ''),
-                photoName: image.name
-            };
-            setImage(imageObject)
-        });
-    };
-
+   
     const onSubmit = () => {
         if (checked === 'first') {
             if (!data.value) {

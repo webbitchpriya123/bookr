@@ -1,10 +1,9 @@
 import React from 'react';
-import { ApiUrl, api, States,disclaimer, deleteBankAcc,upDateBank, getAllBank, bookUpdate, youtubeLink, bannerImg, district, invoiveDownload, banks, faq, notification, userProfile, getBookHistory, productDetail, productStatus, bookCount, notificationCount, notificationReadAt, invoiceOption, selectBankAccount } from '../constant/constant';
+import { ApiUrl, api, States, disclaimer, deleteBankAcc, upDateBank, getAllBank, bookUpdate, youtubeLink, bannerImg, district, invoiveDownload, banks, faq, notification, userProfile, getBookHistory, productDetail, productStatus, bookCount, notificationCount, notificationReadAt, invoiceOption, selectBankAccount } from '../constant/constant';
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //bank
-
 
 export const getBank = async () => {
     try {
@@ -286,6 +285,8 @@ export const updateDraft = async (formData) => {
     try {
         const headers = {
             Authorization: "Bearer " + JSON.parse(token),
+            "Content-Type": "multipart/form-data",
+            Accept: 'application/json'
         };
         const { data } = await axios.post(ApiUrl + api + bookUpdate, formData, { headers });
         return data;

@@ -20,7 +20,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import * as color from '../../colors/colors';
 import * as Font from '../../fonts/fonts';
 import * as Images from '../config/constants';
-
 import ImagePicker from 'react-native-image-crop-picker';
 import { ApiUrl, product, api } from '../constant/constant';
 import axios from 'axios';
@@ -206,7 +205,6 @@ export default function ReSell(props) {
             newForm.append('page_name', arrays);
             newForm.append('user_id', value);
             newForm.append('product_id', props.route.params.bookId)
-
             const response = await updateDraft(newForm);
             console.log("updateresponse", response)
             if (response && response.status === true) {

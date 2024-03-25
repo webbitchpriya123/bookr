@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator ,Dimensions} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Divider, Snackbar } from 'react-native-paper';
@@ -10,7 +10,6 @@ import * as font from '../../fonts/fonts';
 import * as images from '../config/constants';
 import { ApiUrl, api, resetPassword } from '../constant/constant';
 import axios from 'axios';
-import { useIsFocused } from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging';
 import { PushNotification } from '../config/pushNotification';
 
@@ -90,7 +89,7 @@ export default function ResetPassword(props) {
                     <AntDesign name='arrowleft' size={30} color={color.white} />
                 </TouchableOpacity>
                 <View style={styles.imageContainer}>
-                    <Image source={images.MainLogo} style={{height:120,width:100}}/>
+                    <Image source={images.MainLogo} style={{ height: 120, width: 100 }} />
                     <Text style={styles.welcome}>Reset Password</Text>
                     <Text style={styles.login}>At least 9 characters, with uppercase and lowercase letters.</Text>
                 </View>
@@ -109,7 +108,7 @@ export default function ResetPassword(props) {
                             placeholder="Password"
                             secureTextEntry={eye ? false : true}
                             placeholderTextColor="#47436A"
-                            maxLength={8}
+                        // maxLength={8}
 
                         />
                         <TouchableOpacity onPress={() => setEye(!eye)}>
@@ -135,7 +134,7 @@ export default function ResetPassword(props) {
                             placeholder="Confirm password"
                             secureTextEntry={Eye ? false : true}
                             placeholderTextColor="#47436A"
-                            maxLength={8}
+                        // maxLength={8}
                         />
                         <TouchableOpacity onPress={() => reSetEye(!Eye)}>
                             <Feather

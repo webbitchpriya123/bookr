@@ -5,15 +5,8 @@ import {
     Text,
     Image,
     View,
-    TouchableOpacity,
-    FlatList,
-    TextInput,
-    Dimensions,
-    ActivityIndicator,
-    ScrollView
 } from 'react-native';
 import * as color from '../../colors/colors';
-import * as Font from '../../fonts/fonts';
 import HeaderComp from "../header/headerComp";
 
 

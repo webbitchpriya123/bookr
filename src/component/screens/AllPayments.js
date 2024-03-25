@@ -131,7 +131,6 @@ export default function AllPayment(props) {
 
 
 
-    console.log("checkkk", checked)
 
     const setAsDefault = async (id, index) => {
         console.log("default", id, index)

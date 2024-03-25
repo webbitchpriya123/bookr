@@ -37,14 +37,14 @@ const Header = (props) => {
             setNotification(notify)
         }
     }
- 
+
 
     const onClick = () => {
         props.props.navigation.navigate('Notification');
         setNotification(false);
     }
 
-    console.log("notification",notification)
+    console.log("notification", notification)
 
 
     return (
