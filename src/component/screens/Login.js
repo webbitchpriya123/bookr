@@ -128,7 +128,7 @@ export default function Login(props) {
                     <View style={styles.textInputView}>
                         <EvilIcons name="user" color="#241D60" size={35} style={{ paddingLeft: 5 }} />
                         <TextInput
-                            style={[styles.input, { marginLeft: 6 }]}
+                            style={[styles.input, {  marginLeft: 6 }]}
                             onChangeText={(text) => {
 
                                 setMobileNumber(text)

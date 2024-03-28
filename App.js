@@ -45,14 +45,12 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const [localValue, setLocal] = useState(null);
   // const isDarkMode = useColorScheme() === 'dark';
-
   useEffect(() => {
     loadStoredValue();
     requestUserPermission();
     requestNotificationPermission();
     getToken();
   }, []);
-
 
   const requestNotificationPermission = async () => {
     const settings = await notifee.requestPermission({
@@ -67,7 +65,7 @@ const App = () => {
 };
   
 
-  async function requestUserPermission() {
+async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -76,7 +74,6 @@ const App = () => {
       console.log('Authorization status:', authStatus);
     }
   }
-
 
   const getToken = async () => {
     messaging()

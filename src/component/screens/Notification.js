@@ -84,7 +84,7 @@ export default function Notification(props) {
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
             <HeaderComp name={'Notifications'} props={props} />
 
-        {/* <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
+            {/* <LinearGradient colors={['#3CB043', '#15681A']} start={{ x: 0.1, y: 0.4 }}
                 end={{ x: 1.0, y: 1.0 }} style={styles.linearGradient}>
                 <View style={styles.header}>
                     <TouchableOpacity style={{ flex: 0.15 }} onPress={() => goBack()} >
@@ -95,7 +95,7 @@ export default function Notification(props) {
                     </TouchableOpacity>
                 </View>
             </LinearGradient>  */}
-            <View style={{ padding: 15}}>
+            <View style={{ padding: 15 }}>
 
                 <ScrollView refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -127,38 +127,27 @@ export default function Notification(props) {
                         }
                         keyExtractor={item => item}
                     />
-
-
-                    {/* con */}
-
-
-
                 </ScrollView>
                 {!notification && !load ?
                     <View style={{ marginTop: windowHeight / 3, alignSelf: 'center' }}>
                         <Text style={styles.title}>No Data Found</Text>
                     </View> : null}
             </View>
-
-
             {load ?
                 <View style={[styles.loader, { top: windowHeight / 2 }]}>
                     <ActivityIndicator size={'large'} color={color.green} />
                 </View> : null}
-
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
-
     linearGradient: {
         height: 90,
         paddingLeft: 20,
         paddingRight: 20,
     },
     title: { fontWeight: '700', fontSize: 16, fontFamily: Font.acari, color: color.black, paddingBottom: 10 },
-
     loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
     header: { flexDirection: 'row', alignItems: 'center', marginTop: 41 },
     headerText: { color: '#212121', fontWeight: '700', fontSize: 16, flex: 0.83 },
@@ -172,5 +161,4 @@ const styles = StyleSheet.create({
     container: { backgroundColor: '#F5F6FA', marginTop: 15, borderRadius: 10 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
     alert: { height: 10, width: 10, backgroundColor: 'red', position: 'absolute', left: 35, borderRadius: 10 }
-
 })

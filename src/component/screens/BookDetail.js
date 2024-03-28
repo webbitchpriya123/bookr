@@ -31,6 +31,8 @@ import HeaderComp from "../header/headerComp";
 // import RNFS from 'react-native-fs';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios';
+import RNFetchBlob from 'rn-fetch-blob';
+
 // import RNFetchBlob from 'rn-fetch-blob'; // Import rn-fetch-blob for file handling
 
 export default function BookDetail(props) {
@@ -50,8 +52,8 @@ export default function BookDetail(props) {
     // console.log("propsss", props.route.params.id)
 
     const bookHistory = async () => {
-        const allBook = await bookDetail(props.route.params.id);
-        const show = await invoiceShow(props.route.params.id);
+        const allBook = await bookDetail(207);
+        const show = await invoiceShow(207);
         setShow(show);
         setBookData(allBook);
         setLoad(false);
@@ -79,43 +81,73 @@ export default function BookDetail(props) {
 
 
     const downLoad = async () => {
-        // const invoice = await downLoadInvoice(props.route.params.id);
-        try {
-            const token = await AsyncStorage.getItem('token');
-            const convert = JSON.parse(token);
-            console.log("tokennn", JSON.parse(token))
-            const requestBody = {
-                product_id: 161,
-            };
-            const response = await axios.post('https://webbitech.co.in/usedbookr/api/download-invoice', requestBody, {
-                headers: {
-                    Authorization: `Bearer ${convert}`,
-                },
-                responseType: 'blob',// Important: responseType should be 'blob' for file downloads
+        const { fs } = RNFetchBlob;
+        let PictureDir = fs.dirs.PictureDir; // this is the pictures directory. You can check the available directories in the wiki.
+        let date = new Date();
+
+        console.log("nafdasdfasf111111",PictureDir)
+        const filePath = `${PictureDir}/me_${Math.floor(date.getTime() + date.getSeconds() / 2)}.pdf`; // Define the file path
+        console.log("nafdasdfasf2222222",filePath)
+
+        const options = {
+            fileCache: true,
+            addAndroidDownloads: {
+                useDownloadManager: true, // Setting it to true will use the device's native download manager and will be shown in the notification bar.
+                notification: false,
+                path: filePath, // This is the path where your downloaded file will live in
+                description: 'Downloading PDF file.'
+            }
+        };
+
+        // Prepare your request body
+        const requestBody = {
+            product_id: 207
+        };
+
+        // Stringify the request body
+        const requestBodyString = JSON.stringify(requestBody);
+        // Construct the fetch options object
+        const fetchOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/pdf',
+                'Authorization': 'Bearer YOUR_ACCESS_TOKEN'
             },
+            body: requestBodyString // Pass the stringified body
+        };
+        // Perform the fetch request
+        fetch("https://webbitech.co.in/usedbookr/api/download-invoice", fetchOptions)
+            .then((res) => {
+                console.log("responseeeeee", res._bodyInit.data.blobId);
 
-            );
+                const responseBlobId = res._bodyInit.data.blobId;
+                const responseOffset = res._bodyInit.data.offset;
+                const responseSize = res._bodyInit.data.size;
 
-            const contentType = response.headers['content-type'];
-            const isBinary = contentType.startsWith('application/pdf'); // Check 
-            // const data = JSON.stringify(response.data)
-            console.log("lohhsdfsdf",isBinary ,contentType)
-            const path = `${RNFS.DocumentDirectoryPath}/example.pdf`;
-            // const blobId = response.data._data.blobId;
+                // Construct the Blob object using the response data
+                const blob = [
+                    responseBlobId,
+                    '\n',
+                    responseOffset,
+                    '\n',
+                    responseSize
+                ];
 
-            // Create a blob object using the extracted blobId
-            // const fileBlob = await Blob.build(blobId, { type: 'application/pdf' });
-            console.log("33333", path, JSON.stringify(response.data));
-            // await RNFetchBlob.fs.writeFile(path, response.data, 'base64'); // Use 'ascii' encoding for binary data
+                // Save the Blob object to the specified path
+                fs.writeFile(filePath, blob, 'ascii')
+                    .then(() => {
+                        console.log('PDF file downloaded successfully.');
+                    })
+                    .catch((error) => {
+                        console.error('Error downloading PDF file:', error);
+                    });
 
-            // console.log("logsss", path);
-            // Write the file to the device's filesystem
-            // await RNFS.writeFile(path, fileBlob, 'base64');
-            Alert.alert('Success', 'File downloaded successfully');
-        } catch (error) {
-            console.error('Error downloading file:', error);
-            Alert.alert('Error', 'Failed to download file');
-        }
+            })
+            .catch((error) => {
+                // Handle errors here
+                console.error(error);
+            });
+
     }
 
 
@@ -145,7 +177,7 @@ export default function BookDetail(props) {
             </LinearGradient>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.container}>
+                <View style={styles.container}>
 
                     <Text style={styles.title}>Your book details</Text>
                     <View>
@@ -153,7 +185,7 @@ export default function BookDetail(props) {
                         <TextInput
                             editable={false}
                             style={styles.input}
-                            placeholder={ bookData && bookData.isbn_no}
+                            placeholder={bookData && bookData.isbn_no}
                             placeholderTextColor={'#7F8192'}
                         />
                         <Text style={styles.name}>Upload Date</Text>
@@ -161,7 +193,7 @@ export default function BookDetail(props) {
                         <TextInput
                             style={styles.input}
                             editable={false}
-                            placeholder={ bookData && moment(bookData.created_at).format('DD/MM/YYYY')}
+                            placeholder={bookData && moment(bookData.created_at).format('DD/MM/YYYY')}
                             placeholderTextColor={'#7F8192'}
                         />
                         <Text style={styles.name}>Approved Date</Text>
@@ -169,14 +201,14 @@ export default function BookDetail(props) {
                         <TextInput
                             style={styles.input}
                             editable={false}
-                            placeholder={ bookData && bookData.approved_date ? moment(bookData.approved_date).format('DD/MM/YYYY') : '-'}
+                            placeholder={bookData && bookData.approved_date ? moment(bookData.approved_date).format('DD/MM/YYYY') : '-'}
                             placeholderTextColor={'#7F8192'}
                         />
                         <Text style={styles.name}>Approved amount</Text>
                         <TextInput
                             editable={false}
                             style={styles.input}
-                            placeholder={ bookData && bookData.amount ? bookData.amount : '-'}
+                            placeholder={bookData && bookData.amount ? bookData.amount : '-'}
                             placeholderTextColor={'#7F8192'}
                         />
 
@@ -237,7 +269,7 @@ export default function BookDetail(props) {
                     <Text style={[styles.title, { marginTop: 15, marginBottom: 10 }]}>Add your book images</Text>
 
                     <FlatList
-                        data={ bookData && bookData.images}
+                        data={bookData && bookData.images}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item, index }) =>
@@ -248,7 +280,7 @@ export default function BookDetail(props) {
                         }
                         keyExtractor={item => item}
                     />
-                            </View>
+                </View>
 
 
             </ScrollView>
@@ -278,7 +310,7 @@ const styles = StyleSheet.create({
     },
     downLoad: { height: 60, backgroundColor: color.white, flexDirection: 'row', alignItems: "center", elevation: 10, justifyContent: 'space-between', paddingLeft: 15, paddingRight: 15, marginTop: 10 },
     loader: { position: 'absolute', bottom: 0, left: 0, right: 0 },
-    container: { padding: 15 ,flex:0.86},
+    container: { padding: 15, flex: 0.86 },
     header: { flexDirection: 'row', alignItems: 'center', marginTop: 45 },
     notify: { fontWeight: '700', fontSize: 16, color: color.white, fontFamily: Font.acari },
     title: { fontFamily: Font.acari, fontWeight: '800', color: color.black, fontSize: 16 },
